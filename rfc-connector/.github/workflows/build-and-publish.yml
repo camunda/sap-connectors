@@ -1,0 +1,70 @@
+name: build-and-publish
+
+on:
+  push:
+    branches:
+      - release/*
+    paths:
+      - pom.xml
+
+jobs:
+  unit-test:
+    uses: ./.github/workflows/reusable-unit-test.yml
+    with:
+      java-version: '21'
+      distribution: 'temurin'
+      maven-options: '-PcheckFormat'
+    secrets: inherit
+
+  determine-connector-version:
+    needs: unit-test
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.scope_version.outputs.VERSION }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up jdk 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: extract release version
+        id: extract_version
+        # this extracts <version> from pom.xml into env.VERSION
+        run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
+      - name: scope the version into an output
+        id: scope_version
+        run: echo "VERSION=${{ env.VERSION }}" >> "$GITHUB_OUTPUT"
+
+  build-and-gh_release:
+    needs: determine-connector-version
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up jdk 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: build project
+        run: mvn clean package
+
+      - name: create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "target/*.war,element-templates/*.json,mtad.yaml.example"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ needs.determine-connector-version.outputs.VERSION }}
+          release_name: ${{ needs.determine-connector-version.outputs.VERSION }}
+          release_body: "Release ${{ needs.determine-connector-version.outputs.VERSION }}"
+          allowUpdates: 'true'
+          removeArtifacts: 'true'
