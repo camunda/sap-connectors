@@ -7,9 +7,13 @@ on:
       - release/*
     paths:
       - pom.xml
+defaults:
+  run:
+    working-directory: odata-connector
 
 jobs:
   determine-connector-version:
+
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.scope_version.outputs.VERSION }}

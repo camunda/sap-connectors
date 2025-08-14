@@ -7,9 +7,13 @@ on:
     paths:
       - pom.xml
 
+defaults:
+  run:
+    working-directory: rfc-connector
+
 jobs:
   unit-test:
-    uses: ./.github/workflows/reusable-unit-test.yml
+    uses: ./.github/actions/rfc-connector/reusable-unit-test.yml
     with:
       java-version: '21'
       distribution: 'temurin'
