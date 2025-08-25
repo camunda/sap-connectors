@@ -1,4 +1,4 @@
-name: reusable-deploy
+name: rfc-reusable-deploy
 
 on:
   workflow_call:

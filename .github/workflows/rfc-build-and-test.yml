@@ -1,8 +1,10 @@
-name: unit-test
+name: rfc-unit-test
 
 on:
   pull_request:
-    branches: [ "release/*" ]
+    branches: [ "release/*", "main" ]
+  push:
+    branches: [ "release/*", "main" ]
 
 jobs:
   build-and-test:

@@ -1,4 +1,4 @@
-name: reusable-build-and-test
+name: rfc-reusable-build-and-test
 
 on:
   workflow_call:

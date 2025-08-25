@@ -1,4 +1,4 @@
-name: build-and-publish
+name: rfc-build-and-publish
 
 on:
   push:

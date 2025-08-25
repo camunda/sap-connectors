@@ -1,10 +1,10 @@
-name: test-pr
+name: odata-test-pr
 
 on:
   pull_request:
-    branches:
-      - release/*
-      - main
+    branches: [ "release/*", "main" ]
+  push:
+    branches: [ "release/*", "main" ]
 
 defaults:
   run:

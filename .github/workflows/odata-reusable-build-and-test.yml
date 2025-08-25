@@ -1,4 +1,4 @@
-name: reusable-build-and-test
+name: odata-reusable-build-and-test
 
 on:
   workflow_call:
@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: 'cap-bookshop/package-lock.json'
+          cache-dependency-path: 'odata-connector/cap-bookshop/package-lock.json'
 
       - name: install and run OData v2 + v4 mockserver
         run: |

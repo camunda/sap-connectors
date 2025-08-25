@@ -1,4 +1,4 @@
-name: reusable-unit-test
+name: rfc-reusable-unit-test
 
 on:
   workflow_call:
