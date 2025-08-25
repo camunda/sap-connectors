@@ -33,8 +33,6 @@ jobs:
           npm i
           npm start &
 
-      - run: cd .. # back to java space...
-
       - name: set up jdk ${{ inputs.java-version }}
         uses: actions/setup-java@v4
         with:
@@ -50,4 +48,5 @@ jobs:
       - name: build and test with maven
         env:
           destinations: ${{ secrets.DESTINATIONS }}
+        working-directory: odata-connector
         run: mvn -B ${{ inputs.maven-options }} --file pom.xml
