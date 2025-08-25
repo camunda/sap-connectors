@@ -1,0 +1,43 @@
+{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.5.0",
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "5bb6870"
+  },
+  "schemaVersion": 19,
+  "id": "Form_nhee1sx",
+  "components": [
+    {
+      "text": "# Forms in SAP Fiori Design",
+      "label": "Text view",
+      "type": "text",
+      "layout": {
+        "row": "Row_0z0pgle",
+        "columns": null
+      },
+      "id": "Field_0jlfvvg"
+    },
+    {
+      "label": "Search for a business partner name",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0bfg5dz",
+        "columns": null
+      },
+      "id": "Field_1bdb0af",
+      "key": "filter"
+    },
+    {
+      "label": "Maximum number of results to retrieve",
+      "type": "number",
+      "layout": {
+        "row": "Row_1qdvjle",
+        "columns": null
+      },
+      "id": "Field_06k07cr",
+      "key": "top"
+    }
+  ],
+  "type": "default"
+}

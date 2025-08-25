@@ -1,0 +1,46 @@
+{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.6.0",
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "5bb6870"
+  },
+  "schemaVersion": 19,
+  "id": "Form_l6eja1y",
+  "components": [
+    {
+      "text": "# Which SAP system do you want to query?",
+      "label": "Text view",
+      "type": "text",
+      "layout": {
+        "row": "Row_04xrrbw",
+        "columns": null
+      },
+      "id": "Field_0s2v1gr"
+    },
+    {
+      "label": "Choose!",
+      "values": [
+        {
+          "label": "ECC",
+          "value": "ecc"
+        },
+        {
+          "label": "S/4 2023",
+          "value": "s42023"
+        }
+      ],
+      "type": "radio",
+      "layout": {
+        "row": "Row_0um7ywb",
+        "columns": null
+      },
+      "id": "Field_1jhwo8o",
+      "key": "gv_sap_sys",
+      "validate": {
+        "required": false
+      }
+    }
+  ],
+  "type": "default"
+}

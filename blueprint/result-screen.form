@@ -1,0 +1,12 @@
+{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "5bb6870"
+  },
+  "schemaVersion": 19,
+  "id": "result-screen-10x6ef2",
+  "components": [],
+  "type": "default"
+}

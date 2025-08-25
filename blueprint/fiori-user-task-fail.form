@@ -1,0 +1,43 @@
+{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "5bb6870"
+  },
+  "schemaVersion": 19,
+  "id": "Form_suhkjee",
+  "components": [
+    {
+      "text": "# Something went wrong",
+      "label": "Text view",
+      "type": "text",
+      "layout": {
+        "row": "Row_19wbfac",
+        "columns": null
+      },
+      "id": "Field_0w1tvbm"
+    },
+    {
+      "text": "We weren't able to complete your request.",
+      "label": "Text view",
+      "type": "text",
+      "layout": {
+        "row": "Row_05sq60i",
+        "columns": null
+      },
+      "id": "Field_0dwu4gx"
+    },
+    {
+      "text": "=\"Message: \" + substring(ov_errorMessage,1,100) + \" ...\"",
+      "label": "Text view",
+      "type": "text",
+      "layout": {
+        "row": "Row_14503x1",
+        "columns": null
+      },
+      "id": "Field_10hncwv"
+    }
+  ],
+  "type": "default"
+}

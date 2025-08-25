@@ -1,0 +1,23 @@
+{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.5.0",
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "5bb6870"
+  },
+  "schemaVersion": 19,
+  "id": "Form_2jkyyyl",
+  "components": [
+    {
+      "text": "# Thank you for exploring the SAP Business Partner Search  blueprint!",
+      "label": "Text view",
+      "type": "text",
+      "layout": {
+        "row": "Row_176dm3g",
+        "columns": null
+      },
+      "id": "Field_0jtu92h"
+    }
+  ],
+  "type": "default"
+}

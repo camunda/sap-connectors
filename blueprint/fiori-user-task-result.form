@@ -1,0 +1,55 @@
+{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.5.0",
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "047cf72"
+  },
+  "schemaVersion": 19,
+  "id": "Form_xbred0y",
+  "components": [
+    {
+      "text": "# Results",
+      "label": "Text view",
+      "type": "text",
+      "layout": {
+        "row": "Row_0yuh0zs",
+        "columns": null
+      },
+      "id": "Field_1wiocn2"
+    },
+    {
+      "label": "No. of results:",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0anmsei",
+        "columns": null
+      },
+      "id": "Field_0veff2w",
+      "key": "nrOfResults",
+      "defaultValue": "0",
+      "readonly": true
+    },
+    {
+      "label": "Result overview",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_174lqvd",
+        "columns": null
+      },
+      "id": "Field_1umw14t",
+      "key": "result_mangled"
+    },
+    {
+      "label": "New query?",
+      "type": "checkbox",
+      "layout": {
+        "row": "Row_1i2x73y",
+        "columns": null
+      },
+      "id": "Field_0om7cxb",
+      "key": "gv_restart"
+    }
+  ],
+  "type": "default"
+}
