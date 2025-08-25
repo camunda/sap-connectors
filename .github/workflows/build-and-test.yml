@@ -6,12 +6,8 @@ on:
   push:
     branches: [ "release/*", "main" ]
 
-defaults:
-  run:
-    working-directory: odata-connector
-
 jobs:
-  build-and-test:
+  odata-tests:
     uses: ./.github/workflows/odata-reusable-build-and-test.yml
     with:
       java-version: '21'
