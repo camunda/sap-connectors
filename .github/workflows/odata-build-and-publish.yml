@@ -39,7 +39,7 @@ jobs:
 
   build-and-test:
     needs: determine-connector-version
-    uses: ./.github/workflows/reusable-build-and-test.yml
+    uses: ./.github/workflows/odata-reusable-build-and-test.yml
     with:
       java-version: '21'
       distribution: 'temurin'

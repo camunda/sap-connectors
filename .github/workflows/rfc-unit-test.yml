@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-test:
-    uses: ./.github/workflows/reusable-unit-test.yml
+    uses: ./.github/workflows/rfc-reusable-unit-test.yml
     with:
       java-version: '21'
       distribution: 'temurin'

@@ -31,7 +31,7 @@ jobs:
 
   deploy-to-btp:
     needs: determine-connector-version
-    uses: ./.github/workflows/reusable-deploy.yml
+    uses: ./.github/workflows/rfc-reusable-deploy.yml
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}
       cf_api_endpoint: 'https://api.cf.eu10-004.hana.ondemand.com'
@@ -41,7 +41,7 @@ jobs:
 
   e2e:
     needs: deploy-to-btp
-    uses: ./.github/workflows/reusable-e2e-test.yml
+    uses: ./.github/workflows/rfc-reusable-e2e-test.yml
     with:
       java-version: '21'
       distribution: 'temurin'
@@ -51,7 +51,7 @@ jobs:
   undeploy:
     needs: [ determine-connector-version, e2e ]
     if: success() || failure()
-    uses: ./.github/workflows/reusable-undeploy.yml
+    uses: ./.github/workflows/rfc-reusable-undeploy.yml
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}
       cf_api_endpoint: 'https://api.cf.eu10-004.hana.ondemand.com'
