@@ -1,4 +1,4 @@
-name: odata-test-pr
+name: Run tests
 
 on:
   pull_request:
@@ -18,3 +18,10 @@ jobs:
       distribution: 'temurin'
       maven-options: '-PcheckFormat package'
     secrets: inherit
+
+  rfc-tests:
+    uses: ./.github/workflows/rfc-reusable-unit-test.yml
+    with:
+      java-version: '21'
+      distribution: 'temurin'
+      maven-options: '-PcheckFormat'
