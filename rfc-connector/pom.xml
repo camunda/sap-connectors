@@ -8,6 +8,7 @@
     <groupId>io.camunda.connector.sap</groupId>
     <artifactId>connectors-sap-parent</artifactId>
     <version>8.7.0</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <name>Camunda RFC protocol outbound Connector</name>

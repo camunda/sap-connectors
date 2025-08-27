@@ -17,4 +17,8 @@
   <packaging>pom</packaging>
   <version>8.7.0</version>
 
+  <modules>
+    <module>rfc-connector</module>
+    <module>odata-connector</module>
+  </modules>
 </project>
