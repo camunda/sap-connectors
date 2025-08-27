@@ -5,11 +5,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.camunda</groupId>
-    <artifactId>camunda-release-parent</artifactId>
-    <version>3.9.1</version>
-    <!-- do not remove empty tag - http://jira.codehaus.org/browse/MNG-4687 -->
-    <relativePath />
+    <groupId>io.camunda.connector.sap</groupId>
+    <artifactId>connectors-sap-parent</artifactId>
+    <version>8.7.0</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <name>Camunda RFC protocol outbound Connector</name>
