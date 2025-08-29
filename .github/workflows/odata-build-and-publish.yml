@@ -60,8 +60,8 @@ jobs:
           artifacts: "element-templates/*.json,mtad.yaml.example"
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.determine-connector-version.outputs.VERSION }}
-          release_name: ${{ needs.determine-connector-version.outputs.VERSION }}
-          release_body: "Release ${{ needs.determine-connector-version.outputs.VERSION }}"
+          name: ${{ needs.determine-connector-version.outputs.VERSION }}
+          body: "Release ${{ needs.determine-connector-version.outputs.VERSION }}"
           allowUpdates: 'true'
           removeArtifacts: 'true'
 
