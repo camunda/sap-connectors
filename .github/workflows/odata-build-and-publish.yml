@@ -109,7 +109,8 @@ jobs:
       - name: sap-odata-connector - build and push docker image tag ${{ env.VERSION }}
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: odata-connector
+          file: odata-connector/Dockerfile
           build-args: |
             CAMUNDA_CONNECTORS_VERSION=8.7.0
           push: true
