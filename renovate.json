@@ -1,0 +1,74 @@
+{
+  "extends": [
+    "config:recommended",
+    "group:allNonMajor",
+    "schedule:earlyMondays",
+    "schedule:automergeNonOfficeHours"
+  ],
+  "timezone": "Europe/Berlin",
+  "labels": [
+    "dependencies",
+    "no milestone"
+  ],
+  "prHourlyLimit": 10,
+  "packageRules": [
+    {
+      "matchManagers": [
+        "maven",
+        "dockerfile"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "automerge": true
+    },
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "automerge": true
+    },
+    {
+      "matchBaseBranches": [
+        "release/*"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
+    },
+    {
+      "matchBaseBranches": [
+        "release/*"
+      ],
+      "matchPackageNames": [
+        "io.camunda*"
+      ],
+      "matchUpdateTypes": [
+        "major",
+        "minor",
+        "replacement"
+      ],
+      "enabled": false
+    },
+    {
+      "matchPackageNames": [
+        "camunda/infra-global-github-actions"
+      ],
+      "matchUpdateTypes": [
+        "digest"
+      ],
+      "changelogUrl": "https://github.com/camunda/infra-global-github-actions/compare/{{currentDigest}}..{{newDigest}}"
+    }
+  ],
+  "baseBranches": [
+    "main",
+    "release/8.5",
+    "release/8.6",
+    "release/8.7",
+    "release/8.8"
+  ]
+}
