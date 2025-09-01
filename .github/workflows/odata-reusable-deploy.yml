@@ -34,7 +34,7 @@ jobs:
     needs: extract-version
     steps:
       - name: checkout mtad.yaml.example
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: camunda/sap-odata-connector
           ref: ${{ env.camunda_release }}

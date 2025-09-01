@@ -24,7 +24,7 @@ jobs:
         run: echo "camunda_release=$(echo ${{ inputs.connector_version }} | cut -d'.' -f1-2)" >> $GITHUB_ENV
 
       - name: checkout mtad.yaml.example
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: camunda/sap-rfc-connector
 #          ref: release/${{ env.camunda_release }}
@@ -84,7 +84,7 @@ jobs:
           cf install-plugin multiapps -f
 
       # first, build the connector
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: set up jdk 21
         uses: actions/setup-java@v4
