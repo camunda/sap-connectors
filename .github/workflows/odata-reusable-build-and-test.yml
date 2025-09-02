@@ -34,7 +34,7 @@ jobs:
           npm start &
 
       - name: set up jdk ${{ inputs.java-version }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ inputs.java-version }}
           distribution: ${{ inputs.distribution }}
