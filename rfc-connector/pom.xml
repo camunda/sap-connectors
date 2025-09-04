@@ -25,34 +25,34 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- connector SDK version -->
-    <version.connectors>8.7.0-alpha4</version.connectors>
+    <version.connectors>8.7.8</version.connectors>
 
     <!-- external libraries -->
-    <version.assertj>3.26.3</version.assertj>
-    <version.junit-jupiter>5.11.4</version.junit-jupiter>
-    <version.mockito>5.14.2</version.mockito>
-    <version.slf4j>2.0.16</version.slf4j>
-    <version.cloud-sdk>5.13.0</version.cloud-sdk>
+    <version.assertj>3.27.4</version.assertj>
+    <version.junit-jupiter>5.13.4</version.junit-jupiter>
+    <version.mockito>5.19.0</version.mockito>
+    <version.slf4j>2.0.17</version.slf4j>
+    <version.cloud-sdk>5.22.0</version.cloud-sdk>
 
-    <version.spring-boot>3.3.5</version.spring-boot>
-    <version.jackson-databind>2.17.1</version.jackson-databind>
-    <version.spring-boot-starter-camunda>8.7.0-alpha4</version.spring-boot-starter-camunda>
-    <version.logback>1.5.16</version.logback>
+    <version.spring-boot>3.5.5</version.spring-boot>
+    <version.jackson-databind>2.20.0</version.jackson-databind>
+    <version.spring-boot-starter-camunda>8.7.8</version.spring-boot-starter-camunda>
+    <version.logback>1.5.18</version.logback>
 
 
     <!-- maven plugins -->
-    <plugin.version.maven-clean-plugin>3.4.0</plugin.version.maven-clean-plugin>
-    <plugin.version.maven-compiler-plugin>3.13.0</plugin.version.maven-compiler-plugin>
+    <plugin.version.maven-clean-plugin>3.5.0</plugin.version.maven-clean-plugin>
+    <plugin.version.maven-compiler-plugin>3.14.0</plugin.version.maven-compiler-plugin>
     <plugin.version.maven-dependency-plugin>3.8.1</plugin.version.maven-dependency-plugin>
-    <plugin.version.maven-install-plugin>3.1.3</plugin.version.maven-install-plugin>
+    <plugin.version.maven-install-plugin>3.1.4</plugin.version.maven-install-plugin>
     <plugin.version.maven-jar-plugin>3.4.2</plugin.version.maven-jar-plugin>
     <plugin.version.maven-war-plugin>3.4.0</plugin.version.maven-war-plugin>
     <plugin.version.maven-resources-plugin>3.3.1</plugin.version.maven-resources-plugin>
 <!--    <plugin.version.maven-shade-plugin>3.5.2</plugin.version.maven-shade-plugin>-->
-    <plugin.version.maven-surefire-plugin>3.5.2</plugin.version.maven-surefire-plugin>
-    <plugin.version.spotless-maven-plugin>2.43.0</plugin.version.spotless-maven-plugin>
-    <plugin.version.maven-exec-maven-plugin>3.5.0</plugin.version.maven-exec-maven-plugin>
-    <plugin.version.maven-spring-boot>3.4.0</plugin.version.maven-spring-boot>
+    <plugin.version.maven-surefire-plugin>3.5.3</plugin.version.maven-surefire-plugin>
+    <plugin.version.spotless-maven-plugin>2.46.1</plugin.version.spotless-maven-plugin>
+    <plugin.version.maven-exec-maven-plugin>3.5.1</plugin.version.maven-exec-maven-plugin>
+    <plugin.version.maven-spring-boot>3.5.5</plugin.version.maven-spring-boot>
   </properties>
 
   <dependencyManagement>
@@ -61,7 +61,7 @@
       <dependency>
         <groupId>com.sap.cloud.sjb.cf</groupId>
         <artifactId>cf-tomee7-bom</artifactId>
-        <version>2.13.0</version>
+        <version>2.23.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
