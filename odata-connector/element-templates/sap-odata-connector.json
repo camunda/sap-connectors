@@ -134,50 +134,20 @@
     },
     "type" : "Dropdown",
     "choices" : [ {
-      "name" : "DELETE",
-      "value" : "delete"
-    }, {
       "name" : "GET",
       "value" : "get"
-    }, {
-      "name" : "PATCH",
-      "value" : "patch"
     }, {
       "name" : "POST",
       "value" : "post"
     }, {
       "name" : "PUT",
       "value" : "put"
-    } ]
-  }, {
-    "id" : "requestDetails.httpMethod.oDataVersionDelete",
-    "label" : "OData version",
-    "description" : "what version of the OData protocol the above service uses",
-    "optional" : false,
-    "value" : "V2",
-    "group" : "sap",
-    "binding" : {
-      "name" : "requestDetails.httpMethod.oDataVersionDelete",
-      "type" : "zeebe:input"
-    },
-    "condition" : {
-      "allMatch" : [ {
-        "property" : "requestDetails.httpMethod.httpMethod",
-        "equals" : "delete",
-        "type" : "simple"
-      }, {
-        "property" : "requestDetails.requestType",
-        "equals" : "simpleReq",
-        "type" : "simple"
-      } ]
-    },
-    "type" : "Dropdown",
-    "choices" : [ {
-      "name" : "V2",
-      "value" : "V2"
     }, {
-      "name" : "V4",
-      "value" : "V4"
+      "name" : "PATCH",
+      "value" : "patch"
+    }, {
+      "name" : "DELETE",
+      "value" : "delete"
     } ]
   }, {
     "id" : "requestDetails.httpMethod.oDataVersionGet.oDataVersionGet",
@@ -193,36 +163,6 @@
       "allMatch" : [ {
         "property" : "requestDetails.httpMethod.httpMethod",
         "equals" : "get",
-        "type" : "simple"
-      }, {
-        "property" : "requestDetails.requestType",
-        "equals" : "simpleReq",
-        "type" : "simple"
-      } ]
-    },
-    "type" : "Dropdown",
-    "choices" : [ {
-      "name" : "V2",
-      "value" : "V2"
-    }, {
-      "name" : "V4",
-      "value" : "V4"
-    } ]
-  }, {
-    "id" : "requestDetails.httpMethod.oDataVersionPatch",
-    "label" : "OData version",
-    "description" : "what version of the OData protocol the above service uses",
-    "optional" : false,
-    "value" : "V2",
-    "group" : "sap",
-    "binding" : {
-      "name" : "requestDetails.httpMethod.oDataVersionPatch",
-      "type" : "zeebe:input"
-    },
-    "condition" : {
-      "allMatch" : [ {
-        "property" : "requestDetails.httpMethod.httpMethod",
-        "equals" : "patch",
         "type" : "simple"
       }, {
         "property" : "requestDetails.requestType",
@@ -283,6 +223,66 @@
       "allMatch" : [ {
         "property" : "requestDetails.httpMethod.httpMethod",
         "equals" : "put",
+        "type" : "simple"
+      }, {
+        "property" : "requestDetails.requestType",
+        "equals" : "simpleReq",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "V2",
+      "value" : "V2"
+    }, {
+      "name" : "V4",
+      "value" : "V4"
+    } ]
+  }, {
+    "id" : "requestDetails.httpMethod.oDataVersionPatch",
+    "label" : "OData version",
+    "description" : "what version of the OData protocol the above service uses",
+    "optional" : false,
+    "value" : "V2",
+    "group" : "sap",
+    "binding" : {
+      "name" : "requestDetails.httpMethod.oDataVersionPatch",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "requestDetails.httpMethod.httpMethod",
+        "equals" : "patch",
+        "type" : "simple"
+      }, {
+        "property" : "requestDetails.requestType",
+        "equals" : "simpleReq",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "V2",
+      "value" : "V2"
+    }, {
+      "name" : "V4",
+      "value" : "V4"
+    } ]
+  }, {
+    "id" : "requestDetails.httpMethod.oDataVersionDelete",
+    "label" : "OData version",
+    "description" : "what version of the OData protocol the above service uses",
+    "optional" : false,
+    "value" : "V2",
+    "group" : "sap",
+    "binding" : {
+      "name" : "requestDetails.httpMethod.oDataVersionDelete",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "requestDetails.httpMethod.httpMethod",
+        "equals" : "delete",
         "type" : "simple"
       }, {
         "property" : "requestDetails.requestType",

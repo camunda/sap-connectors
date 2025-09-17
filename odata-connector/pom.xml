@@ -17,10 +17,6 @@
   <packaging>jar</packaging>
   <version>8.7.1-SNAPSHOT</version>
 
-  <properties>
-    <plugin.version.maven-shade-plugin>3.6.0</plugin.version.maven-shade-plugin>
-  </properties>
-
   <dependencies>
     <!-- connector-specific -->
     <dependency>
@@ -128,41 +124,14 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>${plugin.version.maven-clean-plugin}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>${plugin.version.maven-dependency-plugin}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>${plugin.version.maven-resources-plugin}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>${plugin.version.maven-compiler-plugin}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>${plugin.version.maven-jar-plugin}</version>
           <configuration>
             <useDefaultManifestFile>false</useDefaultManifestFile>
           </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>${plugin.version.maven-install-plugin}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>${plugin.version.maven-shade-plugin}</version>
           <configuration>
             <shadedArtifactAttached>true</shadedArtifactAttached>
             <shadedClassifierName>with-dependencies</shadedClassifierName>
@@ -196,13 +165,6 @@
               <transformer
                 implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer" />
             </transformers>
-            <!-- Uncomment and adjust to use relocations inside your JAR -->
-            <!--<relocations>
-              <relocation>
-                <pattern>com.fasterxml.jackson</pattern>
-                <shadedPattern>myconnector.com.fasterxml.jackson</shadedPattern>
-              </relocation>
-            </relocations>-->
           </configuration>
           <executions>
             <execution>
@@ -224,11 +186,6 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>${plugin.version.maven-surefire-plugin}</version>
         </plugin>
         <plugin>
           <groupId>com.diffplug.spotless</groupId>

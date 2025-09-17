@@ -212,32 +212,10 @@
         <configuration>
           <mainClass>io.camunda.connector.sap.rfc.ApplicationRuntime</mainClass>
         </configuration>
-        <version>${plugin.version.maven-exec-maven-plugin}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>${plugin.version.maven-clean-plugin}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>${plugin.version.maven-dependency-plugin}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>${plugin.version.maven-resources-plugin}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${plugin.version.maven-compiler-plugin}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>${plugin.version.maven-jar-plugin}</version>
         <configuration>
           <useDefaultManifestFile>false</useDefaultManifestFile>
         </configuration>
@@ -245,15 +223,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>${plugin.version.maven-war-plugin}</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>${plugin.version.maven-install-plugin}</version>
       </plugin>
       <plugin>
         <groupId>io.camunda.connector</groupId>
@@ -273,11 +245,6 @@
             </connector>
           </connectors>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${plugin.version.maven-surefire-plugin}</version>
       </plugin>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
