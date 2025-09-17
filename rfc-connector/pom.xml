@@ -20,9 +20,8 @@
   <packaging>war</packaging>
 
   <properties>
-    <version.connectors>8.7.0</version.connectors>
     <version.spring-boot>3.3.5</version.spring-boot>
-    <version.spring-boot-starter-camunda>8.7.0</version.spring-boot-starter-camunda>
+    <version.spring-boot-starter-camunda>${version.camunda}</version.spring-boot-starter-camunda>
     <version.logback>1.5.16</version.logback>
     <plugin.version.maven-war-plugin>3.4.0</plugin.version.maven-war-plugin>
     <plugin.version.maven-exec-maven-plugin>3.5.0</plugin.version.maven-exec-maven-plugin>
@@ -163,7 +162,7 @@
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>element-template-generator-core</artifactId>
-      <version>${version.connectors}</version>
+      <version>${version.camunda}</version>
       <optional>true</optional>
     </dependency>
 
@@ -171,7 +170,7 @@
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-test</artifactId>
-      <version>${version.connectors}</version>
+      <version>${version.camunda}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -230,7 +229,7 @@
       <plugin>
         <groupId>io.camunda.connector</groupId>
         <artifactId>element-template-generator-maven-plugin</artifactId>
-        <version>${version.connectors}</version>
+        <version>${version.camunda}</version>
         <executions>
           <execution>
             <goals>

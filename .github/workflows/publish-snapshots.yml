@@ -94,6 +94,19 @@ jobs:
           username: ${{ steps.secrets.outputs.DOCKERHUB_USER }}
           password: ${{ steps.secrets.outputs.DOCKERHUB_PASSWORD }}
 
+      # Extract the Camunda version from the Maven property 'version.camunda' and expose it as an env var
+      - name: Determine Camunda Connectors Version
+        id: camunda_version
+        run: |
+          set -euo pipefail
+          VERSION=$(mvn -q -DforceStdout help:evaluate -Dexpression=version.camunda)
+          if [[ -z "$VERSION" ]]; then
+            echo "Failed to resolve version.camunda" >&2
+            exit 1
+          fi
+          echo "Resolved version.camunda=$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
       - name: Build and Push Docker Image tag SNAPSHOT - OData Connector
         uses: docker/build-push-action@v6
         with:
@@ -103,4 +116,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           provenance: false
           build-args: |
-            CAMUNDA_CONNECTORS_VERSION=8.7.0
+            CAMUNDA_CONNECTORS_VERSION=${{ steps.camunda_version.version }}
