@@ -15,7 +15,7 @@
   "dependencies": {
     "@cap-js-community/odata-v2-adapter": "^1.13.1",
     "@sap/cds": ">=7",
-    "express": "^4.17.1"
+    "express": "^5.0.0"
   },
   "scripts": {
     "genres": "cds serve test/genres.cds",
