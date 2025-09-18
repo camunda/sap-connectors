@@ -111,4 +111,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           provenance: false
           build-args: |
-            CAMUNDA_CONNECTORS_VERSION=${{ steps.camunda_version.version }}
+            CAMUNDA_CONNECTORS_VERSION=${{ steps.camunda_version.outputs.version }}
