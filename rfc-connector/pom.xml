@@ -24,7 +24,7 @@
     <version.spring-boot-starter-camunda>${version.camunda}</version.spring-boot-starter-camunda>
     <version.logback>1.5.16</version.logback>
     <plugin.version.maven-war-plugin>3.4.0</plugin.version.maven-war-plugin>
-    <plugin.version.maven-exec-maven-plugin>3.5.0</plugin.version.maven-exec-maven-plugin>
+    <plugin.version.maven-exec-plugin>3.5.0</plugin.version.maven-exec-plugin>
     <plugin.version.maven-spring-boot>3.4.0</plugin.version.maven-spring-boot>
   </properties>
 
@@ -208,6 +208,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
+        <version>${plugin.version.maven-exec-plugin}</version>
         <configuration>
           <mainClass>io.camunda.connector.sap.rfc.ApplicationRuntime</mainClass>
         </configuration>

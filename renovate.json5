@@ -13,9 +13,14 @@
   ],
   "prHourlyLimit": 10,
   "packageRules": [
-    {  "matchManagers": ["npm"],
-       "ignorePaths": ["odata-connector/cap-bookshop/**"],
-        "enabled": false
+    {
+      "matchManagers": [
+        "npm"
+      ],
+      "ignorePaths": [
+        "odata-connector/cap-bookshop/**"
+      ],
+      "enabled": false
     },
     {
       "matchManagers": [
@@ -69,7 +74,7 @@
       "changelogUrl": "https://github.com/camunda/infra-global-github-actions/compare/{{currentDigest}}..{{newDigest}}"
     }
   ],
-  "baseBranches": [
+  "baseBranchPatterns": [
     "main",
     "release/8.5",
     "release/8.6",

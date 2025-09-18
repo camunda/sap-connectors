@@ -17,6 +17,10 @@
   <packaging>jar</packaging>
   <version>8.7.1-SNAPSHOT</version>
 
+  <properties>
+    <plugin.version.maven-shade-plugin>3.6.1</plugin.version.maven-shade-plugin>
+  </properties>
+
   <dependencies>
     <!-- connector-specific -->
     <dependency>
@@ -132,6 +136,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
+          <version>${plugin.version.maven-shade-plugin}</version>
           <configuration>
             <shadedArtifactAttached>true</shadedArtifactAttached>
             <shadedClassifierName>with-dependencies</shadedClassifierName>
