@@ -70,12 +70,7 @@ jobs:
           MAVEN_USERNAME: ${{ steps.secrets.outputs.ARTIFACTORY_USR }}
           MAVEN_PASSWORD: ${{ steps.secrets.outputs.ARTIFACTORY_PSW }}
 
-      - name: Lint Connector Bundle Dockerfile - SaaS
-        uses: hadolint/hadolint-action@v3.2.0
-        with:
-          dockerfile: bundle/camunda-saas-bundle/Dockerfile
-
-      - name: Lint Connector Bundle Dockerfile - default-bundle
+      - name: Lint Connector Bundle Dockerfile - odata-connector
         uses: hadolint/hadolint-action@v3.2.0
         with:
           dockerfile: odata-connector/Dockerfile
