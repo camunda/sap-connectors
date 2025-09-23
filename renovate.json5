@@ -1,4 +1,5 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
     "group:allNonMajor",
@@ -12,6 +13,15 @@
   ],
   "prHourlyLimit": 10,
   "packageRules": [
+    {
+      "matchManagers": [
+        "npm"
+      ],
+      "ignorePaths": [
+        "odata-connector/cap-bookshop/**"
+      ],
+      "enabled": false
+    },
     {
       "matchManagers": [
         "maven",
@@ -64,7 +74,7 @@
       "changelogUrl": "https://github.com/camunda/infra-global-github-actions/compare/{{currentDigest}}..{{newDigest}}"
     }
   ],
-  "baseBranches": [
+  "baseBranchPatterns": [
     "main",
     "release/8.5",
     "release/8.6",
