@@ -63,6 +63,3 @@ build/
 *.env.json
 mtad.yaml
 request*.json
-
-# node test artifacts
-node_modules

@@ -1,0 +1,6 @@
+node_modules
+npm-debug.log
+output.log
+.DS_Store
+*.swp
+*.tsbuildinfonode_modules/

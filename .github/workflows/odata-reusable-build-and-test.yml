@@ -19,19 +19,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
-
-      - name: use node 20
-        uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: 'npm'
-          cache-dependency-path: 'odata-connector/cap-bookshop/package-lock.json'
-
-      - name: install and run OData v2 + v4 mockserver
+      - name: Build CAP bookshop test image
         run: |
-          cd odata-connector/cap-bookshop
-          npm i
-          npm start &
+          docker build -t camunda/sap-odata-connector/cap-bookshop odata-connector/cap-bookshop
 
       - name: set up jdk ${{ inputs.java-version }}
         uses: actions/setup-java@v5
