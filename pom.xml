@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -9,13 +7,17 @@
     <artifactId>camunda-release-parent</artifactId>
     <version>4.1.1</version>
     <!-- do not remove empty tag - http://jira.codehaus.org/browse/MNG-4687 -->
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <groupId>io.camunda.connector.sap</groupId>
   <artifactId>connectors-sap-parent</artifactId>
-  <packaging>pom</packaging>
   <version>8.7.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>rfc-connector</module>
+    <module>odata-connector</module>
+  </modules>
 
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
@@ -29,12 +31,54 @@
     <version.junit-jupiter>5.11.4</version.junit-jupiter>
     <version.mockito>5.14.2</version.mockito>
     <version.jackson-databind>2.19.2</version.jackson-databind>
-  <version.testcontainers>1.21.3</version.testcontainers>
+    <version.testcontainers>1.21.3</version.testcontainers>
     <plugin.version.spotless-maven-plugin>2.43.0</plugin.version.spotless-maven-plugin>
   </properties>
-
-  <modules>
-    <module>rfc-connector</module>
-    <module>odata-connector</module>
-  </modules>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${plugin.version.spotless-maven-plugin}</version>
+          <configuration>
+            <formats>
+              <format>
+                <includes>
+                  <include>.gitignore</include>
+                </includes>
+                <trimTrailingWhitespace/>
+                <endWithNewline/>
+                <indent>
+                  <spaces>true</spaces>
+                  <spacesPerTab>2</spacesPerTab>
+                </indent>
+              </format>
+            </formats>
+            <java>
+              <googleJavaFormat/>
+              <removeUnusedImports/>
+              <replace>
+                <name>keepCoolSrcComment</name>
+                <search>// &gt;</search>
+                <replacement>//&gt;</replacement>
+              </replace>
+            </java>
+            <pom>
+              <sortPom>
+                <expandEmptyElements>false</expandEmptyElements>
+                <predefinedSortOrder>custom_1</predefinedSortOrder>
+              </sortPom>
+            </pom>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>
