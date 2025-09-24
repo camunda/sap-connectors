@@ -30,7 +30,8 @@
     <version.assertj>3.26.3</version.assertj>
     <version.junit-jupiter>5.11.4</version.junit-jupiter>
     <version.mockito>5.14.2</version.mockito>
-    <version.jackson-databind>2.19.2</version.jackson-databind>
+
+    <version.jackson-databind>2.20.0</version.jackson-databind>
     <version.testcontainers>1.21.3</version.testcontainers>
     <plugin.version.spotless-maven-plugin>2.43.0</plugin.version.spotless-maven-plugin>
   </properties>
