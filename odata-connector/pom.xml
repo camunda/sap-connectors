@@ -99,7 +99,18 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- com.fasterxml.jackson.databind.JsonMappingException: Scala module 2.17.2 requires Jackson Databind version >= 2.17.0 and < 2.18.0 -->
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>${version.testcontainers}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${version.testcontainers}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

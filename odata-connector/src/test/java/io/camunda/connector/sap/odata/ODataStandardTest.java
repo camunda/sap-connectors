@@ -26,7 +26,13 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
+@Testcontainers
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class ODataStandardTest {
 
@@ -39,6 +45,12 @@ public class ODataStandardTest {
     int id = ThreadLocalRandom.current().nextInt(200, Integer.MAX_VALUE);
     return id;
   }
+
+  @Container
+  private GenericContainer<?> capContainer =
+      new GenericContainer<>(DockerImageName.parse("camunda/sap-odata-connector/cap-bookshop"))
+          .withExposedPorts(4004)
+          .waitingFor(Wait.forHttp("/health").forStatusCode(200));
 
   @NotNull
   private static String randomString() {
@@ -64,7 +76,8 @@ public class ODataStandardTest {
   void mockDestination() {
     DestinationAccessor.setLoader(null);
     var destination =
-        DefaultHttpDestination.builder("http://localhost:4004")
+        DefaultHttpDestination.builder(
+                "http://" + capContainer.getHost() + ":" + capContainer.getFirstMappedPort())
             .authenticationType(AuthenticationType.BASIC_AUTHENTICATION)
             .basicCredentials("alice", "password")
             .trustAllCertificates()

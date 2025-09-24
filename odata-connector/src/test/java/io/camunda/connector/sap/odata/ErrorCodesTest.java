@@ -19,9 +19,22 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
+@Testcontainers
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class ErrorCodesTest {
+
+  @Container
+  private GenericContainer<?> capContainer =
+      new GenericContainer<>(DockerImageName.parse("camunda/sap-odata-connector/cap-bookshop"))
+          .withExposedPorts(4004)
+          .waitingFor(Wait.forHttp("/health").forStatusCode(200));
+
   @Test
   void destination_error() {
     var httpMethod =
@@ -47,7 +60,8 @@ public class ErrorCodesTest {
     void mockDestination() {
       DestinationAccessor.setLoader(null);
       var destination =
-          DefaultHttpDestination.builder("http://localhost:4004")
+          DefaultHttpDestination.builder(
+                  "http://" + capContainer.getHost() + ":" + capContainer.getFirstMappedPort())
               .authenticationType(AuthenticationType.BASIC_AUTHENTICATION)
               .basicCredentials("alice", "password")
               .trustAllCertificates()

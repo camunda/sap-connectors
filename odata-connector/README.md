@@ -66,6 +66,26 @@ $> cds run
 
 After the mockserver is up and running, `mvn test` can be run in the root directory to execute the unit tests.
 
+### Testcontainers-based local test setup
+
+The unit tests now expect a locally built Docker image for the CAP bookshop backend instead of starting it directly with `npm start` inside the workflow.
+
+Build the image (unpublished, unconventional tag on purpose):
+
+```bash
+docker build -t camunda/sap-odata-connector/cap-bookshop odata-connector/cap-bookshop
+```
+
+Then run the tests (from repo root or inside `odata-connector`):
+
+```bash
+mvn -pl odata-connector test
+```
+
+If you forget to build the image first, the OData connector tests will fail fast with a clear error message telling you to build the image.
+
+The test container waits for the `/health` endpoint exposed by the CAP service (handled by cds) before executing requests.
+
 ## Release cutting
 
 &rarr; will always
