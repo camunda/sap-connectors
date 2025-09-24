@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -10,14 +8,14 @@
     <version>8.7.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-
-  <name>Camunda RFC protocol outbound Connector</name>
-  <description>Camunda RFC protocol outbound Connector</description>
   <groupId>io.camunda.connector.sap.rfc</groupId>
   <artifactId>rfc</artifactId>
   <version>8.7.1-SNAPSHOT</version>
   <!--  necessary for SAP BTP cf to pick up SAP's JCo lib -->
   <packaging>war</packaging>
+
+  <name>Camunda RFC protocol outbound Connector</name>
+  <description>Camunda RFC protocol outbound Connector</description>
 
   <properties>
     <version.spring-boot>3.3.5</version.spring-boot>
@@ -59,25 +57,23 @@
         <scope>provided</scope>
       </dependency>
 
-
       <!-- Spring Boot BOM -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
+        <version>${version.spring-boot}</version>
+        <type>pom</type>
+        <scope>import</scope>
         <exclusions>
           <exclusion>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
           </exclusion>
         </exclusions>
-        <version>${version.spring-boot}</version>
-        <scope>import</scope>
-        <type>pom</type>
       </dependency>
     </dependencies>
 
   </dependencyManagement>
-
 
   <dependencies>
 
@@ -94,12 +90,12 @@
       <version>${version.cloud-sdk}</version>
     </dependency>
 
-<!--    <dependency>-->
-<!--      <groupId>com.sap.conn.jco</groupId>-->
-<!--      <artifactId>com.sap.conn.jco.sapjco3</artifactId>-->
-<!--      <version>3.1.10</version>-->
-<!--      <scope>provided</scope>-->
-<!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>com.sap.conn.jco</groupId>-->
+    <!--      <artifactId>com.sap.conn.jco.sapjco3</artifactId>-->
+    <!--      <version>3.1.10</version>-->
+    <!--      <scope>provided</scope>-->
+    <!--    </dependency>-->
 
     <!-- for SAP BTP cf, this is provided by the platform -->
     <!-- needs local installation for dev time-->
@@ -113,21 +109,23 @@
     <dependency>
       <groupId>com.sap.cloud.sdk.s4hana</groupId>
       <artifactId>s4hana-connectivity</artifactId>
-      <version>${version.cloud-sdk}</version> <!-- uniform versioning w/ cloud sdk -->
+      <version>${version.cloud-sdk}</version>
+      <!-- uniform versioning w/ cloud sdk -->
     </dependency>
 
     <dependency>
       <groupId>com.sap.cloud.sdk.s4hana</groupId>
       <artifactId>rfc</artifactId>
-      <version>${version.cloud-sdk}</version> <!-- uniform versioning w/ cloud sdk -->
+      <version>${version.cloud-sdk}</version>
+      <!-- uniform versioning w/ cloud sdk -->
     </dependency>
 
     <dependency>
       <groupId>com.sap.cloud.sdk.datamodel</groupId>
       <artifactId>odata-generator</artifactId>
-      <version>${version.cloud-sdk}</version> <!-- uniform versioning w/ cloud sdk -->
+      <version>${version.cloud-sdk}</version>
+      <!-- uniform versioning w/ cloud sdk -->
     </dependency>
-
 
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -231,13 +229,6 @@
         <groupId>io.camunda.connector</groupId>
         <artifactId>element-template-generator-maven-plugin</artifactId>
         <version>${version.camunda}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate-templates</goal>
-            </goals>
-          </execution>
-        </executions>
         <configuration>
           <connectors>
             <connector>
@@ -245,39 +236,22 @@
             </connector>
           </connectors>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-templates</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
-        <version>${plugin.version.spotless-maven-plugin}</version>
-        <configuration>
-          <formats>
-            <format>
-              <includes>
-                <include>.gitignore</include>
-              </includes>
-              <trimTrailingWhitespace />
-              <endWithNewline />
-              <indent>
-                <spaces>true</spaces>
-                <spacesPerTab>2</spacesPerTab>
-              </indent>
-            </format>
-          </formats>
-          <java>
-            <googleJavaFormat />
-            <replace>
-              <name>keepCoolSrcComment</name>
-              <search>// ></search>
-              <replacement>//></replacement>
-            </replace>
-          </java>
-          <pom />
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${plugin.version.maven-spring-boot}</version>
         <configuration>
           <skip>false</skip>
         </configuration>
@@ -289,10 +263,69 @@
             </goals>
           </execution>
         </executions>
-        <version>${plugin.version.maven-spring-boot}</version>
       </plugin>
     </plugins>
   </build>
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>connectors</id>
+      <name>Connectors Repository</name>
+      <url>https://artifacts.camunda.com/artifactory/connectors/</url>
+    </repository>
+
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>connectors-snapshots</id>
+      <name>Connectors Snapshot Repository</name>
+      <url>https://artifacts.camunda.com/artifactory/connectors-snapshots/</url>
+    </repository>
+
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Maven Central</name>
+      <url>https://repo1.maven.org/maven2</url>
+      <layout>default</layout>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>connectors</id>
+      <name>Connectors Repository</name>
+      <url>https://artifacts.camunda.com/artifactory/connectors/</url>
+    </pluginRepository>
+
+    <pluginRepository>
+      <id>connectors-snapshots</id>
+      <name>Connectors Snapshot Repository</name>
+      <url>https://artifacts.camunda.com/artifactory/connectors-snapshots/</url>
+    </pluginRepository>
+
+    <pluginRepository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Maven Central</name>
+      <url>https://repo1.maven.org/maven2</url>
+      <layout>default</layout>
+    </pluginRepository>
+  </pluginRepositories>
 
   <profiles>
     <!-- profile to auto format -->
@@ -342,65 +375,5 @@
       </build>
     </profile>
   </profiles>
-
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>connectors</id>
-      <name>Connectors Repository</name>
-      <url>https://artifacts.camunda.com/artifactory/connectors/</url>
-    </repository>
-
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>connectors-snapshots</id>
-      <name>Connectors Snapshot Repository</name>
-      <url>https://artifacts.camunda.com/artifactory/connectors-snapshots/</url>
-    </repository>
-
-    <repository>
-      <id>central</id>
-      <name>Maven Central</name>
-      <layout>default</layout>
-      <url>https://repo1.maven.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>connectors</id>
-      <name>Connectors Repository</name>
-      <url>https://artifacts.camunda.com/artifactory/connectors/</url>
-    </pluginRepository>
-
-    <pluginRepository>
-      <id>connectors-snapshots</id>
-      <name>Connectors Snapshot Repository</name>
-      <url>https://artifacts.camunda.com/artifactory/connectors-snapshots/</url>
-    </pluginRepository>
-
-    <pluginRepository>
-      <id>central</id>
-      <name>Maven Central</name>
-      <layout>default</layout>
-      <url>https://repo1.maven.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
 
 </project>
