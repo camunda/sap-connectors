@@ -30,7 +30,7 @@ import org.testcontainers.utility.DockerImageName;
 public class ErrorCodesTest {
 
   @Container
-  private GenericContainer<?> capContainer =
+  private static final GenericContainer<?> capContainer =
       new GenericContainer<>(DockerImageName.parse("camunda/sap-odata-connector/cap-bookshop"))
           .withExposedPorts(4004)
           .waitingFor(Wait.forHttp("/health").forStatusCode(200));
