@@ -21,19 +21,6 @@
   </properties>
 
   <dependencies>
-    <!-- connector-specific -->
-    <dependency>
-      <groupId>com.sap.cloud.sdk</groupId>
-      <artifactId>sdk-core</artifactId>
-      <version>${version.cloud-sdk}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.sap.cloud.sdk.datamodel</groupId>
-      <artifactId>odata-generator</artifactId>
-      <version>${version.cloud-sdk}</version>
-      <!-- uniform versioning w/ cloud sdk -->
-    </dependency>
 
     <!-- connector base -->
     <dependency>
@@ -48,6 +35,27 @@
       <version>${version.camunda}</version>
       <scope>provided</scope>
     </dependency>
+
+    <!-- connector-specific -->
+    <dependency>
+      <groupId>com.sap.cloud.sdk</groupId>
+      <artifactId>sdk-core</artifactId>
+      <version>${version.cloud-sdk}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sap.cloud.sdk.datamodel</groupId>
+      <artifactId>odata-generator</artifactId>
+      <version>${version.cloud-sdk}</version>
+      <!-- uniform versioning w/ cloud sdk -->
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -109,12 +117,6 @@
       <artifactId>junit-jupiter</artifactId>
       <version>${version.testcontainers}</version>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${version.jackson-databind}</version>
     </dependency>
 
     <!-- for testing connectors locally in bundle with runtime -->
