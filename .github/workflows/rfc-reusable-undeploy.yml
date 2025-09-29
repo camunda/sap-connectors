@@ -15,17 +15,53 @@ on:
       cf_space:
         required: true
         type: string
+      cluster_uuid:
+        required: true
+        type: string
 
 jobs:
-  undeploy:
+  undeploy-camunda-cluster:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Import Secrets
+        id: vault-secrets
+        uses: hashicorp/vault-action@v3.0.0
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID}}
+          secrets: |
+            secret/data/products/connectors/ci/sap CONSOLE_CLIENT_ID;
+            secret/data/products/connectors/ci/sap CONSOLE_CLIENT_SECRET;
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Delete cluster
+        run: node scripts/manage_cluster.js -d ${{inputs.cluster_uuid}}
+        env:
+          CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
+          CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
+
+  undeploy-btp:
     runs-on: ubuntu-latest
     container:
       image: cloudfoundry/cli:latest
-
     steps:
+      - name: Import Secrets
+        id: vault-secrets
+        uses: hashicorp/vault-action@v3.0.0
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID}}
+          secrets: |
+            secret/data/products/connectors/ci/sap SAP_CLOUDFOUNDRY_EMAIL;
+            secret/data/products/connectors/ci/sap SAP_CLOUDFOUNDRY_PASSWORD;
       - name: undeploy ${{inputs.connector_version}} from BTP
         run: |
           cf install-plugin multiapps -f
           ls -al .
-          cf login -a ${{ inputs.cf_api_endpoint }} -u ${{ secrets.CF_USER }} -p ${{ secrets.CF_PASSWORD }} -o ${{ inputs.cf_org }} -s ${{ inputs.cf_space }}
+          cf login -a ${{ inputs.cf_api_endpoint }} -u ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_EMAIL }} \
+            -p ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_PASSWORD }} -o ${{ inputs.cf_org }} -s ${{ inputs.cf_space }}
           cf delete sap-rfc-connector-${{ inputs.connector_version }} -f -r
