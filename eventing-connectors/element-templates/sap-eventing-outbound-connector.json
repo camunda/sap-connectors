@@ -1,0 +1,736 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "SAP Eventing Outbound Connector",
+  "id": "io.camunda.connectors.webhook.SAPEventingOutboundConnector.v1",
+  "version": 1,
+  "description": "Send a (cloud) event to Advanced Event Mesh",
+  "metadata": {
+    "keywords": []
+  },
+  "documentationRef": "https://docs.camunda.io/docs/next/components/camunda-integrations/overview/",
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": [
+    "bpmn:Task"
+  ],
+  "elementType": {
+    "value": "bpmn:ServiceTask"
+  },
+  "engines": {
+    "camunda": "^8.6"
+  },
+  "groups": [
+    {
+      "id": "authentication",
+      "label": "Authentication"
+    },
+    {
+      "id": "endpoint",
+      "label": "Endpoint"
+    },
+    {
+      "id": "timeout",
+      "label": "Connection timeout"
+    },
+    {
+      "id": "payload",
+      "label": "Cloud Event"
+    },
+    {
+      "id": "connector",
+      "label": "Connector"
+    },
+    {
+      "id": "output",
+      "label": "Output mapping"
+    },
+    {
+      "id": "error",
+      "label": "Error handling"
+    },
+    {
+      "id": "retries",
+      "label": "Retries"
+    }
+  ],
+  "properties": [
+    {
+      "value": "io.camunda:http-json:1",
+      "binding": {
+        "property": "type",
+        "type": "zeebe:taskDefinition"
+      },
+      "type": "Hidden"
+    },
+    {
+      "id": "authentication.type",
+      "label": "Type",
+      "description": "Choose the authentication type. Select 'None' if no authentication is necessary",
+      "value": "basic",
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.type",
+        "type": "zeebe:input"
+      },
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "API key",
+          "value": "apiKey"
+        },
+        {
+          "name": "Basic",
+          "value": "basic"
+        },
+        {
+          "name": "Bearer token",
+          "value": "bearer"
+        },
+        {
+          "name": "None",
+          "value": "noAuth"
+        },
+        {
+          "name": "OAuth 2.0",
+          "value": "oauth-client-credentials-flow"
+        }
+      ]
+    },
+    {
+      "id": "authentication.apiKeyLocation",
+      "label": "Api key location",
+      "description": "Choose type: Send API key in header or as query parameter.",
+      "optional": false,
+      "value": "headers",
+      "constraints": {
+        "notEmpty": true
+      },
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.apiKeyLocation",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "authentication.type",
+        "equals": "apiKey",
+        "type": "simple"
+      },
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Headers",
+          "value": "headers"
+        },
+        {
+          "name": "Query parameters",
+          "value": "query"
+        }
+      ]
+    },
+    {
+      "id": "authentication.name",
+      "label": "API key name",
+      "optional": false,
+      "constraints": {
+        "notEmpty": true
+      },
+      "feel": "optional",
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.name",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "authentication.type",
+        "equals": "apiKey",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "authentication.value",
+      "label": "API key value",
+      "optional": false,
+      "constraints": {
+        "notEmpty": true
+      },
+      "feel": "optional",
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.value",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "authentication.type",
+        "equals": "apiKey",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "authentication.username",
+      "label": "Username",
+      "optional": false,
+      "constraints": {
+        "notEmpty": true
+      },
+      "feel": "optional",
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.username",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "authentication.type",
+        "equals": "basic",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "authentication.password",
+      "label": "Password",
+      "optional": false,
+      "constraints": {
+        "notEmpty": true
+      },
+      "feel": "optional",
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.password",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "authentication.type",
+        "equals": "basic",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "authentication.token",
+      "label": "Bearer token",
+      "optional": false,
+      "constraints": {
+        "notEmpty": true
+      },
+      "feel": "optional",
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.token",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "authentication.type",
+        "equals": "bearer",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "authentication.oauthTokenEndpoint",
+      "label": "OAuth 2.0 token endpoint",
+      "description": "The OAuth token endpoint",
+      "optional": false,
+      "constraints": {
+        "notEmpty": true,
+        "pattern": {
+          "value": "^(=|(http://|https://|secrets|\\{\\{).*$)",
+          "message": "Must be a http(s) URL"
+        }
+      },
+      "feel": "optional",
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.oauthTokenEndpoint",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "authentication.type",
+        "equals": "oauth-client-credentials-flow",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "authentication.clientId",
+      "label": "Client ID",
+      "description": "Your application's client ID from the OAuth client",
+      "optional": false,
+      "constraints": {
+        "notEmpty": true
+      },
+      "feel": "optional",
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.clientId",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "authentication.type",
+        "equals": "oauth-client-credentials-flow",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "authentication.clientSecret",
+      "label": "Client secret",
+      "description": "Your application's client secret from the OAuth client",
+      "optional": false,
+      "constraints": {
+        "notEmpty": true
+      },
+      "feel": "optional",
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.clientSecret",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "authentication.type",
+        "equals": "oauth-client-credentials-flow",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "authentication.audience",
+      "label": "Audience",
+      "description": "The unique identifier of the target API you want to access",
+      "optional": true,
+      "feel": "optional",
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.audience",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "authentication.type",
+        "equals": "oauth-client-credentials-flow",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "authentication.clientAuthentication",
+      "label": "Client authentication",
+      "description": "Send client ID and client secret as Basic Auth request in the header, or as client credentials in the request body",
+      "optional": false,
+      "constraints": {
+        "notEmpty": true
+      },
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.clientAuthentication",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "authentication.type",
+        "equals": "oauth-client-credentials-flow",
+        "type": "simple"
+      },
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Send client credentials in body",
+          "value": "credentialsBody"
+        },
+        {
+          "name": "Send as Basic Auth header",
+          "value": "basicAuthHeader"
+        }
+      ]
+    },
+    {
+      "id": "authentication.scopes",
+      "label": "Scopes",
+      "description": "The scopes which you want to request authorization for (e.g.read:contacts)",
+      "optional": true,
+      "feel": "optional",
+      "group": "authentication",
+      "binding": {
+        "name": "authentication.scopes",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "authentication.type",
+        "equals": "oauth-client-credentials-flow",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "method",
+      "label": "Method",
+      "optional": false,
+      "value": "POST",
+      "constraints": {
+        "notEmpty": true
+      },
+      "group": "endpoint",
+      "binding": {
+        "name": "method",
+        "type": "zeebe:input"
+      },
+      "type": "Hidden",
+      "choices": [
+        {
+          "name": "POST",
+          "value": "POST"
+        },
+        {
+          "name": "GET",
+          "value": "GET"
+        },
+        {
+          "name": "DELETE",
+          "value": "DELETE"
+        },
+        {
+          "name": "PATCH",
+          "value": "PATCH"
+        },
+        {
+          "name": "PUT",
+          "value": "PUT"
+        }
+      ]
+    },
+    {
+      "id": "broker",
+      "label": "Broker HTTP(S) URL",
+      "optional": false,
+      "constraints": {
+        "notEmpty": true,
+        "pattern": {
+          "value": "^(=|(http://|https://|secrets|\\{\\{).*[^/]$)",
+          "message": "must be a http(s) URL and not end with a slash"
+        }
+      },
+      "feel": "optional",
+      "group": "endpoint",
+      "binding": {
+        "name": "broker",
+        "type": "zeebe:input"
+      },
+      "type": "String"
+    },
+    {
+      "id": "pubTargetType",
+      "label": "Topic or Queue?",
+      "optional": false,
+      "value": "TOPIC",
+      "constraints": {
+        "notEmpty": true
+      },
+      "group": "endpoint",
+      "binding": {
+        "name": "pubTargetType",
+        "type": "zeebe:input"
+      },
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Topic",
+          "value": "TOPIC"
+        },
+        {
+          "name": "Queue",
+          "value": "QUEUE"
+        }
+      ]
+    },
+    {
+      "id": "pubTargetTopicPath",
+      "label": "Topic path",
+      "group": "endpoint",
+      "optional": false,
+      "feel": "optional",
+      "type": "String",
+      "binding": {
+        "name": "pubTarget",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "pubTargetType",
+        "equals": "TOPIC"
+      },
+      "constraints": {
+        "notEmpty": true,
+        "pattern": {
+          "value": "^[^/].*$",
+          "message": "must not start with a '/'"
+        }
+      }
+    },
+    {
+      "id": "pubTargetQueuePath",
+      "label": "Queue path",
+      "group": "endpoint",
+      "optional": false,
+      "feel": "optional",
+      "type": "String",
+      "binding": {
+        "name": "pubTarget",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "pubTargetType",
+        "equals": "QUEUE"
+      },
+      "constraints": {
+        "notEmpty": true,
+        "pattern": {
+          "value": "^[^/].*$",
+          "message": "must not start with a '/'"
+        }
+      }
+    },
+    {
+      "id": "queryParameters",
+      "label": "Query parameters",
+      "description": "Map of query parameters to add to the request URL",
+      "optional": true,
+      "//feel": "required",
+      "group": "endpoint",
+      "binding": {
+        "name": "queryParameters",
+        "type": "zeebe:input"
+      },
+      "type": "Hidden"
+    },
+    {
+      "id": "storeResponse",
+      "label": "Store response",
+      "description": "Store the response as a document in the document store",
+      "optional": false,
+      "value": false,
+      "//feel": "static",
+      "group": "endpoint",
+      "binding": {
+        "name": "storeResponse",
+        "type": "zeebe:input"
+      },
+      "type": "Hidden"
+    },
+    {
+      "id": "url",
+      "label": "final URL",
+      "group": "endpoint",
+      "binding": {
+        "name": "url",
+        "type": "zeebe:input"
+      },
+      "type": "Hidden",
+      "value": "=broker + \"/\" + (\n  if pubTargetType = \"QUEUE\" then \n    \"QUEUE/\" + pubTarget \n  else \n    pubTarget\n)"
+    },
+    {
+      "id": "skipEncoding",
+      "label": "Skip URL encoding",
+      "description": "Skip the default URL decoding and encoding behavior",
+      "optional": true,
+      "group": "endpoint",
+      "binding": {
+        "name": "skipEncoding",
+        "type": "zeebe:input"
+      },
+      "type": "Hidden"
+    },
+    {
+      "id": "connectionTimeoutInSeconds",
+      "label": "Connection timeout in seconds",
+      "description": "Defines the connection timeout in seconds, or 0 for an infinite timeout",
+      "optional": false,
+      "value": 20,
+      "constraints": {
+        "notEmpty": true,
+        "pattern": {
+          "value": "^\\d+$",
+          "message": "Must be a number"
+        }
+      },
+      "feel": "static",
+      "group": "timeout",
+      "binding": {
+        "name": "connectionTimeoutInSeconds",
+        "type": "zeebe:input"
+      },
+      "type": "Number"
+    },
+    {
+      "id": "readTimeoutInSeconds",
+      "label": "Read timeout in seconds",
+      "description": "Timeout in seconds to read data from an established connection or 0 for an infinite timeout",
+      "optional": false,
+      "value": 20,
+      "constraints": {
+        "notEmpty": true,
+        "pattern": {
+          "value": "^\\d+$",
+          "message": "Must be a number"
+        }
+      },
+      "feel": "static",
+      "group": "timeout",
+      "binding": {
+        "name": "readTimeoutInSeconds",
+        "type": "zeebe:input"
+      },
+      "type": "Number"
+    },
+    {
+      "id": "cloudHeaders",
+      "label": "Headers",
+      "description": "Map of HTTP headers to add to the request",
+      "optional": true,
+      "feel": "required",
+      "group": "payload",
+      "binding": {
+        "name": "cloudHeaders",
+        "type": "zeebe:input"
+      },
+      "type": "String",
+      "value": "={\n  // hardcoded, always 1.0\n  \"ce-specversion\": \"1.0\",\n  // the \"topic\" in dot-Notation, often used for routing, e.g.\n  // sap.s4.beh.marketingcampaign.Campaign.Completed.v1\n  \"ce-type\": \"some.dotted.value\",\n  // \"link\" to the system the message orginiated from\n  \"ce-source\": \"/mycontext/subcontext\",\n  // concern/subject of the message\n  \"ce-subject\": \"some subject\",\n  // unique identifier for the message\n  \"ce-id\": string(from: uuid()),\n  // current time in international format\n  \"ce-time\": date and time(now(), \"Z\"),\n  // align these values with the type of the content\n  // that goes in \"Data\"\n  \"ce-datacontenttype\": \"application/json\",\n  \"Content-Type\": \"application/json\"\n}\n"
+    },
+    {
+      "id": "headers",
+      "label": "final headers",
+      "group": "payload",
+      "//feel": "required",
+      "binding": {
+        "name": "headers",
+        "type": "zeebe:input"
+      },
+      "type": "Hidden",
+      "value": "=context(\n  for entry in get entries(cloudHeaders) return \n    if starts with(entry.key, \"ce-\") then\n      { \"key\": \"Solace-User-Property-\" + entry.key, \"value\": entry.value }\n     else\n       entry\n)"
+    },
+    {
+      "id": "body",
+      "label": "Data",
+      "description": "Payload to send with the request",
+      "optional": true,
+      "feel": "optional",
+      "group": "payload",
+      "binding": {
+        "name": "body",
+        "type": "zeebe:input"
+      },
+      "condition": {
+        "property": "method",
+        "oneOf": [
+          "POST",
+          "PUT",
+          "PATCH"
+        ],
+        "type": "simple"
+      },
+      "type": "Text",
+      "value": "={\n // corresponds with the \"data\" entry of CloudEvents\n \"someKey\": \"someValue\"\n}"
+    },
+    {
+      "id": "ignoreNullValues",
+      "label": "Ignore null values",
+      "optional": false,
+      "value": false,
+      "feel": "static",
+      "group": "payload",
+      "binding": {
+        "name": "ignoreNullValues",
+        "type": "zeebe:input"
+      },
+      "tooltip": "Null values will not be sent",
+      "type": "Boolean"
+    },
+    {
+      "id": "version",
+      "label": "Version",
+      "description": "Version of the element template",
+      "value": "11",
+      "group": "connector",
+      "binding": {
+        "key": "elementTemplateVersion",
+        "type": "zeebe:taskHeader"
+      },
+      "type": "Hidden"
+    },
+    {
+      "id": "id",
+      "label": "ID",
+      "description": "ID of the element template",
+      "value": "io.camunda.connectors.HttpJson.v2",
+      "group": "connector",
+      "binding": {
+        "key": "elementTemplateId",
+        "type": "zeebe:taskHeader"
+      },
+      "type": "Hidden"
+    },
+    {
+      "id": "resultVariable",
+      "label": "Result variable",
+      "description": "Name of variable to store the response in",
+      "group": "output",
+      "binding": {
+        "key": "resultVariable",
+        "type": "zeebe:taskHeader"
+      },
+      "type": "String",
+      "value": "aemResult"
+    },
+    {
+      "id": "resultExpression",
+      "label": "Result expression",
+      "description": "Expression to map the response into process variables",
+      "feel": "required",
+      "group": "output",
+      "binding": {
+        "key": "resultExpression",
+        "type": "zeebe:taskHeader"
+      },
+      "type": "Text"
+    },
+    {
+      "id": "errorExpression",
+      "label": "Error expression",
+      "description": "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/\" target=\"_blank\">documentation</a>.",
+      "feel": "required",
+      "group": "error",
+      "binding": {
+        "key": "errorExpression",
+        "type": "zeebe:taskHeader"
+      },
+      "type": "Text"
+    },
+    {
+      "id": "retryCount",
+      "label": "Retries",
+      "description": "Number of retries",
+      "value": "3",
+      "feel": "optional",
+      "group": "retries",
+      "binding": {
+        "property": "retries",
+        "type": "zeebe:taskDefinition"
+      },
+      "type": "String"
+    },
+    {
+      "id": "retryBackoff",
+      "label": "Retry backoff",
+      "description": "ISO-8601 duration to wait between retries",
+      "value": "PT0S",
+      "group": "retries",
+      "binding": {
+        "key": "retryBackoff",
+        "type": "zeebe:taskHeader"
+      },
+      "type": "String"
+    }
+  ],
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMF81MTBfMTQxNykiPgo8cGF0aCBkPSJNNTEwIDI2MEgwVjUxMkgyNTcuODAyIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfNTEwXzE0MTcpIi8+CjxwYXRoIGQ9Ik0yNTIuMTk3IDMxMC40VjQyOS4xMkwyMDguNDgzIDMxMC40SDE2NC43NjlMMTI3Ljc4IDQwOC45NkMxMjMuMjk2IDM4NC4zMiA5Ny41MTU4IDM3NS4zNiA3Ny4zNCAzNjguNjRDNjMuODg5NCAzNjQuMTYgNDkuMzE4IDM1OC41NiA0OS4zMTggMzUwLjcyQzQ5LjMxOCAzNDUuMTIgNTcuMTY0MiAzMzkuNTIgNzEuNzM1NiAzNDAuNjRDODEuODIzNSAzNDEuNzYgOTAuNzkwNSAzNDEuNzYgMTA4LjcyNSAzNTAuNzJMMTI2LjY1OSAzMjAuNDhDMTA5Ljg0NSAzMTEuNTIgODcuNDI3OSAzMDcuMDQgNjkuNDkzOCAzMDcuMDRDNDguMTk3MSAzMDcuMDQgMzAuMjYzMSAzMTMuNzYgMTkuMDU0MyAzMjQuOTZDMTEuMjA4MSAzMzIuOCA3Ljg0NTQ5IDM0Mi44OCA2LjcyNDYxIDM1NC4wOEM2LjcyNDYxIDM2OS43NiAxMi4zMjkgMzgwLjk2IDI0LjY1ODcgMzg5LjkyQzM0Ljc0NjYgMzk2LjY0IDQ3LjA3NjMgNDAxLjEyIDU4LjI4NSA0MDQuNDhDNzIuODU2NSA0MDguOTYgODQuMDY1MyA0MTMuNDQgODQuMDY1MyA0MjEuMjhDODIuOTQ0NCA0MzEuMzYgNzEuNzM1NiA0MzMuNiA2My44ODk0IDQzMy42QzUwLjQzODkgNDM0LjcyIDM5LjIzMDEgNDMyLjQ4IDIyLjQxNjkgNDIyLjRMNi43MjQ2MSA0NTIuNjRDMjMuNTM3OCA0NjIuNzIgNDEuNDcxOSA0NjcuMiA2Mi43Njg2IDQ2Ny4yQzc3LjM0IDQ2Ny4yIDk5Ljc1NzYgNDYyLjcyIDExMi4wODcgNDUxLjUyTDEwOS44NDUgNDYxLjZIMTUyLjQzOUwxNjAuMjg1IDQ0Mi41NkMxNzcuMDk4IDQ0Ny4wNCAxOTYuMTUzIDQ0OC4xNiAyMTIuOTY2IDQ0Mi41NkwyMTguNTcxIDQ2MS42SDI5NC43OTFWNDE2LjhIMzEwLjQ4M0MzNDkuNzE0IDQxNi44IDM3My4yNTIgMzk3Ljc2IDM3My4yNTIgMzY0LjE2QzM3My4yNTIgMzI2LjA4IDM1MC44MzQgMzEwLjQgMzAyLjYzNyAzMTAuNEgyNTIuMTk3Wk0xNzAuMzczIDQwOC45NkwxODYuMDY1IDM1OC41NkgxODcuMTg2TDIwMi44NzggNDA4Ljk2QzE5MS42NyA0MTIuMzIgMTgwLjQ2MSA0MTIuMzIgMTcwLjM3MyA0MDguOTZaTTI5NC43OTEgMzgzLjJWMzQyLjg4SDMwNS45OTlDMzIwLjU3MSAzNDIuODggMzMxLjc4IDM0Ny4zNiAzMzEuNzggMzYxLjkyQzMzMS43OCAzNzcuNiAzMjAuNTcxIDM4My4yIDMwNS45OTkgMzgzLjJIMjk0Ljc5MVoiIGZpbGw9IndoaXRlIi8+CjwvZz4KPHBhdGggZD0iTTE1MC40MTYgMjEuMzAzN0MxOTQuNTk4IDIxLjMwMzcgMjMxLjUzMiA1Mi44NjY1IDI0MC4wMjggOTQuNjU2MkwyNDAuOTMgOTkuMDg4OUgyMTUuNDUxTDIxNC43MzUgOTYuMzE3NEMyMDcuMzE2IDY3LjU4MTQgMTgxLjMxNSA0Ni4yOTQ5IDE1MC40MTYgNDYuMjk0OUMxMTYuMzg2IDQ2LjI5NSA4Ny45NzA5IDcxLjgzOTggODQuMzE1NCAxMDUuNzNMODMuNTI1NCAxMTMuMDY1TDgzLjE5MzQgMTE2LjE0N0w4MC4xMDA2IDExNi4zNTdMNzIuNzU5OCAxMTYuODU0QzQ5LjQ5NzEgMTE4LjQzNyAzMS4yNDgzIDEzOCAzMS4yNDggMTYxLjM4NkMzMS4yNDggMTg2LjAzOCA1MS4yNTU5IDIwNi4wODUgNzUuODIwMyAyMDYuMDg1SDE2MS4wMTNMMTU5LjQ5OCAyMTAuODkyTDE1My45NTQgMjI4LjQ5TDE1My4xNCAyMzEuMDc2SDc1LjgyMDNDMzcuNDc2NSAyMzEuMDc2IDYuMzAzNzEgMTk5LjgwOSA2LjMwMzcxIDE2MS4zODZDNi4zMDM5MiAxMjguMzE5IDI5LjY2MzcgMTAwLjE2NSA2MS4wODUgOTMuMzM2OUM3MC4xMDk0IDUxLjY1MTQgMTA2LjkzIDIxLjMwMzggMTUwLjQxNiAyMS4zMDM3WiIgZmlsbD0iI0ZGOEMwMCIgc3Ryb2tlPSIjRkY4QzAwIiBzdHJva2Utd2lkdGg9IjcuMzkyODYiLz4KPHBhdGggZD0iTTQyOC4zNDggMTIyLjAzMUw0MjguODY2IDEyMy4wMjNMNDUzLjg2MSAxNzAuODIzTDQ3OC41NjIgMTIzLjAzMUw0NzkuMDc5IDEyMi4wMzFINTA3LjE0NlYyMzMuODQ4SDQ4MS4yOTlWMTY3Ljk1Nkw0NzYuNDM2IDE3Ny42ODJMNDc2LjQxOSAxNzcuNzE0TDQ3Ni40MDEgMTc3Ljc0N0w0NTUuMzM1IDIxNi4wMDdMNDUzLjcwMSAyMTguOTc0TDQ1Mi4wOSAyMTUuOTk1TDQzMS40ODggMTc3Ljg4OUw0MzEuNDY4IDE3Ny44NTFMNDMxLjQ0OSAxNzcuODEzTDQyNi4yODggMTY3LjEwMVYyMzMuODQ4SDQwMC40NFYxMjIuMDMxSDQyOC4zNDhaIiBmaWxsPSIjRkY4QzAwIiBzdHJva2U9IiNGRjhDMDAiIHN0cm9rZS13aWR0aD0iMy42OTY0MyIvPgo8cGF0aCBkPSJNMzc2Ljk1NyAxMjIuMDMxVjE0Ni42MzlIMzI2LjkyNVYxNjUuMDkzSDM2OS44MzJWMTg5LjU0NkgzMjYuOTI1VjIwOS4yNEgzNzYuOTU3VjIzMy44NDhIMjk5LjY4M1YxMjIuMDMxSDM3Ni45NTdaIiBmaWxsPSIjRkY4QzAwIiBzdHJva2U9IiNGRjhDMDAiIHN0cm9rZS13aWR0aD0iMy42OTY0MyIvPgo8cGF0aCBkPSJNMjQ1LjIwMiAxMjIuMDMxTDI0NS42MTcgMTIzLjMwOEwyODAuNzc5IDIzMS40MjhMMjgxLjU2NiAyMzMuODQ4SDI1My4xNzVMMjUyLjc3OCAyMzIuNTMzTDI0NS40MjkgMjA4LjEzNEgyMTIuMDg1TDIwNC43MzUgMjMyLjUzM0wyMDQuMzQgMjMzLjg0OEgxNzYuNTU3TDE3Ny4zNTUgMjMxLjQyMUwyMTIuOTgzIDEyMy4zMDFMMjEzLjQwMSAxMjIuMDMxSDI0NS4yMDJaTTIxOC43NDkgMTg0LjQ1N0gyMzguNjAyTDIyOC42MSAxNTAuNTE1TDIxOC43NDkgMTg0LjQ1N1oiIGZpbGw9IiNGRjhDMDAiIHN0cm9rZT0iI0ZGOEMwMCIgc3Ryb2tlLXdpZHRoPSIzLjY5NjQzIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfNTEwXzE0MTciIHgxPSIwIiB5MT0iMjYwIiB4Mj0iMCIgeTI9IjUxMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjMDBBQUVFIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwNTVBQSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzUxMF8xNDE3Ij4KPHJlY3Qgd2lkdGg9IjUxMCIgaGVpZ2h0PSIyNTIiIGZpbGw9IndoaXRlIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIDI2MCkiLz4KPC9jbGlwUGF0aD4KPC9kZWZzPgo8L3N2Zz4K"
+  }
+}
