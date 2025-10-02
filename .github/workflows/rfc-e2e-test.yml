@@ -1,8 +1,10 @@
 name: rfc-e2e-test
 
 on:
-  pull_request:
-    branches: [ "release/*" ]
+    pull_request:
+        branches: [ "release/*", "main" ]
+    push:
+        branches: [ "release/*", "main" ]
 
 jobs:
   determine-connector-version:

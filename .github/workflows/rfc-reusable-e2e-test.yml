@@ -41,4 +41,3 @@ jobs:
         run: |
           # by env var e2e, only the respective tests are run
           mvn ${{ inputs.maven-options }} test
-          

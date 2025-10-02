@@ -62,6 +62,8 @@ function writeGithubOutput(clientId, clientSecret, zeebeGrpcAddress, zeebeRestAd
         ].join('\n') + '\n';
 
         fs.appendFileSync(githubOutput, outputs);
+        // Prevents secret from being logged in GitHub Actions
+        console.log("::add-mask::" + clientSecret);
         ok('Wrote GitHub outputs (client-id, client-secret, grpc-address, rest-address)');
     } catch (error) {
         warn(`Failed to write GitHub outputs: ${error.message}`);
@@ -358,9 +360,11 @@ async function deleteCluster(accessToken, clusterId) {
 // Step 5: Print Summary
 function printSummary(accessToken, selection, clusterInfo, clientInfo, addresses) {
     const { channelName, channelUuid, genName, genUuid, candidatesJson } = selection;
-    const { clusterId, finalPlanName, finalRegionName, zeebeAddress } = clusterInfo;
+    const { clusterId, finalPlanName} = clusterInfo;
     const { clientId, clientSecret } = clientInfo;
     const { zeebeGrpcAddress, zeebeRestAddress } = addresses;
+    // This marks the clientSecret as a secret in GitHub Actions logs
+    writeGithubOutput(clientId, clientSecret, zeebeGrpcAddress, zeebeRestAddress, clusterId);
 
     // Build final JSON
     const finalJson = {
@@ -391,7 +395,6 @@ function printSummary(accessToken, selection, clusterInfo, clientInfo, addresses
     };
 
     console.log(JSON.stringify(finalJson, null, 2));
-    writeGithubOutput(clientId, clientSecret, zeebeGrpcAddress, zeebeRestAddress, clusterId);
     ok('Cluster and client provisioning complete');
     log(`Artifacts exported: cluster id=${clusterId}, client id=${clientId}`);
 }
@@ -434,13 +437,3 @@ if (require.main === module) {
         fail(`Unhandled error: ${error.message}`);
     });
 }
-
-module.exports = {
-    main,
-    getOAuthToken,
-    selectChannelAndGeneration,
-    createCluster,
-    createClient,
-    deleteCluster,
-    printSummary
-};

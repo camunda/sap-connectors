@@ -81,6 +81,12 @@
       <groupId>com.sap.cloud.sdk</groupId>
       <artifactId>sdk-core</artifactId>
       <version>${version.cloud-sdk}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!--    <dependency>-->
@@ -118,6 +124,12 @@
       <artifactId>odata-generator</artifactId>
       <version>${version.cloud-sdk}</version>
       <!-- uniform versioning w/ cloud sdk -->
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

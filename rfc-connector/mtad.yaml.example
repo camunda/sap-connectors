@@ -4,7 +4,7 @@ version: "<app-version>"
 modules:
   - name: sap-rfc-connector
     type: java.tomcat
-    path: rfc-<app-version>.war
+    path: target/rfc-<app-version>.war
     properties:
       JBP_CONFIG_SAP_MACHINE_JRE: '{ version: 21.+ }'
       LOGGING_LEVEL_COM_SAP_CLOUD_SDK: DEBUG # any of TRACE, DEBUG, INFO, WARN, ERROR, OFF
@@ -13,11 +13,12 @@ modules:
       LOGGING_LEVEL_ROOT: WARN # any of TRACE, DEBUG, INFO, WARN, ERROR, OFF
       SPRING_PROFILES_ACTIVE: cloud
       USE_JCO: true
-      CAMUNDA_CLIENT_MODE: saas
-      CAMUNDA_CLIENT_CLOUD_CLUSTERID: "<your-cluster-id>"
-      CAMUNDA_CLIENT_AUTH_CLIENTID: "<client-id-credential-from-api-client>"
-      CAMUNDA_CLIENT_AUTH_CLIENTSECRET: "<client-secret-credential-from-api-client>"
-      CAMUNDA_CLIENT_CLOUD_REGION: "<your-cluster-region>"
+      CAMUNDA_CLIENT_MODE: self-managed
+      CAMUNDA_CLIENT_AUTH_CLIENT-ID: <client-id>
+      CAMUNDA_CLIENT_AUTH_CLIENT-SECRET: <client-secret>
+      CAMUNDA_CLIENT_AUTH_TOKEN-URL: 'https://login.cloud.ultrawombat.com/oauth/token'
+      CAMUNDA_CLIENT_GRPC-ADDRESS: <grpc-address>
+      CAMUNDA_CLIENT_REST-ADDRESS: <rest-address>
       CAMUNDA_CLIENT_OPERATE_ENABLED: false
       OPERATE_CLIENT_ENABLED: false
       CAMUNDA_CONNECTOR_POLLING_ENABLED: false

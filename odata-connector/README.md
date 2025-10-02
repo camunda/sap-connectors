@@ -5,18 +5,13 @@ It is distributed as [a Docker image](https://hub.docker.com/repository/docker/c
 
 ## development hints
 
-- c8.7, either locally or SaaS
-- have a `destinations` environment variable point to
-  - the local mockserver (see below)
-  - the SAP system, including credentials
-```shell
-export destinations='[{"name":"localMockServer","url":"http://localhost:4004",Authentication:"BasicAuthentication","User":"alice","Password":"admin"}, {"name":"s4","url":"https:<sap-app-server>",Authentication:"BasicAuthentication","User":"<user>","Password":"<pwd>","sap-client":"<mandant>"}]'
-```
+- Use asdf and direnv to manage your dependencies and get all env vars set up
+- C8.7, either locally or SaaS
 - source code formatting is done with `maven-spotless-plugin` upon build/compile
 
 - on PRs
   - always bump the patch version first in `pom.xml`
-  - don't change major or minor, as they indicate the Camunda 8 release assocation
+  - don't change major or minor, as they indicate the Camunda 8 release association
 
 ### OData sample backend
 

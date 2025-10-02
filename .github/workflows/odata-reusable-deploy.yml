@@ -1,5 +1,5 @@
-name: reusable-deploy
-
+name: odata-reusable-deploy
+### This is currently not used. We should start using it however
 on:
   workflow_call:
     inputs:
@@ -36,11 +36,11 @@ jobs:
       - name: checkout mtad.yaml.example
         uses: actions/checkout@v5
         with:
-          repository: camunda/sap-odata-connector
+          repository: camunda/sap-connectors
           ref: ${{ env.camunda_release }}
           path: yaml
           sparse-checkout: |
-            mtad.yaml.example
+            rfc-connectors/mtad.yaml.example
           sparse-checkout-cone-mode: false
 
       - name: check
