@@ -31,7 +31,7 @@
     <version.junit-jupiter>5.11.4</version.junit-jupiter>
     <version.mockito>5.14.2</version.mockito>
     <version.testcontainers>1.21.3</version.testcontainers>
-    <plugin.version.spotless-maven-plugin>2.43.0</plugin.version.spotless-maven-plugin>
+    <plugin.version.spotless-maven-plugin>3.0.0</plugin.version.spotless-maven-plugin>
   </properties>
   <build>
     <pluginManagement>
