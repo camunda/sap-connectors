@@ -28,7 +28,7 @@
     <version.camunda>8.7.8</version.camunda>
     <version.cloud-sdk>5.17.0</version.cloud-sdk>
     <version.assertj>3.26.3</version.assertj>
-    <version.junit-jupiter>5.11.4</version.junit-jupiter>
+    <version.junit-jupiter>6.0.0</version.junit-jupiter>
     <version.mockito>5.14.2</version.mockito>
     <version.testcontainers>1.21.3</version.testcontainers>
     <plugin.version.spotless-maven-plugin>3.0.0</plugin.version.spotless-maven-plugin>
