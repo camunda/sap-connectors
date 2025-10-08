@@ -605,7 +605,7 @@
         "type": "zeebe:input"
       },
       "type": "Hidden",
-      "value": "=context(\n  for entry in get entries(cloudHeaders) return \n    if starts with(entry.key, \"ce-\") then\n      { \"key\": \"Solace-User-Property-\" + entry.key, \"value\": entry.value }\n     else\n       entry\n)"
+      "value": "=context(\n  for entry in get entries(cloudHeaders) return \n    if starts with(entry.key, \"ce-\") then\n      { \"key\": \"solace-user-property-\" + entry.key, \"value\": entry.value }\n     else\n       entry\n)"
     },
     {
       "id": "body",
