@@ -49,12 +49,13 @@ jobs:
     secrets: inherit
 
   undeploy:
-    needs: [ determine-connector-version, e2e ]
-    if: success() || failure()
+    needs: [ determine-connector-version, e2e, deploy-to-btp ]
+    if: always()
     uses: ./.github/workflows/rfc-reusable-undeploy.yml
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}
       cf_api_endpoint: 'https://api.cf.eu10-004.hana.ondemand.com'
       cf_org: camunda-dev
       cf_space: sap-integration
+      cluster_uuid: ${{ needs.deploy-to-btp.outputs.cluster_uuid }}
     secrets: inherit
