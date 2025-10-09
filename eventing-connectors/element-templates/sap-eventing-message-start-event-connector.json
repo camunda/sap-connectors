@@ -70,7 +70,7 @@
     {
       "id": "inbound.method",
       "label": "Webhook method",
-      "description": "Select HTTP method",
+      "description": "Select the HTTP method required for the webhook trigger",
       "optional": false,
       "value": "any",
       "group": "endpoint",
@@ -124,7 +124,7 @@
     {
       "id": "inbound.shouldValidateHmac",
       "label": "HMAC authentication",
-      "description": "Choose whether HMAC verification is enabled. <a href='https://docs.camunda.io/docs/components/connectors/protocol/http-webhook/#make-your-http-webhook-connector-for-receiving-messages-executable' target='_blank'>See documentation</a> and <a href='https://docs.camunda.io/docs/components/connectors/protocol/http-webhook/#example' target='_blank'>example</a> that explains how to use HMAC-related fields",
+      "description": "Choose whether HMAC verification is required for incoming messages. <a href='https://docs.camunda.io/docs/components/connectors/protocol/http-webhook/#make-your-http-webhook-connector-for-receiving-messages-executable' target='_blank'>See documentation</a> and <a href='https://docs.camunda.io/docs/components/connectors/protocol/http-webhook/#example' target='_blank'>example</a> that explains how to use HMAC-related fields",
       "optional": false,
       "value": "disabled",
       "group": "authentication",
@@ -233,7 +233,7 @@
     {
       "id": "inbound.auth.type",
       "label": "Authorization type",
-      "description": "Choose the authorization type",
+      "description": "Choose an authorization type",
       "value": "NONE",
       "group": "authorization",
       "binding": {
