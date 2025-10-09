@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: extract release branch # first two digits of connector_version
-        run: echo "camunda_release=$(echo ${{ inputs.connector_version }} | cut -d'.' -f1-2)" >> $GITHUB_ENV
+        run: echo "camunda_release=$(echo ${{ inputs.connector_version }} | cut -d'.' -f1-2)" >> "$GITHUB_ENV"
 
 #      - name: extract connector version for release # last digit of connector_version
 #        run: echo "connector_version=$(echo ${{ inputs.connector_version }} | cut -d'.' -f3)" >> $GITHUB_ENV
