@@ -76,6 +76,12 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- Forcibly set to compile, to ensure it's not overwritten. -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <scope>compile</scope>
+    </dependency>
     <!-- connector-specific -->
     <dependency>
       <groupId>com.sap.cloud.sdk</groupId>
