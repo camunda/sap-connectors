@@ -399,6 +399,14 @@ function printSummary(accessToken, selection, clusterInfo, clientInfo, addresses
     log(`Artifacts exported: cluster id=${clusterId}, client id=${clientId}`);
 }
 
+function dumpClientCredentials(outputPath, clientInfo, addresses) {
+    if(fs.existsSync(outputPath)) {
+        fail(`File at ${outputPath} already exists. Please remove it first.`);
+    }
+    fs.writeFileSync(outputPath, JSON.stringify({client: clientInfo, addresses}));
+    ok(`Wrote client credentials to ${outputPath}`);
+}
+
 // Main function
 async function main() {
     const args = process.argv.slice(2);
@@ -428,6 +436,11 @@ async function main() {
     const clusterInfo = await createCluster(accessToken, selection);
     const addresses = processAddresses(clusterInfo.zeebeAddress, clusterInfo.operateAddressRaw);
     const clientInfo = await createClient(accessToken, clusterInfo.clusterId);
+    if(args[0]) {
+        const outputPath = args[0];
+        dumpClientCredentials(outputPath, clientInfo, addresses);
+    }
+
     printSummary(accessToken, selection, clusterInfo, clientInfo, addresses);
 }
 

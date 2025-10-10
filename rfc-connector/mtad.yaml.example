@@ -14,11 +14,14 @@ modules:
       SPRING_PROFILES_ACTIVE: cloud
       USE_JCO: true
       CAMUNDA_CLIENT_MODE: self-managed
-      CAMUNDA_CLIENT_AUTH_CLIENT-ID: <client-id>
-      CAMUNDA_CLIENT_AUTH_CLIENT-SECRET: <client-secret>
-      CAMUNDA_CLIENT_AUTH_TOKEN-URL: 'https://login.cloud.ultrawombat.com/oauth/token'
-      CAMUNDA_CLIENT_GRPC-ADDRESS: <grpc-address>
-      CAMUNDA_CLIENT_REST-ADDRESS: <rest-address>
+      CAMUNDA_CLIENT_AUTH_CLIENTID: <client-id>
+      CAMUNDA_CLIENT_AUTH_CLIENTSECRET: <client-secret>
+      CAMUNDA_CLIENT_AUTH_TOKENURL: 'https://login.cloud.ultrawombat.com/oauth/token'
+      CAMUNDA_CLIENT_ZEEBE_ENABLE: true
+      CAMUNDA_CLIENT_ZEEBE_AUDIENCE: zeebe.ultrawombat.com
+      CAMUNDA_CLIENT_ZEEBE_GRPCADDRESS: <grpc-address>
+      CAMUNDA_CLIENT_ZEEBE_RESTADDRESS: <rest-address>
+      # CAMUNDA_CLIENT_ZEEBE_PREFERRESTOVERGRPC: true
       CAMUNDA_CLIENT_OPERATE_ENABLED: false
       OPERATE_CLIENT_ENABLED: false
       CAMUNDA_CONNECTOR_POLLING_ENABLED: false

@@ -6,7 +6,6 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 
 function safeReplace(content, placeholder, replacement) {
     /**
@@ -26,12 +25,9 @@ function main() {
     
     const [inputFile, appVersion, grpcAddress, restAddress, clientId, clientSecret] = args;
     const mangledVersion = appVersion.replace(/\./g, '_');
-    // Create backup
-    const backupFile = inputFile + '.bak';
-    
+
     try {
-        // Create backup
-        fs.copyFileSync(inputFile, backupFile);
+
         
         // Read the input file
         let content = fs.readFileSync(inputFile, 'utf8');
@@ -52,21 +48,9 @@ function main() {
         fs.writeFileSync(inputFile, content, 'utf8');
         
         console.log(`Successfully replaced placeholders in ${inputFile}`);
-        console.log(`Backup created: ${backupFile}`);
-        
+
     } catch (error) {
         console.error(`Error processing file: ${error.message}`);
-        
-        // Restore backup on error
-        try {
-            if (fs.existsSync(backupFile)) {
-                fs.copyFileSync(backupFile, inputFile);
-                console.error('Restored original file from backup');
-            }
-        } catch (restoreError) {
-            console.error(`Failed to restore backup: ${restoreError.message}`);
-        }
-        
         process.exit(1);
     }
 }

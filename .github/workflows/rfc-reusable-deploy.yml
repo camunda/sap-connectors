@@ -51,7 +51,7 @@ jobs:
         uses: actions/checkout@v5
       - name: Create cluster
         id: create_cluster
-        run: node scripts/manage_cluster.js
+        run: node scripts/manage_cluster.js values.json
         env:
           CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
           CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
@@ -78,6 +78,13 @@ jobs:
         with:
           name: mtad
           path: mtad.yaml
+
+
+      - name: Upload client config for e2e test
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-config
+          path: values.json
 
   deploy:
     needs: create-cluster
