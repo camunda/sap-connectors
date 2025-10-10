@@ -84,7 +84,7 @@ jobs:
         run: |
           cd yaml
           ../scripts/replace_mtad_placeholders.js 
-          mtad.yaml.example \          
+          mtad.yaml.example \
           "${{ inputs.connector_version }}" \
           "${{ needs.create-cluster.outputs.grpc-address }}" \
           "${{ needs.create-cluster.outputs.rest-address }}" \
