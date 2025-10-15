@@ -1,11 +1,7 @@
 name: rfc-build-and-publish
 
 on:
-  push:
-    branches:
-      - release/*
-    paths:
-      - pom.xml
+ workflow_call:
 
 defaults:
   run:

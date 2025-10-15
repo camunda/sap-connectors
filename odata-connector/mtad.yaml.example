@@ -1,3 +1,4 @@
+### This is currently not used. We should start using it however
 _schema-version: 3.3.0
 ID: sap-odata-connector-<app-version>
 version: "<app-version>"
@@ -5,11 +6,12 @@ modules:
 - name: sap-odata-connector
   type: application
   properties:
-    CAMUNDA_CLIENT_MODE: saas
-    CAMUNDA_CLIENT_CLOUD_CLUSTER-ID: <your-cluster-id>
-    CAMUNDA_CLIENT_AUTH_CLIENT-ID: <client-id-credential-from-api-client>
-    CAMUNDA_CLIENT_AUTH_CLIENT-SECRET: <client-secret-credential-from-api-client>
-    CAMUNDA_CLIENT_CLOUD_REGION: <your-cluster-region>
+    CAMUNDA_CLIENT_MODE: self-managed
+    CAMUNDA_CLIENT_AUTH_CLIENTID: <client-id>
+    CAMUNDA_CLIENT_AUTH_CLIENTSECRET: <client-secret>
+    CAMUNDA_CLIENT_AUTH_TOKENURL: 'https://login.cloud.ultrawombat.com/oauth/token'
+    CAMUNDA_CLIENT_ZEEBE_GRPCADDRESS: <grpc-address>
+    CAMUNDA_CLIENT_ZEEBE_RESTADDRESS: <rest-address>
     CAMUNDA_CLIENT_OPERATE_ENABLED: false
     CAMUNDA_CONNECTOR_POLLING_ENABLED: false
     CAMUNDA_CONNECTOR_WEBHOOK_ENABLED: false

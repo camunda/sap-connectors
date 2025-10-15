@@ -1,0 +1,13 @@
+name: Release all artifacts
+on:
+  push:
+    branches: [ "release/*" ]
+
+jobs:
+  odata-release:
+    uses: ./.github/workflows/odata-build-and-publish.yml
+    secrets: inherit
+
+  rfc-release:
+    uses:  ./.github/workflows/rfc-build-and-publish.yml
+    secrets: inherit
