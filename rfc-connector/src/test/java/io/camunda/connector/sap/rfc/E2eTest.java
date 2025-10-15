@@ -2,7 +2,9 @@ package io.camunda.connector.sap.rfc;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.camunda.zeebe.client.CredentialsProvider;
 import io.camunda.zeebe.client.ZeebeClient;
+import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -22,11 +24,16 @@ public class E2eTest {
     // the evn vars are set in the github action
     // derived from the repo secrets
     zeebeClient =
-        ZeebeClient.newCloudClientBuilder()
-            .withClusterId(System.getenv("clusterId"))
-            .withClientId(System.getenv("clientId"))
-            .withClientSecret(System.getenv("clientSecret"))
-            .withRegion(System.getenv("region"))
+        ZeebeClient.newClientBuilder()
+            .grpcAddress(URI.create(System.getenv("GRPC_ADDRESS")))
+            .restAddress(URI.create(System.getenv("REST_ADDRESS")))
+            .credentialsProvider(
+                CredentialsProvider.newCredentialsProviderBuilder()
+                    .audience("zeebe.ultrawombat.com")
+                    .clientId(System.getenv("CLIENT_ID"))
+                    .clientSecret(System.getenv("CLIENT_SECRET"))
+                    .authorizationServerUrl("https://login.cloud.ultrawombat.com/oauth/token")
+                    .build())
             .build();
   }
 

@@ -401,9 +401,13 @@ function printSummary(accessToken, selection, clusterInfo, clientInfo, addresses
 
 function dumpClientCredentials(outputPath, clientInfo, addresses) {
     if(fs.existsSync(outputPath)) {
-        fail(`File at ${outputPath} already exists. Please remove it first.`);
+        warn(`File at ${outputPath} already exists. Overwriting.`);
     }
-    fs.writeFileSync(outputPath, JSON.stringify({client: clientInfo, addresses}));
+    fs.writeFileSync(outputPath, JSON.stringify({
+        clientId: clientInfo.clientId,
+        clientSecret: clientInfo.clientSecret,
+        grpcAddress: addresses.zeebeGrpcAddress,
+        restAddress: addresses.zeebeRestAddress}));
     ok(`Wrote client credentials to ${outputPath}`);
 }
 

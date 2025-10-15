@@ -27,16 +27,23 @@ jobs:
           distribution: ${{ inputs.distribution }}
           cache: maven
 
+      # second, prep deployment descriptor
+      - name: download mtad.yaml
+        uses: actions/download-artifact@v5
+        with:
+          name: client-config
+          path: .
+
       # this runs w/ the deployed (!) connector
       # against c8 saas
       # and ecc
       - name: e2e tests (deployed connector, against c8 + ecc)
         env:
           e2e: true
-          clusterId: ${{ secrets.C87_CLUSTER_ID }}
-          clientId: ${{ secrets.C87_CLIENT_ID }}
-          clientSecret: ${{ secrets.C87_CLIENT_SECRET }}
-          region: ${{ secrets.C87_REGION }}
         run: |
           # by env var e2e, only the respective tests are run
-          mvn ${{ inputs.maven-options }} test
+          export CLIENT_ID=$(jq -r .clientId values.json)
+          export CLIENT_SECRET=$(jq -r .clientSecret values.json)
+          export GRPC_ADDRESS=$(jq -r .grpcAddress values.json)
+          export REST_ADDRESS=$(jq -r .restAddress values.json)
+          mvn -pl rfc-connector ${{ inputs.maven-options }} test

@@ -56,6 +56,11 @@ jobs:
           CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
           CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
           CAMUNDA_DESIRED_GENERATION: ${{ needs.extract-version.outputs.camunda_release }}
+      - name: Upload client config for e2e test
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-config
+          path: values.json
 
       - name: fill in target cluster credentials
         run: |
@@ -78,13 +83,6 @@ jobs:
         with:
           name: mtad
           path: mtad.yaml
-
-
-      - name: Upload client config for e2e test
-        uses: actions/upload-artifact@v4
-        with:
-          name: client-config
-          path: values.json
 
   deploy:
     needs: create-cluster

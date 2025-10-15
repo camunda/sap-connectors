@@ -27,8 +27,6 @@ function main() {
     const mangledVersion = appVersion.replace(/\./g, '_');
 
     try {
-
-        
         // Read the input file
         let content = fs.readFileSync(inputFile, 'utf8');
         
