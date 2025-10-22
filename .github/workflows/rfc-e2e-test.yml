@@ -1,8 +1,10 @@
 name: rfc-e2e-test
 
 on:
-  pull_request:
-    branches: [ "release/*" ]
+    pull_request:
+        branches: [ "release/*", "main" ]
+    push:
+        branches: [ "release/*", "main" ]
 
 jobs:
   determine-connector-version:
@@ -23,7 +25,7 @@ jobs:
       - name: extract release version
         id: extract_version
         # this extracts <version> from pom.xml into env.VERSION
-        run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+        run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> "$GITHUB_ENV"
 
       - name: scope the version into an output
         id: scope_version

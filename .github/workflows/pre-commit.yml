@@ -1,0 +1,23 @@
+name: Pre-commit checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'release/**'
+  push:
+    branches:
+      - main
+      - 'release/**'
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Install asdf & tools
+        uses: asdf-vm/actions/install@v4
+      - name: Run pre-commit
+        run: pre-commit run --all
+

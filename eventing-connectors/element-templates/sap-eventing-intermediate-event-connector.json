@@ -1,0 +1,613 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "SAP Eventing Intermediate Event Connector",
+  "id": "io.camunda.connectors.webhook.SAPEventingIntermediateEventConnector.v1",
+  "version": 1,
+  "description": "Configure webhook to receive subscriptions from Advanced Event Mesh to correlate a message into a process",
+  "metadata": {
+    "keywords": []
+  },
+  "documentationRef": "https://docs.camunda.io/docs/components/camunda-integrations/sap/eventing",
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": [
+    "bpmn:IntermediateCatchEvent",
+    "bpmn:IntermediateThrowEvent"
+  ],
+  "elementType": {
+    "value": "bpmn:IntermediateCatchEvent",
+    "eventDefinition": "bpmn:MessageEventDefinition"
+  },
+  "engines": {
+    "camunda": "^8.6"
+  },
+  "groups": [
+    {
+      "id": "endpoint",
+      "label": "Webhook configuration"
+    },
+    {
+      "id": "authentication",
+      "label": "Authentication"
+    },
+    {
+      "id": "authorization",
+      "label": "Authorization"
+    },
+    {
+      "id": "webhookResponse",
+      "label": "Webhook response"
+    },
+    {
+      "id": "activation",
+      "label": "Activation"
+    },
+    {
+      "id": "correlation",
+      "label": "Correlation",
+      "tooltip": "Learn more about message correlation in the <a href=\"https://docs.camunda.io/docs/components/concepts/messages/#message-correlation-overview\">documentation</a>."
+    },
+    {
+      "id": "deduplication",
+      "label": "Deduplication",
+      "tooltip": "Deduplication allows you to configure multiple inbound connector elements to reuse the same backend (consumer/thread/endpoint) by sharing the same deduplication ID."
+    },
+    {
+      "id": "output",
+      "label": "Output mapping"
+    }
+  ],
+  "properties": [
+    {
+      "value": "io.camunda:webhook:1",
+      "binding": {
+        "name": "inbound.type",
+        "type": "zeebe:property"
+      },
+      "type": "Hidden"
+    },
+    {
+      "id": "inbound.method",
+      "label": "Webhook method",
+      "description": "Select the HTTP method required for the webhook trigger",
+      "optional": false,
+      "value": "any",
+      "group": "endpoint",
+      "binding": {
+        "name": "inbound.method",
+        "type": "zeebe:property"
+      },
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Any",
+          "value": "any"
+        },
+        {
+          "name": "GET",
+          "value": "get"
+        },
+        {
+          "name": "POST",
+          "value": "post"
+        },
+        {
+          "name": "PUT",
+          "value": "put"
+        },
+        {
+          "name": "DELETE",
+          "value": "delete"
+        }
+      ]
+    },
+    {
+      "id": "inbound.context",
+      "label": "Webhook ID",
+      "description": "The webhook ID is a part of the URL",
+      "optional": false,
+      "constraints": {
+        "notEmpty": true,
+        "pattern": {
+          "value": "^[a-zA-Z0-9]+([-_][a-zA-Z0-9]+)*$",
+          "message": "can only contain letters, numbers, or single underscores/hyphens and cannot begin or end with an underscore/hyphen"
+        }
+      },
+      "group": "endpoint",
+      "binding": {
+        "name": "inbound.context",
+        "type": "zeebe:property"
+      },
+      "type": "String"
+    },
+    {
+      "id": "inbound.shouldValidateHmac",
+      "label": "HMAC authentication",
+      "description": "Choose whether HMAC verification is required for incoming messages. <a href='https://docs.camunda.io/docs/components/connectors/protocol/http-webhook/#make-your-http-webhook-connector-for-receiving-messages-executable' target='_blank'>See documentation</a> and <a href='https://docs.camunda.io/docs/components/connectors/protocol/http-webhook/#example' target='_blank'>example</a> that explains how to use HMAC-related fields",
+      "optional": false,
+      "value": "disabled",
+      "group": "authentication",
+      "binding": {
+        "name": "inbound.shouldValidateHmac",
+        "type": "zeebe:property"
+      },
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "Enabled",
+          "value": "enabled"
+        },
+        {
+          "name": "Disabled",
+          "value": "disabled"
+        }
+      ]
+    },
+    {
+      "id": "inbound.hmacSecret",
+      "label": "HMAC secret key",
+      "description": "Shared secret key",
+      "optional": true,
+      "feel": "optional",
+      "group": "authentication",
+      "binding": {
+        "name": "inbound.hmacSecret",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "inbound.shouldValidateHmac",
+        "equals": "enabled",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "inbound.hmacHeader",
+      "label": "HMAC header",
+      "description": "Name of header attribute that will contain the HMAC value",
+      "optional": true,
+      "feel": "optional",
+      "group": "authentication",
+      "binding": {
+        "name": "inbound.hmacHeader",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "inbound.shouldValidateHmac",
+        "equals": "enabled",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "inbound.hmacAlgorithm",
+      "label": "HMAC algorithm",
+      "description": "Choose HMAC algorithm",
+      "optional": false,
+      "value": "sha_256",
+      "group": "authentication",
+      "binding": {
+        "name": "inbound.hmacAlgorithm",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "inbound.shouldValidateHmac",
+        "equals": "enabled",
+        "type": "simple"
+      },
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "SHA-1",
+          "value": "sha_1"
+        },
+        {
+          "name": "SHA-256",
+          "value": "sha_256"
+        },
+        {
+          "name": "SHA-512",
+          "value": "sha_512"
+        }
+      ]
+    },
+    {
+      "id": "inbound.hmacScopes",
+      "label": "HMAC scopes",
+      "description": "Set HMAC scopes for calculating signature data. See <a href='https://docs.camunda.io/docs/components/connectors/protocol/http-webhook/' target='_blank'>documentation</a>",
+      "optional": true,
+      "feel": "required",
+      "group": "authentication",
+      "binding": {
+        "name": "inbound.hmacScopes",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "inbound.shouldValidateHmac",
+        "equals": "enabled",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "inbound.auth.type",
+      "label": "Authorization type",
+      "description": "Choose an authorization type",
+      "value": "NONE",
+      "group": "authorization",
+      "binding": {
+        "name": "inbound.auth.type",
+        "type": "zeebe:property"
+      },
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "None",
+          "value": "NONE"
+        },
+        {
+          "name": "Basic",
+          "value": "BASIC"
+        },
+        {
+          "name": "API key",
+          "value": "APIKEY"
+        },
+        {
+          "name": "JWT",
+          "value": "JWT"
+        }
+      ]
+    },
+    {
+      "id": "inbound.auth.username",
+      "label": "Username",
+      "description": "Username for basic authentication",
+      "optional": false,
+      "feel": "optional",
+      "group": "authorization",
+      "binding": {
+        "name": "inbound.auth.username",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "inbound.auth.type",
+        "equals": "BASIC",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "inbound.auth.password",
+      "label": "Password",
+      "description": "Password for basic authentication",
+      "optional": false,
+      "feel": "optional",
+      "group": "authorization",
+      "binding": {
+        "name": "inbound.auth.password",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "inbound.auth.type",
+        "equals": "BASIC",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "inbound.auth.apiKey",
+      "label": "API key",
+      "description": "Expected API key",
+      "optional": false,
+      "feel": "optional",
+      "group": "authorization",
+      "binding": {
+        "name": "inbound.auth.apiKey",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "inbound.auth.type",
+        "equals": "APIKEY",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "inbound.auth.apiKeyLocator",
+      "label": "API key locator",
+      "description": "A FEEL expression that extracts API key from the request. <a href='https://docs.camunda.io/docs/components/connectors/protocol/http-webhook/#how-to-configure-api-key-authorization'>See documentation</a>",
+      "optional": false,
+      "value": "=split(request.headers.authorization, \" \")[2]",
+      "constraints": {
+        "notEmpty": true
+      },
+      "feel": "required",
+      "group": "authorization",
+      "binding": {
+        "name": "inbound.auth.apiKeyLocator",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "inbound.auth.type",
+        "equals": "APIKEY",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "inbound.auth.jwt.jwkUrl",
+      "label": "JWK URL",
+      "description": "Well-known URL of JWKs",
+      "optional": false,
+      "feel": "optional",
+      "group": "authorization",
+      "binding": {
+        "name": "inbound.auth.jwt.jwkUrl",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "inbound.auth.type",
+        "equals": "JWT",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "inbound.auth.jwt.permissionsExpression",
+      "label": "JWT role property expression",
+      "description": "Expression to extract the roles from the JWT token. <a href='https://docs.camunda.io/docs/components/connectors/protocol/http-webhook/#how-to-extract-roles-from-jwt-data'>See documentation</a>",
+      "optional": false,
+      "feel": "required",
+      "group": "authorization",
+      "binding": {
+        "name": "inbound.auth.jwt.permissionsExpression",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "inbound.auth.type",
+        "equals": "JWT",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "inbound.auth.jwt.requiredPermissions",
+      "label": "Required roles",
+      "description": "List of roles to test JWT roles against",
+      "optional": false,
+      "feel": "required",
+      "group": "authorization",
+      "binding": {
+        "name": "inbound.auth.jwt.requiredPermissions",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "inbound.auth.type",
+        "equals": "JWT",
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "inbound.responseExpression",
+      "label": "Response expression",
+      "description": "Expression used to generate the HTTP response",
+      "optional": true,
+      "feel": "required",
+      "group": "webhookResponse",
+      "binding": {
+        "name": "inbound.responseExpression",
+        "type": "zeebe:property"
+      },
+      "type": "Text",
+      "value": "={\n  result: \"OK\",\n  status: 200\n}"
+    },
+    {
+      "id": "inbound.verificationExpression",
+      "label": "One time verification response expression",
+      "description": "Specify condition and response. Learn more in the <a href='https://docs.camunda.io/docs/components/connectors/protocol/http-webhook/#verification-expression' target='_blank'>documentation</a>",
+      "optional": true,
+      "//feel": "required",
+      "group": "webhookResponse",
+      "binding": {
+        "name": "inbound.verificationExpression",
+        "type": "zeebe:property"
+      },
+      "type": "Hidden"
+    },
+    {
+      "id": "activationCondition",
+      "label": "Activation condition",
+      "description": "Condition under which the Connector triggers. Leave empty to catch all events",
+      "optional": true,
+      "feel": "required",
+      "group": "activation",
+      "binding": {
+        "name": "activationCondition",
+        "type": "zeebe:property"
+      },
+      "type": "String"
+    },
+    {
+      "id": "consumeUnmatchedEvents",
+      "label": "Consume unmatched events",
+      "value": true,
+      "group": "activation",
+      "binding": {
+        "name": "consumeUnmatchedEvents",
+        "type": "zeebe:property"
+      },
+      "tooltip": "Unmatched events are rejected by default, allowing the upstream service to handle the error. Check this box to consume unmatched events and return a success response",
+      "type": "Boolean"
+    },
+    {
+      "id": "correlationKeyProcess",
+      "label": "Correlation key (process)",
+      "description": "Sets up the correlation key from process variables",
+      "constraints": {
+        "notEmpty": true
+      },
+      "feel": "required",
+      "group": "correlation",
+      "binding": {
+        "name": "correlationKey",
+        "type": "bpmn:Message#zeebe:subscription#property"
+      },
+      "type": "String"
+    },
+    {
+      "id": "correlationKeyPayload",
+      "label": "Correlation key (payload)",
+      "description": "Extracts the correlation key from the incoming message payload",
+      "constraints": {
+        "notEmpty": true
+      },
+      "feel": "required",
+      "group": "correlation",
+      "binding": {
+        "name": "correlationKeyExpression",
+        "type": "zeebe:property"
+      },
+      "type": "String"
+    },
+    {
+      "id": "messageIdExpression",
+      "label": "Message ID expression",
+      "description": "Expression to extract unique identifier of a message",
+      "optional": true,
+      "feel": "required",
+      "group": "correlation",
+      "binding": {
+        "name": "messageIdExpression",
+        "type": "zeebe:property"
+      },
+      "type": "String"
+    },
+    {
+      "id": "messageTtl",
+      "label": "Message TTL",
+      "description": "Time-to-live for the message in the broker (ISO-8601 duration)",
+      "optional": true,
+      "constraints": {
+        "notEmpty": false,
+        "pattern": {
+          "value": "^(PT.*|)$",
+          "message": "must be an ISO-8601 duration"
+        }
+      },
+      "feel": "optional",
+      "group": "correlation",
+      "binding": {
+        "name": "messageTtl",
+        "type": "zeebe:property"
+      },
+      "type": "String"
+    },
+    {
+      "id": "messageNameUuid",
+      "generatedValue": {
+        "type": "uuid"
+      },
+      "group": "correlation",
+      "binding": {
+        "name": "name",
+        "type": "bpmn:Message#property"
+      },
+      "type": "Hidden"
+    },
+    {
+      "id": "deduplicationModeManualFlag",
+      "label": "Manual mode",
+      "description": "By default, similar connectors receive the same deduplication ID. Customize by activating manual mode",
+      "value": false,
+      "group": "deduplication",
+      "binding": {
+        "name": "deduplicationModeManualFlag",
+        "type": "zeebe:property"
+      },
+      "type": "Boolean"
+    },
+    {
+      "id": "deduplicationId",
+      "label": "Deduplication ID",
+      "constraints": {
+        "notEmpty": true,
+        "pattern": {
+          "value": "^[a-zA-Z0-9_-]+$",
+          "message": "can only contain alphanumeric characters, dashes, and underscores"
+        }
+      },
+      "group": "deduplication",
+      "binding": {
+        "name": "deduplicationId",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "deduplicationModeManualFlag",
+        "equals": true,
+        "type": "simple"
+      },
+      "type": "String"
+    },
+    {
+      "id": "deduplicationModeManual",
+      "value": "MANUAL",
+      "group": "deduplication",
+      "binding": {
+        "name": "deduplicationMode",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "deduplicationId",
+        "isActive": true,
+        "type": "simple"
+      },
+      "type": "Hidden"
+    },
+    {
+      "id": "deduplicationModeAuto",
+      "value": "AUTO",
+      "group": "deduplication",
+      "binding": {
+        "name": "deduplicationMode",
+        "type": "zeebe:property"
+      },
+      "condition": {
+        "property": "deduplicationId",
+        "isActive": false,
+        "type": "simple"
+      },
+      "type": "Hidden"
+    },
+    {
+      "id": "resultVariable",
+      "label": "Result variable",
+      "description": "Name of variable to store the response in",
+      "group": "output",
+      "binding": {
+        "name": "resultVariable",
+        "type": "zeebe:property"
+      },
+      "type": "String",
+      "value": "sapIntermediate"
+    },
+    {
+      "id": "resultExpression",
+      "label": "Result expression",
+      "description": "Expression to map the response into process variables",
+      "feel": "required",
+      "group": "output",
+      "binding": {
+        "name": "resultExpression",
+        "type": "zeebe:property"
+      },
+      "type": "Text"
+    }
+  ],
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0yNTUuOTE4IDEzQzI3Mi44NDEgMTMgMjg5LjEyOSAxOS40MjA4IDMwMS4zOTIgMzAuOTUzMUMzMTMuNjU3IDQyLjQ4ODQgMzIwLjk0OSA1OC4yNTMgMzIxLjcyMiA3NC45NzQ2QzMyMi40OTQgOTEuNjk2NyAzMTYuNjg1IDEwOC4wNTMgMzA1LjUyOSAxMjAuNjQyQzI5NS41OTIgMTMxLjg1NSAyODIuMDk3IDEzOS4zMSAyNjcuMzUyIDE0MS44NzFWMjMwLjIwMkgyNDQuNDg0VjE0MS44NzFDMjI5LjczOSAxMzkuMzEgMjE2LjI0NCAxMzEuODU1IDIwNi4zMDcgMTIwLjY0MkMxOTUuMTUxIDEwOC4wNTMgMTg5LjM0MiA5MS42OTY3IDE5MC4xMTQgNzQuOTc0NkMxOTAuODg3IDU4LjI1MyAxOTguMTc5IDQyLjQ4ODQgMjEwLjQ0NCAzMC45NTMxQzIyMi43MDYgMTkuNDIwNyAyMzguOTk1IDEzIDI1NS45MTggMTNaTTc0Ljg3MjEgNTIuMzczQzkxLjc5NTEgNTIuMzczIDEwOC4wODUgNTguNzkzNyAxMjAuMzQ3IDcwLjMyNjJDMTMyLjYxMiA4MS44NjE0IDEzOS45MDQgOTcuNjI2MiAxNDAuNjc3IDExNC4zNDhDMTQxLjQ0OSAxMzEuMDcgMTM1LjY0IDE0Ny40MjYgMTI0LjQ4NCAxNjAuMDE1QzExNC41NDcgMTcxLjIyOSAxMDEuMDUxIDE3OC42ODMgODYuMzA1NyAxODEuMjQ0VjIzMC4wMDFINjMuNDM4NVYxODEuMjQ0QzQ4LjY5MzEgMTc4LjY4MyAzNS4xOTgxIDE3MS4yMjggMjUuMjYwNyAxNjAuMDE1QzE0LjEwNDkgMTQ3LjQyNiA4LjI5NTg2IDEzMS4wNyA5LjA2ODM2IDExNC4zNDhDOS44NDA5IDk3LjYyNjEgMTcuMTMzNCA4MS44NjE0IDI5LjM5ODQgNzAuMzI2MkM0MS42NjA1IDU4Ljc5MzcgNTcuOTQ5MSA1Mi4zNzMxIDc0Ljg3MjEgNTIuMzczWk00MzYuMzA5IDUyLjM3M0M0NTMuMjMyIDUyLjM3MyA0NjkuNTIxIDU4Ljc5MzcgNDgxLjc4MyA3MC4zMjYyQzQ5NC4wNDggODEuODYxNCA1MDEuMzQxIDk3LjYyNjIgNTAyLjExMyAxMTQuMzQ4QzUwMi44ODYgMTMxLjA3IDQ5Ny4wNzcgMTQ3LjQyNiA0ODUuOTIxIDE2MC4wMTVDNDc1Ljk4MyAxNzEuMjI5IDQ2Mi40ODggMTc4LjY4MyA0NDcuNzQyIDE4MS4yNDRWMjI5LjU4M0g0MjQuODc1VjE4MS4yNDRDNDEwLjEzIDE3OC42ODMgMzk2LjYzNSAxNzEuMjI4IDM4Ni42OTcgMTYwLjAxNUMzNzUuNTQxIDE0Ny40MjYgMzY5LjczMiAxMzEuMDcgMzcwLjUwNSAxMTQuMzQ4QzM3MS4yNzcgOTcuNjI2IDM3OC41NyA4MS44NjE0IDM5MC44MzUgNzAuMzI2MkM0MDMuMDk3IDU4Ljc5MzcgNDE5LjM4NiA1Mi4zNzMxIDQzNi4zMDkgNTIuMzczWk05MS4zMjMyIDc4LjUxODZDODMuNDcxMSA3NS4zMTc0IDc0LjgyNTMgNzQuNDc4MiA2Ni40ODM0IDc2LjExMTNDNTguMTQyIDc3Ljc0NDQgNTAuNDkyOCA4MS43NzM2IDQ0LjQ5OCA4Ny42NzM4QzM2LjQ3NTMgOTUuNTkwMyAzMS45ODc0IDEwNi4yOTUgMzEuOTg3MyAxMTcuNDM1QzMxLjk4NzMgMTI4LjU3NSAzNi40NzUxIDEzOS4yOCA0NC40OTggMTQ3LjE5NkM1MC40OTI4IDE1My4wOTcgNTguMTQyIDE1Ny4xMjYgNjYuNDgzNCAxNTguNzU5Qzc0LjgyNTMgMTYwLjM5MiA4My40NzExIDE1OS41NTMgOTEuMzIzMiAxNTYuMzUyQzk5LjE3NDQgMTUzLjE1MSAxMDUuODcgMTQ3LjczNyAxMTAuNTczIDE0MC44MDlDMTE1LjI3NiAxMzMuODgyIDExNy43OCAxMjUuNzQ3IDExNy43OCAxMTcuNDM1QzExNy43OCAxMDkuMTIyIDExNS4yNzYgMTAwLjk4OCAxMTAuNTczIDk0LjA2MTVDMTA1Ljg3IDg3LjEzMzQgOTkuMTc0NSA4MS43MTk0IDkxLjMyMzIgNzguNTE4NlpNNDUyLjc2IDc4LjUxODZDNDQ0LjkwOCA3NS4zMTc0IDQzNi4yNjIgNzQuNDc4MiA0MjcuOTIgNzYuMTExM0M0MTkuNTc5IDc3Ljc0NDQgNDExLjkyOSA4MS43NzM2IDQwNS45MzUgODcuNjczOEMzOTcuOTEyIDk1LjU5MDMgMzkzLjQyNCAxMDYuMjk1IDM5My40MjQgMTE3LjQzNUMzOTMuNDI0IDEyOC41NzUgMzk3LjkxMiAxMzkuMjggNDA1LjkzNSAxNDcuMTk2QzQxMS45MjkgMTUzLjA5NyA0MTkuNTc5IDE1Ny4xMjYgNDI3LjkyIDE1OC43NTlDNDM2LjI2MiAxNjAuMzkyIDQ0NC45MDggMTU5LjU1MyA0NTIuNzYgMTU2LjM1MkM0NjAuNjExIDE1My4xNTEgNDY3LjMwNiAxNDcuNzM3IDQ3Mi4wMSAxNDAuODA5QzQ3Ni43MTIgMTMzLjg4MiA0NzkuMjE3IDEyNS43NDcgNDc5LjIxNyAxMTcuNDM1QzQ3OS4yMTcgMTA5LjEyMiA0NzYuNzEyIDEwMC45ODggNDcyLjAxIDk0LjA2MTVDNDY3LjMwNiA4Ny4xMzM0IDQ2MC42MTEgODEuNzE5NCA0NTIuNzYgNzguNTE4NlpNMjcyLjM2OSAzOS4xNDU1QzI2NC41MTcgMzUuOTQ0MyAyNTUuODcxIDM1LjEwNTEgMjQ3LjUyOSAzNi43MzgzQzIzOS4xODggMzguMzcxMyAyMzEuNTM5IDQyLjQwMDUgMjI1LjU0NCA0OC4zMDA4QzIxNy41MjEgNTYuMjE3NCAyMTMuMDMzIDY2LjkyMjQgMjEzLjAzMyA3OC4wNjI1QzIxMy4wMzMgODkuMjA0NyAyMTcuNTIzIDk5LjkxMTIgMjI1LjU0OSAxMDcuODI4SDIyNS41NDhDMjMxLjU0MiAxMTMuNzI2IDIzOS4xOSAxMTcuNzUzIDI0Ny41MjkgMTE5LjM4NkMyNTUuODcxIDEyMS4wMTkgMjY0LjUxNyAxMjAuMTggMjcyLjM2OSAxMTYuOTc5QzI4MC4yMiAxMTMuNzc4IDI4Ni45MTYgMTA4LjM2NCAyOTEuNjE5IDEwMS40MzZDMjk2LjMyMiA5NC41MDg2IDI5OC44MjYgODYuMzc0OCAyOTguODI2IDc4LjA2MjVDMjk4LjgyNiA2OS43NTAxIDI5Ni4zMjIgNjEuNjE1NSAyOTEuNjE5IDU0LjY4ODVDMjg2LjkxNiA0Ny43NjA0IDI4MC4yMiA0Mi4zNDYzIDI3Mi4zNjkgMzkuMTQ1NVoiIGZpbGw9IiNGRjhDMDAiIHN0cm9rZT0iI0ZGOEMwMCIgc3Ryb2tlLXdpZHRoPSIxMiIvPgo8ZyBjbGlwLXBhdGg9InVybCgjY2xpcDBfNTExXzg5NCkiPgo8cGF0aCBkPSJNNTEwIDI2MEgwVjUxMkgyNTcuODAyIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfNTExXzg5NCkiLz4KPHBhdGggZD0iTTI1Mi4xOTcgMzEwLjRWNDI5LjEyTDIwOC40ODMgMzEwLjRIMTY0Ljc2OUwxMjcuNzggNDA4Ljk2QzEyMy4yOTYgMzg0LjMyIDk3LjUxNTggMzc1LjM2IDc3LjM0IDM2OC42NEM2My44ODk0IDM2NC4xNiA0OS4zMTggMzU4LjU2IDQ5LjMxOCAzNTAuNzJDNDkuMzE4IDM0NS4xMiA1Ny4xNjQyIDMzOS41MiA3MS43MzU2IDM0MC42NEM4MS44MjM1IDM0MS43NiA5MC43OTA1IDM0MS43NiAxMDguNzI1IDM1MC43MkwxMjYuNjU5IDMyMC40OEMxMDkuODQ1IDMxMS41MiA4Ny40Mjc5IDMwNy4wNCA2OS40OTM4IDMwNy4wNEM0OC4xOTcxIDMwNy4wNCAzMC4yNjMxIDMxMy43NiAxOS4wNTQzIDMyNC45NkMxMS4yMDgxIDMzMi44IDcuODQ1NDkgMzQyLjg4IDYuNzI0NjEgMzU0LjA4QzYuNzI0NjEgMzY5Ljc2IDEyLjMyOSAzODAuOTYgMjQuNjU4NyAzODkuOTJDMzQuNzQ2NiAzOTYuNjQgNDcuMDc2MyA0MDEuMTIgNTguMjg1IDQwNC40OEM3Mi44NTY1IDQwOC45NiA4NC4wNjUzIDQxMy40NCA4NC4wNjUzIDQyMS4yOEM4Mi45NDQ0IDQzMS4zNiA3MS43MzU2IDQzMy42IDYzLjg4OTQgNDMzLjZDNTAuNDM4OSA0MzQuNzIgMzkuMjMwMSA0MzIuNDggMjIuNDE2OSA0MjIuNEw2LjcyNDYxIDQ1Mi42NEMyMy41Mzc4IDQ2Mi43MiA0MS40NzE5IDQ2Ny4yIDYyLjc2ODYgNDY3LjJDNzcuMzQgNDY3LjIgOTkuNzU3NiA0NjIuNzIgMTEyLjA4NyA0NTEuNTJMMTA5Ljg0NSA0NjEuNkgxNTIuNDM5TDE2MC4yODUgNDQyLjU2QzE3Ny4wOTggNDQ3LjA0IDE5Ni4xNTMgNDQ4LjE2IDIxMi45NjYgNDQyLjU2TDIxOC41NzEgNDYxLjZIMjk0Ljc5MVY0MTYuOEgzMTAuNDgzQzM0OS43MTQgNDE2LjggMzczLjI1MiAzOTcuNzYgMzczLjI1MiAzNjQuMTZDMzczLjI1MiAzMjYuMDggMzUwLjgzNCAzMTAuNCAzMDIuNjM3IDMxMC40SDI1Mi4xOTdaTTE3MC4zNzMgNDA4Ljk2TDE4Ni4wNjUgMzU4LjU2SDE4Ny4xODZMMjAyLjg3OCA0MDguOTZDMTkxLjY3IDQxMi4zMiAxODAuNDYxIDQxMi4zMiAxNzAuMzczIDQwOC45NlpNMjk0Ljc5MSAzODMuMlYzNDIuODhIMzA1Ljk5OUMzMjAuNTcxIDM0Mi44OCAzMzEuNzggMzQ3LjM2IDMzMS43OCAzNjEuOTJDMzMxLjc4IDM3Ny42IDMyMC41NzEgMzgzLjIgMzA1Ljk5OSAzODMuMkgyOTQuNzkxWiIgZmlsbD0id2hpdGUiLz4KPC9nPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDBfbGluZWFyXzUxMV84OTQiIHgxPSIwIiB5MT0iMjYwIiB4Mj0iMCIgeTI9IjUxMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjMDBBQUVFIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwNTVBQSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzUxMV84OTQiPgo8cmVjdCB3aWR0aD0iNTEwIiBoZWlnaHQ9IjI1MiIgZmlsbD0id2hpdGUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgMjYwKSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
+  }
+}

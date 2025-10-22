@@ -1,5 +1,5 @@
-name: reusable-deploy
-
+name: odata-reusable-deploy
+### This is currently not used. We should start using it however
 on:
   workflow_call:
     inputs:
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: extract release branch # first two digits of connector_version
-        run: echo "camunda_release=$(echo ${{ inputs.connector_version }} | cut -d'.' -f1-2)" >> $GITHUB_ENV
+        run: echo "camunda_release=$(echo ${{ inputs.connector_version }} | cut -d'.' -f1-2)" >> "$GITHUB_ENV"
 
 #      - name: extract connector version for release # last digit of connector_version
 #        run: echo "connector_version=$(echo ${{ inputs.connector_version }} | cut -d'.' -f3)" >> $GITHUB_ENV
@@ -36,11 +36,11 @@ jobs:
       - name: checkout mtad.yaml.example
         uses: actions/checkout@v5
         with:
-          repository: camunda/sap-odata-connector
+          repository: camunda/sap-connectors
           ref: ${{ env.camunda_release }}
           path: yaml
           sparse-checkout: |
-            mtad.yaml.example
+            rfc-connectors/mtad.yaml.example
           sparse-checkout-cone-mode: false
 
       - name: check
