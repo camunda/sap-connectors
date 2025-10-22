@@ -5,12 +5,12 @@
   <parent>
     <groupId>io.camunda.connector.sap</groupId>
     <artifactId>connectors-sap-parent</artifactId>
-    <version>8.7.1-SNAPSHOT</version>
+    <version>8.6.4-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>io.camunda.connector.sap.rfc</groupId>
   <artifactId>rfc</artifactId>
-  <version>8.7.1-SNAPSHOT</version>
+  <version>8.6.4-SNAPSHOT</version>
   <!--  necessary for SAP BTP cf to pick up SAP's JCo lib -->
   <packaging>war</packaging>
 

@@ -3,9 +3,6 @@
   "name" : "SAP OData Connector",
   "id" : "SAP_ODATA_CONNECTOR",
   "description" : "This connector allows you to interact with an SAP System via OData v2 + v4",
-  "metadata" : {
-    "keywords" : [ ]
-  },
   "documentationRef" : "https://docs.camunda.io/docs/components/camunda-integrations/sap",
   "version" : 2,
   "category" : {
@@ -641,6 +638,7 @@
     "label" : "Retry backoff",
     "description" : "ISO-8601 duration to wait between retries",
     "value" : "PT0S",
+    "feel" : "optional",
     "group" : "retries",
     "binding" : {
       "key" : "retryBackoff",
