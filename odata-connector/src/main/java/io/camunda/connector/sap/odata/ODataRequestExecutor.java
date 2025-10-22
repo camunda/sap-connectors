@@ -9,7 +9,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataResponseException
 import com.sap.cloud.sdk.datamodel.odata.client.expression.ODataResourcePath;
 import com.sap.cloud.sdk.datamodel.odata.client.request.*;
 import io.camunda.connector.api.error.ConnectorException;
-import io.camunda.connector.api.json.ConnectorsObjectMapperSupplier;
+import io.camunda.connector.jackson.ConnectorsObjectMapperSupplier;
 import io.camunda.connector.sap.odata.helper.*;
 import io.camunda.connector.sap.odata.model.*;
 import java.time.LocalDateTime;

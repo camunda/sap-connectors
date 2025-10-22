@@ -26,6 +26,9 @@
     "id" : "advanced",
     "label" : "Advanced"
   }, {
+    "id" : "connector",
+    "label" : "Connector"
+  }, {
     "id" : "output",
     "label" : "Output mapping"
   }, {
@@ -394,7 +397,7 @@
     "label" : "$top",
     "description" : "only the first $top results of an EntitySet",
     "optional" : true,
-    "feel" : "optional",
+    "feel" : "static",
     "group" : "advanced",
     "binding" : {
       "name" : "requestDetails.httpMethod.top",
@@ -411,13 +414,13 @@
         "type" : "simple"
       } ]
     },
-    "type" : "String"
+    "type" : "Number"
   }, {
     "id" : "requestDetails.httpMethod.skip",
     "label" : "$skip",
     "description" : "skip the first $skip results of an EntitySet",
     "optional" : true,
-    "feel" : "optional",
+    "feel" : "static",
     "group" : "advanced",
     "binding" : {
       "name" : "requestDetails.httpMethod.skip",
@@ -434,7 +437,7 @@
         "type" : "simple"
       } ]
     },
-    "type" : "String"
+    "type" : "Number"
   }, {
     "id" : "requestDetails.httpMethod.orderby",
     "label" : "$orderby",
@@ -516,7 +519,7 @@
     "label" : "$inlinecount",
     "description" : "$inlinecount result in EntitySet",
     "optional" : true,
-    "feel" : "optional",
+    "feel" : "static",
     "group" : "advanced",
     "binding" : {
       "name" : "requestDetails.httpMethod.oDataVersionGet.inlinecount",
@@ -570,7 +573,7 @@
     "label" : "$count",
     "description" : "$count of EntitySet",
     "optional" : true,
-    "feel" : "optional",
+    "feel" : "static",
     "group" : "advanced",
     "binding" : {
       "name" : "requestDetails.httpMethod.oDataVersionGet.count",
@@ -592,6 +595,28 @@
       } ]
     },
     "type" : "Boolean"
+  }, {
+    "id" : "version",
+    "label" : "Version",
+    "description" : "Version of the element template",
+    "value" : "2",
+    "group" : "connector",
+    "binding" : {
+      "key" : "elementTemplateVersion",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "Hidden"
+  }, {
+    "id" : "id",
+    "label" : "ID",
+    "description" : "ID of the element template",
+    "value" : "SAP_ODATA_CONNECTOR",
+    "group" : "connector",
+    "binding" : {
+      "key" : "elementTemplateId",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "Hidden"
   }, {
     "id" : "resultVariable",
     "label" : "Result variable",

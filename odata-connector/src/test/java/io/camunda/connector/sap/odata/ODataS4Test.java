@@ -3,6 +3,7 @@ package io.camunda.connector.sap.odata;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import io.camunda.connector.runtime.test.outbound.OutboundConnectorContextBuilder;
 import io.camunda.connector.sap.odata.helper.CustomODataRequestCreate;
 import io.camunda.connector.sap.odata.helper.CustomODataRequestDelete;
 import io.camunda.connector.sap.odata.helper.CustomODataRequestRead;
@@ -17,7 +18,6 @@ import io.camunda.connector.sap.odata.model.ODataConnectorRequest;
 import io.camunda.connector.sap.odata.model.ODataConnectorResponse;
 import io.camunda.connector.sap.odata.model.ODataConnectorResponseWithCount;
 import io.camunda.connector.sap.odata.model.ODataRequestDetails.SimpleRequest;
-import io.camunda.connector.test.outbound.OutboundConnectorContextBuilder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
