@@ -12,7 +12,7 @@ import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestGeneric;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResult;
 import com.sap.cloud.sdk.datamodel.odata.client.request.ODataRequestResultGeneric;
 import io.camunda.connector.api.error.ConnectorException;
-import io.camunda.connector.api.json.ConnectorsObjectMapperSupplier;
+import io.camunda.connector.jackson.ConnectorsObjectMapperSupplier;
 import io.camunda.connector.sap.odata.DestinationProvider;
 import io.camunda.connector.sap.odata.model.ErrorCodes;
 import io.camunda.connector.sap.odata.model.HttpMethod;
