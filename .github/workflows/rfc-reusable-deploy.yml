@@ -57,7 +57,7 @@ jobs:
           CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
           CAMUNDA_DESIRED_GENERATION: ${{ needs.extract-version.outputs.camunda_release }}
       - name: Upload client config for e2e test
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: client-config
           path: values.json
@@ -79,7 +79,7 @@ jobs:
           cat mtad.yaml
 
       - name: Upload mtad.yaml
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: mtad
           path: mtad.yaml
@@ -116,7 +116,7 @@ jobs:
 
       # second, prep deployment descriptor
       - name: download mtad.yaml
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: mtad
           path: rfc-connector/
