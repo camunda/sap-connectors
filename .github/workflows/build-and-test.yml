@@ -8,7 +8,7 @@ on:
 
 jobs:
   odata-tests:
-    uses: ./.github/workflows/odata-reusable-build-and-test.yml
+    uses: ./.github/workflows/odata-reusable-unit-test.yml
     with:
       java-version: '21'
       distribution: 'temurin'
