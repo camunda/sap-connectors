@@ -1,13 +1,45 @@
 name: Release all artifacts
 on:
-  push:
-    branches: [ "release/*" ]
+  workflow_dispatch:
+    inputs:
+      patch-version:
+        description: The release patch version. Minor is specified by the branch.
+          E.g. specify "5" to release version "8.6.5" if on branch "release/8.6"
+        required: true
 
 jobs:
+  build-final-version:
+    runs-on: ubuntu-latest
+    outputs:
+      FINAL_VERSION: ${{ steps.final_version.outputs.FINAL_VERSION }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: set up jdk 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: determine final version
+        id: final_version
+        run: |
+          MINOR_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | cut -d'.' -f1-2)
+          PATCH_VERSION=${{ github.event.inputs['patch-version'] }}
+          echo "FINAL_VERSION=${MINOR_VERSION}.${PATCH_VERSION}" >> "$GITHUB_OUTPUT"
+
   odata-release:
+    needs: build-final-version
     uses: ./.github/workflows/odata-build-and-publish.yml
     secrets: inherit
+    with:
+      final_version: ${{ needs.build-final-version.outputs.FINAL_VERSION }}
 
   rfc-release:
+    needs: build-final-version
     uses:  ./.github/workflows/rfc-build-and-publish.yml
     secrets: inherit
+    with:
+      final_version: ${{ needs.build-final-version.outputs.FINAL_VERSION }}
