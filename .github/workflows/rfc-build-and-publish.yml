@@ -7,10 +7,6 @@ on:
        required: true
        type: string
 
-defaults:
-  run:
-    working-directory: rfc-connector
-
 jobs:
   unit-test:
     uses: ./.github/workflows/rfc-reusable-unit-test.yml
@@ -38,14 +34,14 @@ jobs:
         run: |
           mvn versions:set -DnewVersion=${{ inputs.final_version }} -DgenerateBackupPoms=false
       - name: build project
-        run: mvn clean package
+        run: mvn clean package -DskipTests
 
       - name: create release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "rfc-connector/target/*.war,element-templates/*.json,rfc-connector/mtad.yaml.example"
+          artifacts: "rfc-connector/target/*.war,rfc-connector/element-templates/*.json,rfc-connector/mtad.yaml.example"
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: "RFC ${{ inputs.final_version }}"
+          tag: "rfc-${{ inputs.final_version }}"
           name: "RFC ${{ inputs.final_version }}"
           body: "RFC Release ${{ inputs.final_version }}"
           allowUpdates: 'true'
