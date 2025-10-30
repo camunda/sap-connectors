@@ -3,7 +3,8 @@ on:
   workflow_dispatch:
     inputs:
       patch-version:
-        description: The release patch version. Minor is specified by the branch.
+        description: |
+          The release patch version. Minor is specified by the branch.
           E.g. specify "5" to release version "8.6.5" if on branch "release/8.6"
         required: true
 

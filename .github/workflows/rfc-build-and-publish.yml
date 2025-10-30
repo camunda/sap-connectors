@@ -22,6 +22,7 @@ jobs:
 
 
   build-and-gh_release:
+    needs: unit-test
     runs-on: ubuntu-latest
 
     steps:
@@ -46,6 +47,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: "RFC ${{ inputs.final_version }}"
           name: "RFC ${{ inputs.final_version }}"
-          body: "RFC Release${{ inputs.final_version }}"
+          body: "RFC Release ${{ inputs.final_version }}"
           allowUpdates: 'true'
           removeArtifacts: 'true'
