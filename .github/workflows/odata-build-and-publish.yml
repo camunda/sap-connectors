@@ -49,7 +49,7 @@ jobs:
       - name: create release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "element-templates/*.json,odata-connector/mtad.yaml.example"
+          artifacts: "odata-connector/element-templates/*.json,odata-connector/mtad.yaml.example"
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: "odata-${{ inputs.final_version }}"
           name: "OData ${{ inputs.final_version }}"
