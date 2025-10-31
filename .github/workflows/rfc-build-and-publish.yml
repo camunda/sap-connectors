@@ -39,7 +39,7 @@ jobs:
       - name: create release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "rfc-connector/target/*.war,element-templates/*.json,rfc-connector/mtad.yaml.example"
+          artifacts: "rfc-connector/target/*.war,rfc-connector/element-templates/*.json,rfc-connector/mtad.yaml.example"
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: "rfc-${{ inputs.final_version }}"
           name: "RFC ${{ inputs.final_version }}"
