@@ -2,8 +2,8 @@ package io.camunda.connector.sap.rfc;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.camunda.zeebe.client.CredentialsProvider;
-import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.CredentialsProvider;
 import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -18,13 +18,13 @@ public class E2eTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(E2eTest.class);
 
-  ZeebeClient zeebeClient;
+  CamundaClient camundaClient;
 
   E2eTest() {
-    // the evn vars are set in the github action
+    // the env vars are set in the GitHub action
     // derived from the repo secrets
-    zeebeClient =
-        ZeebeClient.newClientBuilder()
+    camundaClient =
+        CamundaClient.newClientBuilder()
             .grpcAddress(URI.create(System.getenv("GRPC_ADDRESS")))
             .restAddress(URI.create(System.getenv("REST_ADDRESS")))
             .credentialsProvider(
@@ -39,10 +39,10 @@ public class E2eTest {
 
   @Test
   void bapi() {
-    zeebeClient.newDeployResourceCommand().addResourceFromClasspath("bapi.bpmn").send().join();
+    camundaClient.newDeployResourceCommand().addResourceFromClasspath("bapi.bpmn").send().join();
 
     var processInstanceResult =
-        zeebeClient
+        camundaClient
             .newCreateInstanceCommand()
             .bpmnProcessId("bapi")
             .latestVersion()
@@ -61,10 +61,10 @@ public class E2eTest {
 
   @Test
   void rfm_collection_result() {
-    zeebeClient.newDeployResourceCommand().addResourceFromClasspath("rfm.bpmn").send().join();
+    camundaClient.newDeployResourceCommand().addResourceFromClasspath("rfm.bpmn").send().join();
 
     var processInstanceResult =
-        zeebeClient
+        camundaClient
             .newCreateInstanceCommand()
             .bpmnProcessId("rfm")
             .latestVersion()
@@ -83,14 +83,14 @@ public class E2eTest {
 
   @Test
   void rfm_atomic_result() {
-    zeebeClient
+    camundaClient
         .newDeployResourceCommand()
         .addResourceFromClasspath("rfm-atomic-values.bpmn")
         .send()
         .join();
 
     var processInstanceResult =
-        zeebeClient
+        camundaClient
             .newCreateInstanceCommand()
             .bpmnProcessId("rfm-atomic-result")
             .latestVersion()
