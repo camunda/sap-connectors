@@ -44,5 +44,6 @@ jobs:
           tag: "rfc-${{ inputs.final_version }}"
           name: "RFC ${{ inputs.final_version }}"
           body: "RFC Release ${{ inputs.final_version }}"
+          commit: ${{github.ref}}
           allowUpdates: 'true'
           removeArtifacts: 'true'

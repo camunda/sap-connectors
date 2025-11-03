@@ -54,6 +54,7 @@ jobs:
           tag: "odata-${{ inputs.final_version }}"
           name: "OData ${{ inputs.final_version }}"
           body: "OData Release ${{ inputs.final_version }}"
+          commit: ${{github.ref}}
           allowUpdates: 'true'
           removeArtifacts: 'true'
 
