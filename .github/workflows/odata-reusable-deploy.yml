@@ -32,18 +32,7 @@ jobs:
   mtad-yaml: # get the mtad.yaml.example from the release branch via sparse checkout
     runs-on: ubuntu-latest
     needs: extract-version
-    outputs:
-      deployment-name: ${{ steps.set_deployment_name.outputs.deployment-name }}
     steps:
-      - name: Set deployment name
-        id: set_deployment_name
-        run: |
-          # Create a unique deployment name using version, branch and run ID
-          DEPLOYMENT_NAME="sap-odata-connector-${{ inputs.connector_version }}-${{ github.ref_name }}-${{ github.run_id }}"
-          # Sanitize the name to make it compatible with SAP BTP (replace invalid characters with hyphens)
-          DEPLOYMENT_NAME=$(echo "$DEPLOYMENT_NAME" | sed 's/[^a-zA-Z0-9-]/-/g' | sed 's/--*/-/g' | sed 's/-$//' | cut -c1-63)
-          echo "deployment-name=$DEPLOYMENT_NAME" >> "$GITHUB_OUTPUT"
-          echo "Using deployment name: $DEPLOYMENT_NAME"
       - name: checkout mtad.yaml.example
         uses: actions/checkout@v5
         with:
@@ -51,7 +40,7 @@ jobs:
           ref: ${{ env.camunda_release }}
           path: yaml
           sparse-checkout: |
-            odata-connector/mtad.yaml.example
+            rfc-connectors/mtad.yaml.example
           sparse-checkout-cone-mode: false
 
       - name: check
@@ -63,7 +52,7 @@ jobs:
         run: |
           cd yaml
           sed -i.bak -e "s/<app-version>/${{ inputs.connector_version }}/g" \
-          -e "s/name: sap-odata-connector/name: ${{ steps.set_deployment_name.outputs.deployment-name }}/g" \
+          -e "s/name: sap-odata-connector/name: sap-odata-connector-${{ inputs.connector_version }}/g" \
           -e "s/<your-cluster-id>/${{ secrets.C86_CLUSTER_ID }}/g" \
           -e "s/<client-id-credential-from-api-client>/${{ secrets.C86_CLIENT_ID }}/g" \
           -e "s/<client-secret-credential-from-api-client>/${{ secrets.C86_CLIENT_SECRET }}/g" \
