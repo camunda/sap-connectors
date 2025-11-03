@@ -46,7 +46,7 @@ jobs:
           # Create a unique deployment name using version, branch and run ID
           DEPLOYMENT_NAME="sap-rfc-connector-${{ inputs.connector_version }}-${{ github.ref_name }}-${{ github.run_id }}"
           # Sanitize the name to make it compatible with SAP BTP (replace invalid characters with hyphens)
-          DEPLOYMENT_NAME=$(echo "$DEPLOYMENT_NAME" | sed 's/[^a-zA-Z0-9-]/-/g' | sed 's/--*/-/g' | sed 's/-$//' | cut -c1-63)
+          DEPLOYMENT_NAME=$(echo "$DEPLOYMENT_NAME" | sed 's/[^a-zA-Z0-9-]/-/g' | sed 's/--*/-/g' | sed 's/-$//' | cut -c1-50)
           echo "deployment-name=$DEPLOYMENT_NAME" >> "$GITHUB_OUTPUT"
           echo "Using deployment name: $DEPLOYMENT_NAME"
       - name: Import Secrets
