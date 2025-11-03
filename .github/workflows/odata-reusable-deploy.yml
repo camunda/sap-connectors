@@ -51,7 +51,7 @@ jobs:
           ref: ${{ env.camunda_release }}
           path: yaml
           sparse-checkout: |
-            rfc-connectors/mtad.yaml.example
+            odata-connector/mtad.yaml.example
           sparse-checkout-cone-mode: false
 
       - name: check
