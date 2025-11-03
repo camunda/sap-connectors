@@ -18,12 +18,12 @@ function safeReplace(content, placeholder, replacement) {
 function main() {
     const args = process.argv.slice(2);
     
-    if (args.length !== 6) {
-        console.error('Usage: node replace_mtad_placeholders.js <input_file> <app_version> <grpc_address> <rest_address> <client_id> <client_secret>');
+    if (args.length !== 7) {
+        console.error('Usage: node replace_mtad_placeholders.js <input_file> <app_version> <grpc_address> <rest_address> <client_id> <client_secret> <deployment_name>');
         process.exit(1);
     }
     
-    const [inputFile, appVersion, grpcAddress, restAddress, clientId, clientSecret] = args;
+    const [inputFile, appVersion, grpcAddress, restAddress, clientId, clientSecret, deploymentName] = args;
     const mangledVersion = appVersion.replace(/\./g, '_');
 
     try {
@@ -42,7 +42,7 @@ function main() {
 
         // Handle the connector name replacement (using regex for end-of-line matching)
         const namePattern = /name: sap-rfc-connector$/gm;
-        content = content.replace(namePattern, `name: sap-rfc-connector-${appVersion}`);
+        content = content.replace(namePattern, `name: ${deploymentName}`);
         
         // Write the modified content back
         fs.writeFileSync(inputFile, content, 'utf8');
