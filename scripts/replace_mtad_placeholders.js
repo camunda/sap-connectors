@@ -37,7 +37,9 @@ function main() {
         content = safeReplace(content, '<rest-address>', restAddress);
         content = safeReplace(content, '<client-id>', clientId);
         content = safeReplace(content, '<client-secret>', clientSecret);
-        
+        content = safeReplace(content, '<token-url>', 'https://login.cloud.ultrawombat.com/oauth/token');
+        content = safeReplace(content, '<zeebe-audience>', 'zeebe.ultrawombat.com');
+
         // Handle the connector name replacement (using regex for end-of-line matching)
         const namePattern = /name: sap-rfc-connector$/gm;
         content = content.replace(namePattern, `name: sap-rfc-connector-${appVersion}`);
