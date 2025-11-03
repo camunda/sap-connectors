@@ -43,7 +43,7 @@ function fail(...args) {
 const TOKEN_ISSUER = `https://${LOGIN_HOST}/oauth/token`;
 
 // Write GitHub Actions outputs if GITHUB_OUTPUT is set
-function writeGithubOutput(clientId, clientSecret, zeebeGrpcAddress, zeebeRestAddress, clusterId) {
+function writeGithubOutput(clientId, clientSecret, clusterId, regionId) {
     const githubOutput = process.env.GITHUB_OUTPUT;
     if (!githubOutput) return;
 
@@ -56,15 +56,14 @@ function writeGithubOutput(clientId, clientSecret, zeebeGrpcAddress, zeebeRestAd
         const outputs = [
             `client-id=${clientId}`,
             `client-secret=${clientSecret}`,
-            `grpc-address=${zeebeGrpcAddress}`,
-            `rest-address=${zeebeRestAddress}`,
-            `cluster-uuid=${clusterId}`
+            `cluster-id=${clusterId}`,
+            `region-id=${regionId}`
         ].join('\n') + '\n';
 
         fs.appendFileSync(githubOutput, outputs);
         // Prevents secret from being logged in GitHub Actions
         console.log("::add-mask::" + clientSecret);
-        ok('Wrote GitHub outputs (client-id, client-secret, grpc-address, rest-address)');
+        ok('Wrote GitHub outputs (client-id, client-secret, cluster-id, region-id)');
     } catch (error) {
         warn(`Failed to write GitHub outputs: ${error.message}`);
     }
@@ -187,7 +186,6 @@ async function selectChannelAndGeneration(accessToken) {
 // Step 3: Create Cluster
 async function createCluster(accessToken, selection) {
     const { channelName, channelUuid, genName, genUuid, planUuid, planName, regionName, regionUuid } = selection;
-
     log(`Creating cluster name='${CLUSTER_NAME}' plan='${planName}' region='${regionName}' channel='${channelName}' generation='${genName}'`);
 
     try {
@@ -252,10 +250,6 @@ async function createCluster(accessToken, selection) {
                 break;
             }
 
-            if (readyState === 'Unhealthy') {
-                fail('Cluster became Unhealthy');
-            }
-
             const now = Date.now();
             if (now - startTime > POLL_TIMEOUT * 1000) {
                 fail(`Timeout waiting for cluster to become Healthy (last state=${readyState})`);
@@ -266,37 +260,18 @@ async function createCluster(accessToken, selection) {
 
         const finalPlanName = clusterJson.planType.name;
         const finalRegionName = clusterJson.region.name;
-        const zeebeAddress = clusterJson.links.zeebe;
-        const operateAddressRaw = clusterJson.links.operate;
-
+        const regionIdentifier = clusterJson.links.zeebe.split(".")[1];
         return {
             clusterId,
             clusterJson,
             finalPlanName,
             finalRegionName,
-            zeebeAddress,
-            operateAddressRaw
+            regionIdentifier
         };
 
     } catch (error) {
         fail(`Failed to create cluster: ${error.message}`);
     }
-}
-
-// Compute final Zeebe REST + gRPC addresses (post processing)
-function processAddresses(zeebeAddress, operateAddressRaw) {
-    if (!zeebeAddress) {
-        fail("Missing 'zeebe' address in cluster links (zeebeAddress empty)");
-    }
-    if (!operateAddressRaw) {
-        fail("Missing 'operate' address in cluster links (operateAddressRaw empty)");
-    }
-
-    const zeebeGrpcAddress = `grpcs://${zeebeAddress}:443`;
-    const zeebeRestAddress = operateAddressRaw.replace(/operate/g, 'zeebe');
-    ok(`Processed addresses: grpc=${zeebeGrpcAddress} rest=${zeebeRestAddress}`);
-
-    return { zeebeGrpcAddress, zeebeRestAddress };
 }
 
 // Step 4: Create Client
@@ -358,13 +333,12 @@ async function deleteCluster(accessToken, clusterId) {
 }
 
 // Step 5: Print Summary
-function printSummary(accessToken, selection, clusterInfo, clientInfo, addresses) {
+function printSummary(accessToken, selection, clusterInfo, clientInfo) {
     const { channelName, channelUuid, genName, genUuid, candidatesJson } = selection;
-    const { clusterId, finalPlanName} = clusterInfo;
+    const { clusterId, finalPlanName, regionIdentifier } = clusterInfo;
     const { clientId, clientSecret } = clientInfo;
-    const { zeebeGrpcAddress, zeebeRestAddress } = addresses;
     // This marks the clientSecret as a secret in GitHub Actions logs
-    writeGithubOutput(clientId, clientSecret, zeebeGrpcAddress, zeebeRestAddress, clusterId);
+    writeGithubOutput(clientId, clientSecret, clusterId, regionIdentifier);
 
     // Build final JSON
     const finalJson = {
@@ -383,8 +357,7 @@ function printSummary(accessToken, selection, clusterInfo, clientInfo, addresses
             name: CLUSTER_NAME,
             plan: finalPlanName,
             region: selection.regionName,
-            restAddress: zeebeRestAddress,
-            grpcAddress: zeebeGrpcAddress
+            regionId: regionIdentifier
         },
         client: {
             id: clientId,
@@ -399,15 +372,16 @@ function printSummary(accessToken, selection, clusterInfo, clientInfo, addresses
     log(`Artifacts exported: cluster id=${clusterId}, client id=${clientId}`);
 }
 
-function dumpClientCredentials(outputPath, clientInfo, addresses) {
+function dumpClientCredentials(outputPath, clientInfo, clusterInfo) {
     if(fs.existsSync(outputPath)) {
         warn(`File at ${outputPath} already exists. Overwriting.`);
     }
     fs.writeFileSync(outputPath, JSON.stringify({
         clientId: clientInfo.clientId,
         clientSecret: clientInfo.clientSecret,
-        grpcAddress: addresses.zeebeGrpcAddress,
-        restAddress: addresses.zeebeRestAddress}));
+        clusterId: clusterInfo.clusterId,
+        regionId: clusterInfo.regionIdentifier,
+        baseDomain: BASE_HOSTNAME}));
     ok(`Wrote client credentials to ${outputPath}`);
 }
 
@@ -438,14 +412,13 @@ async function main() {
     requireEnv('CAMUNDA_DESIRED_GENERATION');
     const selection = await selectChannelAndGeneration(accessToken);
     const clusterInfo = await createCluster(accessToken, selection);
-    const addresses = processAddresses(clusterInfo.zeebeAddress, clusterInfo.operateAddressRaw);
     const clientInfo = await createClient(accessToken, clusterInfo.clusterId);
     if(args[0]) {
         const outputPath = args[0];
-        dumpClientCredentials(outputPath, clientInfo, addresses);
+        dumpClientCredentials(outputPath, clientInfo, clusterInfo);
     }
 
-    printSummary(accessToken, selection, clusterInfo, clientInfo, addresses);
+    printSummary(accessToken, selection, clusterInfo, clientInfo);
 }
 
 // Run main function
