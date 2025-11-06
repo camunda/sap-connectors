@@ -1,4 +1,4 @@
-ARG CAMUNDA_CONNECTORS_VERSION=0.0.0
+ARG CAMUNDA_CONNECTORS_VERSION=8.8.2
 FROM camunda/connectors:${CAMUNDA_CONNECTORS_VERSION}
 
 COPY target/odata-*-with-dependencies.jar /opt/custom
