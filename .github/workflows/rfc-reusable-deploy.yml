@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: extract-version
     outputs:
-        cluster-uuid: ${{ steps.create_cluster.outputs.cluster-uuid }}
+        cluster-uuid: ${{ steps.create_cluster.outputs.cluster-id }}
         deployment-name: ${{ steps.set_deployment_name.outputs.deployment-name }}
     steps:
       - name: Set deployment name
@@ -81,8 +81,9 @@ jobs:
           scripts/replace_mtad_placeholders.js \
           rfc-connector/mtad.yaml.example \
           "${{ inputs.connector_version }}" \
-          "${{ steps.create_cluster.outputs.grpc-address }}" \
-          "${{ steps.create_cluster.outputs.rest-address }}" \
+          "${{ steps.create_cluster.outputs.region-id }}" \
+          "${{ steps.create_cluster.outputs.cluster-id }}" \
+          "ultrawombat.com" \
           "${{ steps.create_cluster.outputs.client-id }}" \
           "${{ steps.create_cluster.outputs.client-secret }}" \
           "${{ steps.set_deployment_name.outputs.deployment-name }}"
