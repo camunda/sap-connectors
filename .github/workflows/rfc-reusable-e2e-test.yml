@@ -44,6 +44,7 @@ jobs:
           # by env var e2e, only the respective tests are run
           export CLIENT_ID=$(jq -r .clientId values.json)
           export CLIENT_SECRET=$(jq -r .clientSecret values.json)
-          export GRPC_ADDRESS=$(jq -r .grpcAddress values.json)
-          export REST_ADDRESS=$(jq -r .restAddress values.json)
+          export CLUSTER_ID=$(jq -r .clusterId values.json)
+          export REGION_ID=$(jq -r .regionId values.json)
+          export BASE_DOMAIN=$(jq -r .baseDomain values.json)
           mvn -pl rfc-connector ${{ inputs.maven-options }} test

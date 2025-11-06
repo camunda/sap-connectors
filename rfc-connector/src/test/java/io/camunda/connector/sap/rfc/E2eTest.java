@@ -3,8 +3,6 @@ package io.camunda.connector.sap.rfc;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.camunda.client.CamundaClient;
-import io.camunda.client.CredentialsProvider;
-import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -24,16 +22,12 @@ public class E2eTest {
     // the env vars are set in the GitHub action
     // derived from the repo secrets
     camundaClient =
-        CamundaClient.newClientBuilder()
-            .grpcAddress(URI.create(System.getenv("GRPC_ADDRESS")))
-            .restAddress(URI.create(System.getenv("REST_ADDRESS")))
-            .credentialsProvider(
-                CredentialsProvider.newCredentialsProviderBuilder()
-                    .audience("zeebe.ultrawombat.com")
-                    .clientId(System.getenv("CLIENT_ID"))
-                    .clientSecret(System.getenv("CLIENT_SECRET"))
-                    .authorizationServerUrl("https://login.cloud.ultrawombat.com/oauth/token")
-                    .build())
+        CamundaClient.newCloudClientBuilder()
+            .withClusterId(System.getenv("CLUSTER_ID"))
+            .withClientId(System.getenv("CLIENT_ID"))
+            .withClientSecret(System.getenv("CLIENT_SECRET"))
+            .withRegion(System.getenv("REGION_ID"))
+            .withDomain(System.getenv("BASE_DOMAIN"))
             .build();
   }
 
