@@ -76,6 +76,15 @@
   </dependencyManagement>
 
   <dependencies>
+    <!--
+     FIXME: The Connectors Spring Boot starter ship the 8.5 client which doesn't have the
+     with Domain method, which we need for testing against ultrawombat
+     -->
+    <dependency>
+      <groupId>io.camunda</groupId>
+      <artifactId>zeebe-client-java</artifactId>
+      <version>8.6.30</version>
+    </dependency>
     <!-- Forcibly set to compile, to ensure it's not overwritten. -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

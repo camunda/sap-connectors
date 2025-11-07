@@ -3,16 +3,16 @@ name: build-and-publish
 
 on:
  workflow_call:
-
-defaults:
-  run:
-    working-directory: odata-connector
+   inputs:
+     final_version:
+       required: true
+       type: string
 
 jobs:
   determine-connector-version:
     runs-on: ubuntu-latest
     outputs:
-      VERSION: ${{ steps.scope_version.outputs.VERSION }}
+      CAMUNDA_VERSION: ${{ steps.connectors_repo_version.outputs.CAMUNDA_VERSION }}
 
     steps:
       - uses: actions/checkout@v5
@@ -24,14 +24,10 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: extract release version
-        id: extract_version
-        # this extracts <version> from pom.xml into env.VERSION
-        run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> "$GITHUB_ENV"
+      - name: Set connectors repo version in output
+        id: connectors_repo_version
+        run: echo "CAMUNDA_VERSION=$(mvn help:evaluate -Dexpression=version.camunda -q -DforceStdout)" >> "$GITHUB_OUTPUT"
 
-      - name: scope the version into an output
-        id: scope_version
-        run: echo "VERSION=${{ env.VERSION }}" >> "$GITHUB_OUTPUT"
 
   build-and-test:
     needs: determine-connector-version
@@ -53,11 +49,12 @@ jobs:
       - name: create release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "element-templates/*.json,mtad.yaml.example"
+          artifacts: "odata-connector/element-templates/*.json,odata-connector/mtad.yaml.example"
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ needs.determine-connector-version.outputs.VERSION }}
-          name: ${{ needs.determine-connector-version.outputs.VERSION }}
-          body: "Release ${{ needs.determine-connector-version.outputs.VERSION }}"
+          tag: "odata-${{ inputs.final_version }}"
+          name: "OData ${{ inputs.final_version }}"
+          body: "OData Release ${{ inputs.final_version }}"
+          commit: ${{github.ref}}
           allowUpdates: 'true'
           removeArtifacts: 'true'
 
@@ -87,6 +84,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Set connector version
+        run: |
+          mvn versions:set -DnewVersion=${{ inputs.final_version }} -DgenerateBackupPoms=false
       - name: build
         run: mvn -B -PcheckFormat package --file pom.xml -DskipTests # as we've run the tests in the previous job
 
@@ -99,16 +99,16 @@ jobs:
           username: ${{ steps.secrets.outputs.DOCKERHUB_USER }}
           password: ${{ steps.secrets.outputs.DOCKERHUB_PASSWORD }}
 
-      - name: sap-odata-connector - build and push docker image tag ${{ env.VERSION }}
+      - name: sap-odata-connector - build and push docker image tag ${{ inputs.final_version }}
         uses: docker/build-push-action@v6
         with:
           context: odata-connector
           file: odata-connector/Dockerfile
           build-args: |
-            CAMUNDA_CONNECTORS_VERSION=8.7.0
+            CAMUNDA_CONNECTORS_VERSION=${{ needs.determine-connector-version.outputs.CAMUNDA_VERSION }}
           push: true
           tags: |
-            camunda/sap-odata-connector${{ needs.determine-connector-version.outputs.VERSION }}
+            camunda/sap-odata-connector:${{ inputs.final_version }}
           #            camunda/sap-odata-connector:latest
           platforms: linux/amd64
           provenance: false

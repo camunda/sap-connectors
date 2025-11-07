@@ -2,10 +2,10 @@ name: rfc-build-and-publish
 
 on:
  workflow_call:
-
-defaults:
-  run:
-    working-directory: rfc-connector
+   inputs:
+     final_version:
+       required: true
+       type: string
 
 jobs:
   unit-test:
@@ -16,33 +16,9 @@ jobs:
       maven-options: '-PcheckFormat'
     secrets: inherit
 
-  determine-connector-version:
-    needs: unit-test
-    runs-on: ubuntu-latest
-    outputs:
-      VERSION: ${{ steps.scope_version.outputs.VERSION }}
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: set up jdk 21
-        uses: actions/setup-java@v5
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: extract release version
-        id: extract_version
-        # this extracts <version> from pom.xml into env.VERSION
-        run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> "$GITHUB_ENV"
-
-      - name: scope the version into an output
-        id: scope_version
-        run: echo "VERSION=${{ env.VERSION }}" >> "$GITHUB_OUTPUT"
 
   build-and-gh_release:
-    needs: determine-connector-version
+    needs: unit-test
     runs-on: ubuntu-latest
 
     steps:
@@ -54,17 +30,20 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-
+      - name: Set connector version
+        run: |
+          mvn versions:set -DnewVersion=${{ inputs.final_version }} -DgenerateBackupPoms=false
       - name: build project
-        run: mvn clean package
+        run: mvn clean package -DskipTests
 
       - name: create release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "target/*.war,element-templates/*.json,mtad.yaml.example"
+          artifacts: "rfc-connector/target/*.war,rfc-connector/element-templates/*.json,rfc-connector/mtad.yaml.example"
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ needs.determine-connector-version.outputs.VERSION }}
-          name: ${{ needs.determine-connector-version.outputs.VERSION }}
-          body: "Release ${{ needs.determine-connector-version.outputs.VERSION }}"
+          tag: "rfc-${{ inputs.final_version }}"
+          name: "RFC ${{ inputs.final_version }}"
+          body: "RFC Release ${{ inputs.final_version }}"
+          commit: ${{github.ref}}
           allowUpdates: 'true'
           removeArtifacts: 'true'

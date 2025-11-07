@@ -25,7 +25,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <version.slf4j>2.0.16</version.slf4j>
-    <version.camunda>8.6.20</version.camunda>
+    <version.camunda>8.6.21</version.camunda>
     <version.cloud-sdk>5.17.0</version.cloud-sdk>
     <version.assertj>3.26.3</version.assertj>
     <version.junit-jupiter>5.11.4</version.junit-jupiter>
@@ -33,6 +33,54 @@
     <version.testcontainers>1.21.3</version.testcontainers>
     <plugin.version.spotless-maven-plugin>3.0.0</plugin.version.spotless-maven-plugin>
   </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${plugin.version.spotless-maven-plugin}</version>
+          <configuration>
+            <formats>
+              <format>
+                <includes>
+                  <include>.gitignore</include>
+                </includes>
+                <trimTrailingWhitespace/>
+                <endWithNewline/>
+                <indent>
+                  <spaces>true</spaces>
+                  <spacesPerTab>2</spacesPerTab>
+                </indent>
+              </format>
+            </formats>
+            <java>
+              <googleJavaFormat/>
+              <removeUnusedImports/>
+              <replace>
+                <name>keepCoolSrcComment</name>
+                <search>// &gt;</search>
+                <replacement>//&gt;</replacement>
+              </replace>
+            </java>
+            <pom>
+              <sortPom>
+                <expandEmptyElements>false</expandEmptyElements>
+                <predefinedSortOrder>custom_1</predefinedSortOrder>
+              </sortPom>
+            </pom>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
   <repositories>
     <repository>
       <id>confluent</id>
@@ -87,9 +135,6 @@
     </repository>
 
     <repository>
-      <id>shibboleth</id>
-      <name>Shibboleth Releases Repository</name>
-      <url>https://build.shibboleth.net/maven/releases/</url>
       <releases>
         <enabled>true</enabled>
         <checksumPolicy>warn</checksumPolicy>
@@ -97,54 +142,9 @@
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
+      <id>shibboleth</id>
+      <name>Shibboleth Releases Repository</name>
+      <url>https://build.shibboleth.net/maven/releases/</url>
     </repository>
   </repositories>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>com.diffplug.spotless</groupId>
-          <artifactId>spotless-maven-plugin</artifactId>
-          <version>${plugin.version.spotless-maven-plugin}</version>
-          <configuration>
-            <formats>
-              <format>
-                <includes>
-                  <include>.gitignore</include>
-                </includes>
-                <trimTrailingWhitespace/>
-                <endWithNewline/>
-                <indent>
-                  <spaces>true</spaces>
-                  <spacesPerTab>2</spacesPerTab>
-                </indent>
-              </format>
-            </formats>
-            <java>
-              <googleJavaFormat/>
-              <removeUnusedImports/>
-              <replace>
-                <name>keepCoolSrcComment</name>
-                <search>// &gt;</search>
-                <replacement>//&gt;</replacement>
-              </replace>
-            </java>
-            <pom>
-              <sortPom>
-                <expandEmptyElements>false</expandEmptyElements>
-                <predefinedSortOrder>custom_1</predefinedSortOrder>
-              </sortPom>
-            </pom>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>com.diffplug.spotless</groupId>
-        <artifactId>spotless-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 </project>
