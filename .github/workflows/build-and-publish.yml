@@ -9,7 +9,21 @@ on:
         required: true
 
 jobs:
+  validate-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate branch name has release/ prefix
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          if [[ ! "$BRANCH_NAME" =~ ^release/ ]]; then
+            echo "Error: This workflow can only be run on branches with 'release/' prefix."
+            echo "Current branch: $BRANCH_NAME"
+            exit 1
+          fi
+          echo "Branch validation passed: $BRANCH_NAME"
+
   build-final-version:
+    needs: validate-branch
     runs-on: ubuntu-latest
     outputs:
       FINAL_VERSION: ${{ steps.final_version.outputs.FINAL_VERSION }}
