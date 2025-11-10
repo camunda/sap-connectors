@@ -2,9 +2,7 @@ package io.camunda.connector.sap.rfc;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import io.camunda.zeebe.client.CredentialsProvider;
 import io.camunda.zeebe.client.ZeebeClient;
-import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -18,31 +16,27 @@ public class E2eTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(E2eTest.class);
 
-  ZeebeClient zeebeClient;
+  ZeebeClient camundaClient;
 
   E2eTest() {
-    // the evn vars are set in the github action
+    // the env vars are set in the GitHub action
     // derived from the repo secrets
-    zeebeClient =
-        ZeebeClient.newClientBuilder()
-            .grpcAddress(URI.create(System.getenv("GRPC_ADDRESS")))
-            .restAddress(URI.create(System.getenv("REST_ADDRESS")))
-            .credentialsProvider(
-                CredentialsProvider.newCredentialsProviderBuilder()
-                    .audience("zeebe.ultrawombat.com")
-                    .clientId(System.getenv("CLIENT_ID"))
-                    .clientSecret(System.getenv("CLIENT_SECRET"))
-                    .authorizationServerUrl("https://login.cloud.ultrawombat.com/oauth/token")
-                    .build())
+    camundaClient =
+        ZeebeClient.newCloudClientBuilder()
+            .withClusterId(System.getenv("CLUSTER_ID"))
+            .withClientId(System.getenv("CLIENT_ID"))
+            .withClientSecret(System.getenv("CLIENT_SECRET"))
+            .withRegion(System.getenv("REGION_ID"))
+            .withDomain(System.getenv("BASE_DOMAIN"))
             .build();
   }
 
   @Test
   void bapi() {
-    zeebeClient.newDeployResourceCommand().addResourceFromClasspath("bapi.bpmn").send().join();
+    camundaClient.newDeployResourceCommand().addResourceFromClasspath("bapi.bpmn").send().join();
 
     var processInstanceResult =
-        zeebeClient
+        camundaClient
             .newCreateInstanceCommand()
             .bpmnProcessId("bapi")
             .latestVersion()
@@ -61,10 +55,10 @@ public class E2eTest {
 
   @Test
   void rfm_collection_result() {
-    zeebeClient.newDeployResourceCommand().addResourceFromClasspath("rfm.bpmn").send().join();
+    camundaClient.newDeployResourceCommand().addResourceFromClasspath("rfm.bpmn").send().join();
 
     var processInstanceResult =
-        zeebeClient
+        camundaClient
             .newCreateInstanceCommand()
             .bpmnProcessId("rfm")
             .latestVersion()
@@ -83,14 +77,14 @@ public class E2eTest {
 
   @Test
   void rfm_atomic_result() {
-    zeebeClient
+    camundaClient
         .newDeployResourceCommand()
         .addResourceFromClasspath("rfm-atomic-values.bpmn")
         .send()
         .join();
 
     var processInstanceResult =
-        zeebeClient
+        camundaClient
             .newCreateInstanceCommand()
             .bpmnProcessId("rfm-atomic-result")
             .latestVersion()
