@@ -18,12 +18,12 @@
   <description>Camunda RFC protocol outbound Connector</description>
 
   <properties>
-    <version.spring-boot>3.3.5</version.spring-boot>
+    <version.spring-boot>3.5.7</version.spring-boot>
     <version.spring-boot-starter-camunda>${version.camunda}</version.spring-boot-starter-camunda>
-    <version.logback>1.5.16</version.logback>
+    <version.logback>1.5.21</version.logback>
     <plugin.version.maven-war-plugin>3.4.0</plugin.version.maven-war-plugin>
-    <plugin.version.maven-exec-plugin>3.5.0</plugin.version.maven-exec-plugin>
-    <plugin.version.maven-spring-boot>3.4.0</plugin.version.maven-spring-boot>
+    <plugin.version.maven-exec-plugin>3.6.2</plugin.version.maven-exec-plugin>
+    <plugin.version.maven-spring-boot>3.5.7</plugin.version.maven-spring-boot>
   </properties>
 
   <dependencyManagement>
@@ -32,7 +32,7 @@
       <dependency>
         <groupId>com.sap.cloud.sjb.cf</groupId>
         <artifactId>cf-tomee7-bom</artifactId>
-        <version>2.13.0</version>
+        <version>2.23.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
