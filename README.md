@@ -29,6 +29,9 @@ manually. You will be asked for the target branch and the patch version.
 The workflow will them publish the docker image to docker hub and 
 publish the WAR of the RFC connector to the GitHub releases of the repo.
 
+**Warning**: Whatever artifact you release last will be marked as 
+latest. So you should prefer releases from the oldest supported release to the newest.
+
 ## Development Hints
 
 Please consider using asdf and direnv to manage your local development environment.
