@@ -22,6 +22,17 @@
       ],
       "enabled": false
     },
+    // Don't update dockerfile so it never points to a valid connector version
+    // This way it always has to be manually specified
+    {
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "ignorePaths": [
+        "odata-connector/Dockerfile"
+      ],
+      "enabled": false
+    },
     {
       "matchManagers": [
         "maven",
@@ -35,6 +46,7 @@
       ],
       "automerge": true
     },
+
     {
       "matchManagers": [
         "github-actions"
