@@ -1,5 +1,5 @@
-java temurin-21.0.8+9.0.LTS
+java temurin-21.0.9+10.0.LTS
 maven 3.9.9
-pre-commit 4.3.0
-actionlint 1.7.7
+pre-commit 4.4.0
+actionlint 1.7.8
 shellcheck 0.11.0
