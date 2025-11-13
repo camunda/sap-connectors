@@ -10,7 +10,7 @@ jobs:
   odata-tests:
     uses: ./.github/workflows/odata-reusable-build-and-test.yml
     with:
-      java-version: '21'
+      java-version: '25'
       distribution: 'temurin'
       maven-options: '-PcheckFormat package'
     secrets: inherit
@@ -18,6 +18,6 @@ jobs:
   rfc-tests:
     uses: ./.github/workflows/rfc-reusable-unit-test.yml
     with:
-      java-version: '21'
+      java-version: '25'
       distribution: 'temurin'
       maven-options: '-PcheckFormat'

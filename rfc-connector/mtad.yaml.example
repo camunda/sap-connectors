@@ -6,7 +6,7 @@ modules:
     type: java.tomcat
     path: target/rfc-<app-version>.war
     properties:
-      JBP_CONFIG_SAP_MACHINE_JRE: '{ version: 21.+ }'
+      JBP_CONFIG_SAP_MACHINE_JRE: '{ version: 25.+ }'
       LOGGING_LEVEL_COM_SAP_CLOUD_SDK: DEBUG # any of TRACE, DEBUG, INFO, WARN, ERROR, OFF
       LOGGING_LEVEL_COM_SAP_CORE_CONNECTIVITY_JCO: DEBUG # any of TRACE, DEBUG, INFO, WARN, ERROR, OFF
       LOGGING_LEVEL_IO_CAMUNDA_CONNECTOR_SAP_RFC: DEBUG # any of TRACE, DEBUG, INFO, WARN, ERROR, OFF

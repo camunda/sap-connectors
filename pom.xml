@@ -20,7 +20,7 @@
   </modules>
 
   <properties>
-    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.release>25</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -31,11 +31,25 @@
     <version.junit-jupiter>5.14.1</version.junit-jupiter>
     <version.mockito>5.20.0</version.mockito>
     <version.testcontainers>2.0.1</version.testcontainers>
+    <version.lombok>1.18.42</version.lombok>
     <plugin.version.spotless-maven-plugin>3.0.0</plugin.version.spotless-maven-plugin>
   </properties>
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${version.lombok}</version>
+              </path>
+            </annotationProcessorPaths>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>com.diffplug.spotless</groupId>
           <artifactId>spotless-maven-plugin</artifactId>
