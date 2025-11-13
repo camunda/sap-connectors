@@ -110,7 +110,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-
+    <!-- see the rfc-connector/README.md on why this is commented out-->
     <!--    <dependency>-->
     <!--      <groupId>com.sap.conn.jco</groupId>-->
     <!--      <artifactId>com.sap.conn.jco.sapjco3</artifactId>-->
