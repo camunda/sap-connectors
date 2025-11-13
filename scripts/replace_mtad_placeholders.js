@@ -38,7 +38,7 @@ function main() {
         content = safeReplace(content, '<base-domain>', baseDomain);
         content = safeReplace(content, '<client-id>', clientId);
         content = safeReplace(content, '<client-secret>', clientSecret);
-
+        content = safeReplace(content, '<deployment-name>', deploymentName);
         // Handle the connector name replacement (using regex for end-of-line matching)
         const namePattern = /name: sap-rfc-connector$/gm;
         content = content.replace(namePattern, `name: ${deploymentName}`);
