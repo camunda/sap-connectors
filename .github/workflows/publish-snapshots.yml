@@ -71,7 +71,7 @@ jobs:
           MAVEN_PASSWORD: ${{ steps.secrets.outputs.ARTIFACTORY_PSW }}
 
       - name: Lint Connector Bundle Dockerfile - odata-connector
-        uses: hadolint/hadolint-action@v3.2.0
+        uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: odata-connector/Dockerfile
 

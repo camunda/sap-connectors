@@ -18,21 +18,29 @@
   <description>Camunda RFC protocol outbound Connector</description>
 
   <properties>
-    <version.spring-boot>3.3.5</version.spring-boot>
-    <version.spring-boot-starter-camunda>${version.camunda}</version.spring-boot-starter-camunda>
-    <version.logback>1.5.16</version.logback>
+    <version.spring-boot>3.5.7</version.spring-boot>
+    <version.spring-boot-starter-camunda-connectors>${version.camunda}</version.spring-boot-starter-camunda-connectors>
+    <version.logback>1.5.19</version.logback>
+    <version.jackson>2.19.2</version.jackson>
     <plugin.version.maven-war-plugin>3.4.0</plugin.version.maven-war-plugin>
-    <plugin.version.maven-exec-plugin>3.5.0</plugin.version.maven-exec-plugin>
-    <plugin.version.maven-spring-boot>3.4.0</plugin.version.maven-spring-boot>
+    <plugin.version.maven-exec-plugin>3.6.2</plugin.version.maven-exec-plugin>
+    <plugin.version.maven-spring-boot>3.5.7</plugin.version.maven-spring-boot>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${version.jackson}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <!-- SAP BTP cf related artifacts -->
       <dependency>
         <groupId>com.sap.cloud.sjb.cf</groupId>
         <artifactId>cf-tomee7-bom</artifactId>
-        <version>2.13.0</version>
+        <version>2.23.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -82,6 +90,14 @@
       <artifactId>jackson-databind</artifactId>
       <scope>compile</scope>
     </dependency>
+
+    <!-- connector runtime -->
+    <dependency>
+      <groupId>io.camunda.connector</groupId>
+      <artifactId>spring-boot-starter-camunda-connectors</artifactId>
+      <version>${version.spring-boot-starter-camunda-connectors}</version>
+    </dependency>
+
     <!-- connector-specific -->
     <dependency>
       <groupId>com.sap.cloud.sdk</groupId>
@@ -157,14 +173,6 @@
     <dependency>
       <groupId>org.codehaus.janino</groupId>
       <artifactId>janino</artifactId>
-    </dependency>
-
-    <!-- connector runtime -->
-
-    <dependency>
-      <groupId>io.camunda.connector</groupId>
-      <artifactId>spring-boot-starter-camunda-connectors</artifactId>
-      <version>${version.spring-boot-starter-camunda}</version>
     </dependency>
 
     <!-- Element template generator annotations (compile-time only) -->
