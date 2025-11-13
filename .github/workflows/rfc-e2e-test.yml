@@ -15,10 +15,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: set up jdk 21
+      - name: set up jdk 25
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
           cache: maven
 
@@ -45,7 +45,7 @@ jobs:
     needs: deploy-to-btp
     uses: ./.github/workflows/rfc-reusable-e2e-test.yml
     with:
-      java-version: '21'
+      java-version: '25'
       distribution: 'temurin'
       maven-options: ''
     secrets: inherit

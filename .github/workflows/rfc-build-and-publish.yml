@@ -11,7 +11,7 @@ jobs:
   unit-test:
     uses: ./.github/workflows/rfc-reusable-unit-test.yml
     with:
-      java-version: '21'
+      java-version: '25'
       distribution: 'temurin'
       maven-options: '-PcheckFormat'
     secrets: inherit
@@ -24,10 +24,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: set up jdk 21
+      - name: set up jdk 25
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
           cache: maven
       - name: Set connector version

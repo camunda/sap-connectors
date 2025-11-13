@@ -57,7 +57,7 @@ mvn spotless:apply
 ### Development Setup
 
 - Use `asdf` and `direnv` to manage dependencies and environment variables
-- Requires Java 21 (see `.tool-versions`)
+- Requires Java 25 (see `.tool-versions`)
 - Pre-commit hooks are configured in `.pre-commit-config.yaml`
 
 ## Project Structure
