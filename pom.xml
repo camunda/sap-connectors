@@ -28,7 +28,7 @@
     <version.camunda>8.8.2</version.camunda>
     <version.cloud-sdk>5.24.0</version.cloud-sdk>
     <version.assertj>3.27.6</version.assertj>
-    <version.junit-jupiter>5.14.1</version.junit-jupiter>
+    <version.junit-jupiter>6.0.1</version.junit-jupiter>
     <version.mockito>5.20.0</version.mockito>
     <version.testcontainers>2.0.1</version.testcontainers>
     <version.lombok>1.18.42</version.lombok>
