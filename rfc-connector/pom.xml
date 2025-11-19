@@ -20,8 +20,8 @@
   <properties>
     <version.spring-boot>3.5.7</version.spring-boot>
     <version.spring-boot-starter-camunda-connectors>${version.camunda}</version.spring-boot-starter-camunda-connectors>
-    <version.logback>1.5.19</version.logback>
-    <version.jackson>2.19.2</version.jackson>
+    <version.logback>1.5.21</version.logback>
+    <version.jackson>2.20.1</version.jackson>
     <plugin.version.maven-war-plugin>3.4.0</plugin.version.maven-war-plugin>
     <plugin.version.maven-exec-plugin>3.6.2</plugin.version.maven-exec-plugin>
     <plugin.version.maven-spring-boot>3.5.7</plugin.version.maven-spring-boot>
@@ -123,7 +123,7 @@
     <dependency>
       <groupId>com.sap.cloud</groupId>
       <artifactId>neo-java-web-api</artifactId>
-      <version>[3.71.8,5.34.7)</version>
+      <version>[3.71.8,5.35.7)</version>
       <scope>provided</scope>
     </dependency>
 
