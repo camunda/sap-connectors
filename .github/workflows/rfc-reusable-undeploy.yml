@@ -38,7 +38,7 @@ jobs:
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_ID;
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_SECRET;
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Delete cluster
         run: node scripts/manage_cluster.js -d ${{inputs.cluster_uuid}}
         env:
