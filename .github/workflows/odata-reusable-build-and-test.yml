@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Build CAP bookshop test image
         run: |
           docker build -t camunda/sap-odata-connector/cap-bookshop odata-connector/cap-bookshop
