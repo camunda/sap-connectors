@@ -1,6 +1,6 @@
 ### This is currently not used. We should start using it however
 _schema-version: 3.3.0
-ID: sap-odata-connector-<app-version>
+ID: odata-<deployment-name>
 version: "<app-version>"
 modules:
 - name: sap-odata-connector
@@ -20,8 +20,8 @@ modules:
     LOGGING_LEVEL_ROOT: WARN # any of TRACE, DEBUG, INFO, WARN, ERROR, OFF
     LOGGING_LEVEL_IO_CAMUNDA_CONNECTOR_SAP: DEBUG # any of TRACE, DEBUG, INFO, WARN, ERROR, OFF
   requires:
-    - name: dest-camunda-odata-connector
-    - name: conn-camunda-odata-connector
+    - name: dest-<deployment-name>
+    - name: conn-<deployment-name>
   parameters:
     disk-quota: 2G
     docker:
@@ -31,12 +31,12 @@ modules:
     instances: 1
     memory: 1G
 resources:
-  - name: dest-camunda-odata-connector
+  - name: dest-<deployment-name>
     type: org.cloudfoundry.managed-service
     parameters:
       service: destination
       service-plan: lite
-  - name: conn-camunda-odata-connector
+  - name: conn-<deployment-name>
     type: org.cloudfoundry.managed-service
     parameters:
       service: connectivity
