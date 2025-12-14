@@ -71,7 +71,7 @@ jobs:
           CAMUNDA_DESIRED_GENERATION: ${{ needs.extract-version.outputs.camunda_release }}
           CLUSTER_NAME: ${{ steps.set_deployment_name.outputs.deployment-name }}
       - name: Upload client config for e2e test
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: client-config
           path: values.json
@@ -95,7 +95,7 @@ jobs:
           cat mtad.yaml
 
       - name: Upload mtad.yaml
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: mtad
           path: mtad.yaml
@@ -132,7 +132,7 @@ jobs:
 
       # second, prep deployment descriptor
       - name: download mtad.yaml
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: mtad
           path: rfc-connector/
