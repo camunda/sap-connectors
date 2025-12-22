@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: set up jdk ${{ inputs.java-version }}
         uses: actions/setup-java@v5
@@ -29,7 +29,7 @@ jobs:
 
       # second, prep deployment descriptor
       - name: download mtad.yaml
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: client-config
           path: .

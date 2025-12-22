@@ -34,7 +34,7 @@ jobs:
     needs: extract-version
     steps:
       - name: checkout mtad.yaml.example
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: camunda/sap-connectors
           ref: ${{ env.camunda_release }}
@@ -69,7 +69,7 @@ jobs:
           cat yaml/mtad.yaml
 
       - name: Upload mtad.yaml
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: mtad
           path: yaml/mtad.yaml
@@ -82,7 +82,7 @@ jobs:
 
     steps:
       - name: download mtad.yaml
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: mtad
       - name: deploy ${{inputs.connector_version}} to BTP
