@@ -21,7 +21,6 @@
     <version.spring-boot>3.5.9</version.spring-boot>
     <version.spring-boot-starter-camunda-connectors>${version.camunda}</version.spring-boot-starter-camunda-connectors>
     <version.logback>1.5.23</version.logback>
-    <version.jackson>2.20.1</version.jackson>
     <plugin.version.maven-war-plugin>3.4.0</plugin.version.maven-war-plugin>
     <plugin.version.maven-exec-plugin>3.6.3</plugin.version.maven-exec-plugin>
     <plugin.version.maven-spring-boot>3.5.9</plugin.version.maven-spring-boot>
@@ -29,13 +28,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>com.fasterxml.jackson</groupId>
-        <artifactId>jackson-bom</artifactId>
-        <version>${version.jackson}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
       <!-- SAP BTP cf related artifacts -->
       <dependency>
         <groupId>com.sap.cloud.sjb.cf</groupId>
