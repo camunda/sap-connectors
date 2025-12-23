@@ -40,7 +40,7 @@ function main() {
         content = safeReplace(content, '<client-secret>', clientSecret);
         content = safeReplace(content, '<deployment-name>', deploymentName);
         // Handle the connector name replacement (using regex for end-of-line matching)
-        const namePattern = /name: sap-rfc-connector$/gm;
+        const namePattern = /name: sap-(rfc|odata)-connector$/gm;
         content = content.replace(namePattern, `name: ${deploymentName}`);
         
         // Write the modified content back
