@@ -1,1 +1,2 @@
 io.camunda.connector.sap.odata.ODataConnector
+io.camunda.connector.sap.odata.LegacyODataConnector
