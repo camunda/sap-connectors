@@ -35,4 +35,46 @@ jobs:
         run: mvn ${{ inputs.maven-options }} test
         working-directory: rfc-connector
 
+      - name: Package WAR for smoke test
+        run: mvn -B package -DskipTests
+        working-directory: rfc-connector
+
+      - name: Smoke-test RFC connector WAR startup
+        working-directory: rfc-connector
+        run: |
+          set -euo pipefail
+
+          WAR=$(find target -maxdepth 1 -name 'rfc-*.war' -print -quit)
+          if [ -z "$WAR" ]; then
+            echo "ERROR: No WAR file found in target/" >&2
+            exit 1
+          fi
+          echo "Starting $WAR ..."
+
+          java -jar "$WAR" > /tmp/rfc-smoke.log 2>&1 &
+          PID=$!
+          trap 'kill $PID 2>/dev/null || true' EXIT
+
+          # give Spring Boot time to attempt startup
+          sleep 20
+
+          echo "--- WAR logs ---"
+          cat /tmp/rfc-smoke.log
+
+          # PASS: Spring Boot started loading (proves JVM + classpath are OK)
+          if ! grep -q 'Starting ApplicationRuntime' /tmp/rfc-smoke.log; then
+            echo "FAIL: Spring Boot did not start — likely a classloading or JVM issue"
+            exit 1
+          fi
+
+          # wait a bit longer for any late classloading errors to surface
+          sleep 10
+
+          # FAIL: classloading errors indicate dependency/version problems
+          if grep -qE 'UnsupportedClassVersionError|NoClassDefFoundError|NoSuchMethodError|ClassNotFoundException' /tmp/rfc-smoke.log; then
+            echo "FAIL: classpath error detected in WAR logs"
+            exit 1
+          fi
+
+          echo "PASS: connector booted to config-error stage (expected without secrets)"
 
