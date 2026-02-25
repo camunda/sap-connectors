@@ -45,3 +45,50 @@ jobs:
           destinations: ${{ steps.vault-secrets.outputs.DESTINATIONS }}
         working-directory: odata-connector
         run: mvn -B ${{ inputs.maven-options }} --file pom.xml
+
+      - name: Determine Camunda Connectors version
+        id: camunda_version
+        run: |
+          set -euo pipefail
+          VERSION=$(mvn -q -DforceStdout help:evaluate -Dexpression=version.camunda)
+          if [ -z "$VERSION" ]; then
+            echo "ERROR: Failed to resolve 'version.camunda' via Maven (VERSION is empty)." >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Smoke-test OData connector Docker image
+        run: |
+          set -euo pipefail
+          trap 'docker rm -f odata-smoke 2>/dev/null || true' EXIT
+
+          docker build \
+            --build-arg CAMUNDA_CONNECTORS_VERSION=${{ steps.camunda_version.outputs.version }} \
+            -t sap-odata-connector:smoke-test \
+            odata-connector/
+
+          docker run -d --name odata-smoke sap-odata-connector:smoke-test
+          # give Spring Boot time to attempt startup and surface any classloading errors
+          sleep 25
+          docker logs odata-smoke > /tmp/odata-smoke.log 2>&1
+
+          echo "--- container logs ---"
+          cat /tmp/odata-smoke.log
+
+          # PASS: Spring Boot started loading (proves JVM + classpath are OK)
+          if ! grep -q 'Starting ConnectorRuntimeApplication' /tmp/odata-smoke.log; then
+            echo "FAIL: Spring Boot did not start — likely a classloading or JVM issue"
+            exit 1
+          fi
+
+          # re-capture logs after a brief wait to catch any late classloading errors
+          sleep 10
+          docker logs odata-smoke > /tmp/odata-smoke.log 2>&1
+
+          # FAIL: classloading errors indicate dependency/version problems
+          if grep -qE 'UnsupportedClassVersionError|NoClassDefFoundError|NoSuchMethodError|ClassNotFoundException' /tmp/odata-smoke.log; then
+            echo "FAIL: classpath error detected in container logs"
+            exit 1
+          fi
+
+          echo "PASS: connector booted to config-error stage (expected without secrets)"
