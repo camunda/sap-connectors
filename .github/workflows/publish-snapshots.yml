@@ -65,7 +65,7 @@ jobs:
           mirrors: '[{"url": "https://repository.nexus.camunda.cloud/content/groups/internal/", "id": "camunda-nexus", "mirrorOf": "*,!confluent,!shibboleth", "name": "camunda Nexus"}]'
 
       - name: Build Artifacts
-        run: mvn -B compile generate-sources source:jar javadoc:jar deploy -DskipTests
+        run: mvn -B package -DskipTests
         env:
           MAVEN_USERNAME: ${{ steps.secrets.outputs.ARTIFACTORY_USR }}
           MAVEN_PASSWORD: ${{ steps.secrets.outputs.ARTIFACTORY_PSW }}
@@ -102,12 +102,12 @@ jobs:
           echo "Resolved version.camunda=$VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Build and Push Docker Image tag SNAPSHOT - OData Connector
+      - name: Build and Push Docker Image tag 8.7-v1-fallback-2 - OData Connector
         uses: docker/build-push-action@v6
         with:
           context: odata-connector
           push: true
-          tags: camunda/sap-odata-connector:SNAPSHOT
+          tags: camunda/sap-odata-connector:8.7-v1-fallback-2
           platforms: linux/amd64,linux/arm64
           provenance: false
           build-args: |
