@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.33.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.7.0">
+  <bpmn:process id="read_bps_from_s4_v1" name="Read BPs from S/4 (v1 fallback)" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Activity_v1_get" />
+    <bpmn:endEvent id="EndEvent_1">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_v1_get" name="query BPs from S/4 (v1 flat vars)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:sap-odata:2" retries="0" />
+        <zeebe:ioMapping>
+          <zeebe:input source="s4" target="destination" />
+          <zeebe:input source="/sap/opu/odata/sap/API_BUSINESS_PARTNER" target="oDataService" />
+          <zeebe:input source="A_BusinessPartner" target="entityOrEntitySet" />
+          <zeebe:input source="get" target="httpMethod.httpMethod" />
+          <zeebe:input source="V2" target="httpMethod.oDataVersionGet.oDataVersionGet" />
+          <zeebe:input source="CreatedByUser eq 'STUDENT037'" target="httpMethod.filter" />
+          <zeebe:input source="=false" target="httpMethod.oDataVersionGet.inlinecount" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultVariable" value="BusinessPartners" />
+          <zeebe:header key="errorExpression" value="=if error.code = &quot;400&quot; then&#10;  bpmnError(&quot;400&quot;, &quot;client request is bad&quot;, { errorMessage: error.message, errorCode: error.code })&#10;else if error.code = &quot;404&quot; then&#10;  bpmnError(&quot;404&quot;, &quot;queried resource not found&quot;, { errorMessage: error.message, errorCode: error.code })&#10;else if error.code = &quot;500&quot; then &#10;  bpmnError(&quot;500&quot;, &quot;server error&quot;, { errorMessage: error.message, errorCode: error.code })&#10;else if error.code = &quot;503&quot; then &#10;  bpmnError(&quot;503&quot;, &quot;I'm just an proxy teapot&quot;, { errorMessage: error.message, errorCode: error.code })&#10;else &#10;  null" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Activity_v1_get" targetRef="EndEvent_1" />
+    <bpmn:boundaryEvent id="ErrorBoundary_1" attachedToRef="Activity_v1_get">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=errorMessage" target="ov_errorMessage" />
+          <zeebe:output source="=errorCode" target="ov_errorCode" />
+          <zeebe:output source="=error" target="ov_error" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDef_1" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="ErrorBoundary_1" targetRef="EndEvent_1" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="read_bps_from_s4_v1">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="150" y="100" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="382" y="100" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_v1_get_di" bpmnElement="Activity_v1_get">
+        <dc:Bounds x="230" y="78" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ErrorBoundary_1_di" bpmnElement="ErrorBoundary_1">
+        <dc:Bounds x="282" y="140" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="186" y="118" />
+        <di:waypoint x="230" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="330" y="118" />
+        <di:waypoint x="382" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="300" y="176" />
+        <di:waypoint x="300" y="196" />
+        <di:waypoint x="400" y="196" />
+        <di:waypoint x="400" y="136" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
