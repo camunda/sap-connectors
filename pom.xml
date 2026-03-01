@@ -29,7 +29,7 @@
     <version.cloud-sdk>5.26.0</version.cloud-sdk>
     <version.assertj>3.27.7</version.assertj>
     <version.junit-jupiter>6.0.3</version.junit-jupiter>
-    <version.mockito>5.21.0</version.mockito>
+    <version.mockito>5.22.0</version.mockito>
     <version.testcontainers>2.0.3</version.testcontainers>
     <version.lombok>1.18.42</version.lombok>
     <plugin.version.spotless-maven-plugin>3.2.1</plugin.version.spotless-maven-plugin>
