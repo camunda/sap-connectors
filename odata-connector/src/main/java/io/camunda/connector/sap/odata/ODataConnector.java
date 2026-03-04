@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public class ODataConnector implements OutboundConnectorFunction {
   private static final Logger LOGGER = LoggerFactory.getLogger(ODataConnector.class);
 
-  public static final String NAME = "SAP_ODATA_CONNECTOR";
+  public static final String NAME = "PATCHED_SAP_ODATA_CONNECTOR";
   public static final int VERSION = 2;
   // the format "io.camunda:<type>:<version>" is important as this
   // is in line w/ "zeebe-analytics", exporting usage of the connector task to mixpanel (for SaaS)
