@@ -103,7 +103,7 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Build and Push Docker Image tag SNAPSHOT - OData Connector
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: odata-connector
           push: true
