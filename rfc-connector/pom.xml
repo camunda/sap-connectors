@@ -146,7 +146,7 @@
     <dependency>
       <groupId>com.sap.cloud</groupId>
       <artifactId>neo-java-web-api</artifactId>
-      <version>[3.71.8,5.41.2)</version>
+      <version>[3.71.8,5.42.5)</version>
       <scope>provided</scope>
     </dependency>
 
