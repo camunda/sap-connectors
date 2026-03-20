@@ -17,7 +17,7 @@
   <description>Camunda SAP OData protocol outbound Connector</description>
 
   <properties>
-    <plugin.version.maven-shade-plugin>3.6.1</plugin.version.maven-shade-plugin>
+    <plugin.version.maven-shade-plugin>3.6.2</plugin.version.maven-shade-plugin>
   </properties>
 
   <dependencies>
