@@ -18,10 +18,10 @@
   <description>Camunda RFC protocol outbound Connector</description>
 
   <properties>
-    <version.spring-boot>3.5.11</version.spring-boot>
+    <version.spring-boot>3.5.12</version.spring-boot>
     <version.spring-boot-starter-camunda>${version.camunda}</version.spring-boot-starter-camunda>
     <version.logback>1.5.32</version.logback>
-    <version.jackson>2.21.1</version.jackson>
+    <version.jackson>2.21.2</version.jackson>
     <plugin.version.maven-war-plugin>3.4.0</plugin.version.maven-war-plugin>
     <plugin.version.maven-exec-plugin>3.6.3</plugin.version.maven-exec-plugin>
     <plugin.version.maven-spring-boot>${version.spring-boot}</plugin.version.maven-spring-boot>
