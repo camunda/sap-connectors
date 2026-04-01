@@ -5,12 +5,12 @@
   <parent>
     <groupId>io.camunda.connector.sap</groupId>
     <artifactId>connectors-sap-parent</artifactId>
-    <version>8.8.0-SNAPSHOT</version>
+    <version>8.9.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>io.camunda.connector.sap.odata</groupId>
   <artifactId>odata</artifactId>
-  <version>8.8.0-SNAPSHOT</version>
+  <version>8.9.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>sap-odata-connector</name>
