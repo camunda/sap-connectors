@@ -5,12 +5,11 @@
   <parent>
     <groupId>io.camunda.connector.sap</groupId>
     <artifactId>connectors-sap-parent</artifactId>
-    <version>8.8.0-SNAPSHOT</version>
+    <version>8.9.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>io.camunda.connector.sap.odata</groupId>
   <artifactId>odata</artifactId>
-  <version>8.8.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>sap-odata-connector</name>
@@ -27,8 +26,8 @@
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-core</artifactId>
       <version>${version.camunda}</version>
-      <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-validation</artifactId>
@@ -41,6 +40,12 @@
       <groupId>com.sap.cloud.sdk</groupId>
       <artifactId>sdk-core</artifactId>
       <version>${version.cloud-sdk}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>jcl-over-slf4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -53,6 +58,14 @@
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-databind</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>jcl-over-slf4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -60,14 +73,29 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${version.slf4j}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Element template generator annotations (compile-time only) -->
     <dependency>
       <groupId>io.camunda.connector</groupId>
-      <artifactId>element-template-generator-core</artifactId>
+      <artifactId>element-template-generator-annotations</artifactId>
       <version>${version.camunda}</version>
       <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>io.camunda.connector</groupId>
+      <artifactId>connector-validation</artifactId>
+      <version>${version.camunda}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.camunda.connector</groupId>
+      <artifactId>connector-object-mapper</artifactId>
+      <version>${version.camunda}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- test dependencies -->
@@ -107,13 +135,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>${version.slf4j}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>testcontainers-junit-jupiter</artifactId>
       <version>${version.testcontainers}</version>
@@ -126,12 +147,6 @@
       <artifactId>spring-boot-starter-camunda-connectors</artifactId>
       <version>${version.camunda}</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-classic</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
   </dependencies>
@@ -155,6 +170,17 @@
             <shadedClassifierName>with-dependencies</shadedClassifierName>
             <!-- no need for this since we are not consuming this artifact downstream -->
             <createDependencyReducedPom>false</createDependencyReducedPom>
+            <!--
+              Relocate org.apache.hc to prevent ClassNotFoundException / NoClassDefFoundError in
+              the Camunda Connector runtime. The Camunda Client relies on its own version of Apache HttpClient.
+              If we don't shade it into a distinct package namespace, it clashes with ours.
+            -->
+            <relocations>
+              <relocation>
+                <pattern>org.apache.hc</pattern>
+                <shadedPattern>io.camunda.connector.sap.odata.shaded.org.apache.hc</shadedPattern>
+              </relocation>
+            </relocations>
             <filters>
               <filter>
                 <artifact>*:*</artifact>
