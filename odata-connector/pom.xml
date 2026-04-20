@@ -170,6 +170,11 @@
             <shadedClassifierName>with-dependencies</shadedClassifierName>
             <!-- no need for this since we are not consuming this artifact downstream -->
             <createDependencyReducedPom>false</createDependencyReducedPom>
+            <!--
+              Relocate org.apache.hc to prevent ClassNotFoundException / NoClassDefFoundError in
+              the Camunda Connector runtime. The Camunda Client relies on its own version of Apache HttpClient.
+              If we don't shade it into a distinct package namespace, it clashes with ours.
+            -->
             <relocations>
               <relocation>
                 <pattern>org.apache.hc</pattern>
