@@ -1,6 +1,6 @@
 package io.camunda.connector.sap.rfc.model;
 
-import io.camunda.connector.generator.dsl.Property;
+import io.camunda.connector.generator.java.annotation.FeelMode;
 import io.camunda.connector.generator.java.annotation.TemplateProperty;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -9,7 +9,7 @@ public record RFCConnectorRequest(
     @TemplateProperty(
             label = "BTP destination name",
             description = "BTP destination pointing to the SAP System to connect to (e.g. a4h)",
-            feel = Property.FeelMode.optional)
+            feel = FeelMode.optional)
         @NotEmpty
         String destination,
     @TemplateProperty(
@@ -22,12 +22,12 @@ public record RFCConnectorRequest(
             },
             constraints = @TemplateProperty.PropertyConstraints(notEmpty = true))
         String moduleType,
-    @TemplateProperty(label = "BAPI/module name", feel = Property.FeelMode.optional) @NotEmpty
+    @TemplateProperty(label = "BAPI/module name", feel = FeelMode.optional) @NotEmpty
         String moduleName,
     @TemplateProperty(
             label = "exporting parameter",
             description = "variables to send to the the module/BAPI",
-            feel = Property.FeelMode.optional,
+            feel = FeelMode.optional,
             optional = true,
             defaultValue = "=[{name:\"param\", type:\"type\", value:\"value\"}]")
         @Pattern(
@@ -39,7 +39,7 @@ public record RFCConnectorRequest(
     @TemplateProperty(
             label = "importing parameter",
             description = "which variables the module/BAPI returns should be picked up",
-            feel = Property.FeelMode.optional,
+            feel = FeelMode.optional,
             optional = true,
             defaultValue = "=[{name:\"param\", type:\"type\"}]")
         @Pattern(
@@ -51,7 +51,7 @@ public record RFCConnectorRequest(
             label = "changing parameter",
             description =
                 "which variables the module/BAPI receives and returns should be processed",
-            feel = Property.FeelMode.optional,
+            feel = FeelMode.optional,
             optional = true,
             defaultValue = "=[{name:\"param\", type:\"type\", value:\"value\"}]",
             condition =
@@ -67,7 +67,7 @@ public record RFCConnectorRequest(
             label = "tables parameter",
             description =
                 "which tables the module/BAPI receives and returns should be managed,\n for RETURN table BAPIRET2, set 'isReturn' to true",
-            feel = Property.FeelMode.optional,
+            feel = FeelMode.optional,
             optional = true,
             type = TemplateProperty.PropertyType.String,
             defaultValue =

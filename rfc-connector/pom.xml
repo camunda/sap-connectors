@@ -5,12 +5,11 @@
   <parent>
     <groupId>io.camunda.connector.sap</groupId>
     <artifactId>connectors-sap-parent</artifactId>
-    <version>8.8.0-SNAPSHOT</version>
+    <version>8.9.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>io.camunda.connector.sap.rfc</groupId>
   <artifactId>rfc</artifactId>
-  <version>8.8.0-SNAPSHOT</version>
   <!--  necessary for SAP BTP cf to pick up SAP's JCo lib -->
   <packaging>war</packaging>
 
@@ -18,7 +17,7 @@
   <description>Camunda RFC protocol outbound Connector</description>
 
   <properties>
-    <version.spring-boot>3.5.13</version.spring-boot>
+    <version.spring-boot>4.0.5</version.spring-boot>
     <version.spring-boot-starter-camunda-connectors>${version.camunda}</version.spring-boot-starter-camunda-connectors>
     <version.logback>1.5.32</version.logback>
     <plugin.version.maven-war-plugin>3.4.0</plugin.version.maven-war-plugin>
@@ -201,9 +200,23 @@
     <!-- Element template generator annotations (compile-time only) -->
     <dependency>
       <groupId>io.camunda.connector</groupId>
-      <artifactId>element-template-generator-core</artifactId>
+      <artifactId>element-template-generator-annotations</artifactId>
       <version>${version.camunda}</version>
       <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>io.camunda.connector</groupId>
+      <artifactId>connector-validation</artifactId>
+      <version>${version.camunda}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.camunda.connector</groupId>
+      <artifactId>connector-object-mapper</artifactId>
+      <version>${version.camunda}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- test dependencies -->
