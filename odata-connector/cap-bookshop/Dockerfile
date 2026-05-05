@@ -11,7 +11,8 @@ FROM node:24-trixie
 WORKDIR /app
 
 COPY . .
-RUN npm install
+
+RUN npm ci --ignore-scripts
 
 EXPOSE 4004
 ENV PORT=4004

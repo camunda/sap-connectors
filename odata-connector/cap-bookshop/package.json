@@ -10,11 +10,11 @@
     "index.js"
   ],
   "devDependencies": {
-    "@cap-js/sqlite": "*"
+    "@cap-js/sqlite": "2.4.0"
   },
   "dependencies": {
     "@cap-js-community/odata-v2-adapter": "^1.13.1",
-    "@sap/cds": ">=7",
+    "@sap/cds": "9.9.1",
     "express": "^4.17.1"
   },
   "scripts": {
