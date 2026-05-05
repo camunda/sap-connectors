@@ -31,8 +31,8 @@ jobs:
           secrets: |
             secret/data/products/connectors/ci/common DOCKERHUB_USER;
             secret/data/products/connectors/ci/common DOCKERHUB_PASSWORD;
-            secret/data/products/connectors/ci/common ARTIFACTORY_USR;
-            secret/data/products/connectors/ci/common ARTIFACTORY_PSW;
+            secret/data/products/connectors/ci/nexus USER | CI_NEXUS_USR;
+            secret/data/products/connectors/ci/nexus PASSWORD | CI_NEXUS_PSW;
 
       - name: Restore cache
         uses: actions/cache@v5
@@ -59,16 +59,16 @@ jobs:
           servers: |
             [{
                "id": "camunda-nexus",
-               "username": "${{ steps.secrets.outputs.ARTIFACTORY_USR }}",
-               "password": "${{ steps.secrets.outputs.ARTIFACTORY_PSW }}"
+               "username": "${{ steps.secrets.outputs.CI_NEXUS_USR }}",
+               "password": "${{ steps.secrets.outputs.CI_NEXUS_PSW }}"
              }]
           mirrors: '[{"url": "https://repository.nexus.camunda.cloud/content/groups/internal/", "id": "camunda-nexus", "mirrorOf": "*,!confluent,!shibboleth", "name": "camunda Nexus"}]'
 
       - name: Build Artifacts
         run: mvn -B compile generate-sources source:jar javadoc:jar deploy -DskipTests
         env:
-          MAVEN_USERNAME: ${{ steps.secrets.outputs.ARTIFACTORY_USR }}
-          MAVEN_PASSWORD: ${{ steps.secrets.outputs.ARTIFACTORY_PSW }}
+          MAVEN_USERNAME: ${{ steps.secrets.outputs.CI_NEXUS_USR }}
+          MAVEN_PASSWORD: ${{ steps.secrets.outputs.CI_NEXUS_PSW }}
 
       - name: Lint Connector Bundle Dockerfile - odata-connector
         uses: hadolint/hadolint-action@v3.3.0
