@@ -26,14 +26,14 @@
 
     <version.slf4j>2.0.17</version.slf4j>
     <version.camunda>8.8.8</version.camunda>
-    <version.cloud-sdk>5.27.0</version.cloud-sdk>
+    <version.cloud-sdk>5.29.0</version.cloud-sdk>
     <version.assertj>3.27.7</version.assertj>
     <version.junit-jupiter>6.0.3</version.junit-jupiter>
     <version.mockito>5.23.0</version.mockito>
-    <version.testcontainers>2.0.4</version.testcontainers>
-    <version.lombok>1.18.44</version.lombok>
+    <version.testcontainers>2.0.5</version.testcontainers>
+    <version.lombok>1.18.46</version.lombok>
     <plugin.version.spotless-maven-plugin>3.4.0</plugin.version.spotless-maven-plugin>
-    <version.jackson>2.21.2</version.jackson>
+    <version.jackson>2.21.3</version.jackson>
   </properties>
   <dependencyManagement>
     <dependencies>
