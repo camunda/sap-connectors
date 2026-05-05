@@ -5,12 +5,11 @@
   <parent>
     <groupId>io.camunda.connector.sap</groupId>
     <artifactId>connectors-sap-parent</artifactId>
-    <version>8.8.0-SNAPSHOT</version>
+    <version>8.9.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>io.camunda.connector.sap.rfc</groupId>
   <artifactId>rfc</artifactId>
-  <version>8.8.0-SNAPSHOT</version>
   <!--  necessary for SAP BTP cf to pick up SAP's JCo lib -->
   <packaging>war</packaging>
 
@@ -18,12 +17,9 @@
   <description>Camunda RFC protocol outbound Connector</description>
 
   <properties>
-    <version.spring-boot>3.5.13</version.spring-boot>
-    <version.spring-boot-starter-camunda-connectors>${version.camunda}</version.spring-boot-starter-camunda-connectors>
+    <version.spring-boot>4.0.5</version.spring-boot>
     <version.logback>1.5.32</version.logback>
-    <plugin.version.maven-war-plugin>3.4.0</plugin.version.maven-war-plugin>
     <plugin.version.maven-exec-plugin>3.6.3</plugin.version.maven-exec-plugin>
-    <plugin.version.maven-spring-boot>${version.spring-boot}</plugin.version.maven-spring-boot>
   </properties>
 
   <dependencyManagement>
@@ -75,12 +71,6 @@
         <version>${version.spring-boot}</version>
         <type>pom</type>
         <scope>import</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-logging</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
     </dependencies>
 
@@ -118,7 +108,7 @@
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>spring-boot-starter-camunda-connectors</artifactId>
-      <version>${version.spring-boot-starter-camunda-connectors}</version>
+      <version>${version.camunda}</version>
     </dependency>
 
     <!-- connector-specific -->
@@ -201,9 +191,16 @@
     <!-- Element template generator annotations (compile-time only) -->
     <dependency>
       <groupId>io.camunda.connector</groupId>
-      <artifactId>element-template-generator-core</artifactId>
+      <artifactId>element-template-generator-annotations</artifactId>
       <version>${version.camunda}</version>
       <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>io.camunda.connector</groupId>
+      <artifactId>connector-object-mapper</artifactId>
+      <version>${version.camunda}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- test dependencies -->
@@ -234,13 +231,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>${version.slf4j}</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -251,13 +241,6 @@
         <version>${plugin.version.maven-exec-plugin}</version>
         <configuration>
           <mainClass>io.camunda.connector.sap.rfc.ApplicationRuntime</mainClass>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <useDefaultManifestFile>false</useDefaultManifestFile>
         </configuration>
       </plugin>
       <plugin>
@@ -287,16 +270,9 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>com.diffplug.spotless</groupId>
-        <artifactId>spotless-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${plugin.version.maven-spring-boot}</version>
-        <configuration>
-          <skip>false</skip>
-        </configuration>
+        <version>${version.spring-boot}</version>
         <executions>
           <execution>
             <id>repackage</id>
@@ -308,54 +284,5 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <!-- profile to auto format -->
-    <profile>
-      <id>autoFormat</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.diffplug.spotless</groupId>
-            <artifactId>spotless-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>spotless-format</id>
-                <goals>
-                  <goal>apply</goal>
-                </goals>
-                <phase>process-sources</phase>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- profile to perform strict validation checks -->
-    <profile>
-      <id>checkFormat</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.diffplug.spotless</groupId>
-            <artifactId>spotless-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>spotless-check</id>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-                <phase>validate</phase>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>
