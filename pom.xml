@@ -12,7 +12,7 @@
 
   <groupId>io.camunda.connector.sap</groupId>
   <artifactId>connectors-sap-parent</artifactId>
-  <version>8.8.0-SNAPSHOT</version>
+  <version>8.9.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>rfc-connector</module>
@@ -25,7 +25,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <version.slf4j>2.0.17</version.slf4j>
-    <version.camunda>8.8.8</version.camunda>
+    <version.camunda>8.9.1</version.camunda>
     <version.cloud-sdk>5.27.0</version.cloud-sdk>
     <version.assertj>3.27.7</version.assertj>
     <version.junit-jupiter>6.0.3</version.junit-jupiter>
@@ -100,11 +100,54 @@
         </plugin>
       </plugins>
     </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>com.diffplug.spotless</groupId>
-        <artifactId>spotless-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
   </build>
+
+  <profiles>
+    <!-- auto-format sources during build (inherited by all modules) -->
+    <profile>
+      <id>autoFormat</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>spotless-format</id>
+                <goals>
+                  <goal>apply</goal>
+                </goals>
+                <phase>process-sources</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- strict format validation (inherited by all modules) -->
+    <profile>
+      <id>checkFormat</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>spotless-check</id>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+                <phase>validate</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
