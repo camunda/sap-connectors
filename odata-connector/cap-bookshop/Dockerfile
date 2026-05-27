@@ -13,6 +13,7 @@ WORKDIR /app
 COPY . .
 
 RUN npm ci --ignore-scripts
+RUN npm rebuild better-sqlite3
 
 EXPOSE 4004
 ENV PORT=4004
