@@ -11,7 +11,9 @@ FROM node:24-trixie
 WORKDIR /app
 
 COPY . .
-RUN npm install
+
+RUN npm ci --ignore-scripts
+RUN npm rebuild better-sqlite3
 
 EXPOSE 4004
 ENV PORT=4004
