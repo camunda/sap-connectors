@@ -200,7 +200,6 @@
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-object-mapper</artifactId>
       <version>${version.camunda}</version>
-      <scope>provided</scope>
     </dependency>
 
     <!-- test dependencies -->
