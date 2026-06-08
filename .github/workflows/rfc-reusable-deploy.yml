@@ -157,3 +157,27 @@ jobs:
           cf login -a ${{ inputs.cf_api_endpoint }} -u ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_EMAIL }} \
           -p ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_PASSWORD }} -o ${{ inputs.cf_org }} -s ${{ inputs.cf_space }}
           cf deploy ./ -f
+
+      - name: dump app + MTA logs on failure
+        if: failure()
+        env:
+          APP: ${{ needs.create-cluster.outputs.deployment-name }}
+        run: |
+          set +e
+          echo "=== cf target ==="
+          cf target
+          echo "=== cf apps ==="
+          cf apps
+          echo "=== cf app $APP ==="
+          cf app "$APP"
+          echo "=== cf events $APP ==="
+          cf events "$APP"
+          echo "=== cf logs $APP --recent ==="
+          cf logs "$APP" --recent
+          echo "=== cf mta-ops ==="
+          cf mta-ops
+          OP_ID=$(cf mta-ops | awk 'NR>1 && $2=="deploy" {print $1}' | tail -1)
+          if [ -n "$OP_ID" ]; then
+            echo "=== cf dmol -i $OP_ID ==="
+            cf dmol -i "$OP_ID"
+          fi
