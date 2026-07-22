@@ -17,8 +17,8 @@
   <description>Camunda RFC protocol outbound Connector</description>
 
   <properties>
-    <version.spring-boot>4.0.5</version.spring-boot>
-    <version.logback>1.5.32</version.logback>
+    <version.spring-boot>4.1.0</version.spring-boot>
+    <version.logback>1.5.34</version.logback>
     <plugin.version.maven-exec-plugin>3.6.3</plugin.version.maven-exec-plugin>
   </properties>
 
@@ -88,19 +88,19 @@
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
       <artifactId>httpclient5</artifactId>
-      <version>5.6.1</version>
+      <version>5.6.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents.core5</groupId>
       <artifactId>httpcore5</artifactId>
-      <version>5.4.2</version>
+      <version>5.4.3</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents.core5</groupId>
       <artifactId>httpcore5-h2</artifactId>
-      <version>5.4.2</version>
+      <version>5.4.3</version>
       <scope>compile</scope>
     </dependency>
 
@@ -136,7 +136,7 @@
     <dependency>
       <groupId>com.sap.cloud</groupId>
       <artifactId>neo-java-web-api</artifactId>
-      <version>[3.71.8,5.42.5)</version>
+      <version>[3.71.8,5.51.6)</version>
       <scope>provided</scope>
     </dependency>
 
