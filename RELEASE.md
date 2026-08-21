@@ -39,7 +39,7 @@ Open a PR against `release/X.Y` with the new version in `pom.xml`:
 <!-- change this -->
 <version>8.9.3-SNAPSHOT</version>
 <!-- to this -->
-<version>8.9.4-SNAPSHOT</version>
+<version>8.10.0-SNAPSHOT</version>
 ```
 
 Merge the PR and wait for CI to go green.
