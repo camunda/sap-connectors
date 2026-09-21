@@ -22,6 +22,7 @@ A single release run publishes **both** connectors at the same version:
 | OData | Docker image `camunda/sap-odata-connector:X.Y.Z` | Docker Hub |
 | OData | Element templates JSON + `mtad.yaml.example` | GitHub Release (`odata-X.Y.Z`) |
 | RFC | `.war` file + element templates JSON + `mtad.yaml.example` | GitHub Release (`rfc-X.Y.Z`) |
+| RFC | `scratch` image containing only the released WAR (for CVE scanning, not a supported runtime) | Internal GAR `europe-west1-docker.pkg.dev/team-infosec/camunda/sap-rfc-connector:X.Y.Z` |
 
 ## Prerequisites
 
@@ -81,6 +82,7 @@ Both connector releases run in parallel after the version is resolved.
 1. Runs unit tests and smoke tests.
 2. Sets the version, builds the `.war`.
 3. Creates a GitHub release tagged `rfc-X.Y.Z` with the `.war`, element templates, and `mtad.yaml.example`.
+4. Stages the released `.war` into a minimal `scratch` image (see `rfc-connector/Dockerfile.scanner`) and pushes it to the internal InfoSec Google Artifact Registry so it can be picked up by CVE scanning. This image is not a supported RFC runtime distribution — see the SAP JCo licensing note in `AGENT.md`.
 
 ### 4. Verify the release
 
@@ -88,6 +90,7 @@ After the workflow succeeds:
 
 - [ ] GitHub releases exist for `odata-X.Y.Z` and `rfc-X.Y.Z` with the correct artifacts.
 - [ ] `camunda/sap-odata-connector:X.Y.Z` is visible on Docker Hub.
+- [ ] `europe-west1-docker.pkg.dev/team-infosec/camunda/sap-rfc-connector:X.Y.Z` is visible in the internal Artifact Registry.
 - [ ] Download and sanity-check the element templates JSON from each release.
 
 ## Releasing multiple minor lines
