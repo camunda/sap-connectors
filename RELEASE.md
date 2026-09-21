@@ -82,7 +82,7 @@ Both connector releases run in parallel after the version is resolved.
 1. Runs unit tests and smoke tests.
 2. Sets the version, builds the `.war`.
 3. Creates a GitHub release tagged `rfc-X.Y.Z` with the `.war`, element templates, and `mtad.yaml.example`.
-4. Stages the released `.war` into a minimal `scratch` image (see `rfc-connector/Dockerfile.scanner`) and pushes it to the internal InfoSec Google Artifact Registry so it can be picked up by CVE scanning. This image is not a supported RFC runtime distribution — see the SAP JCo licensing note in `AGENT.md`.
+4. Stages the released `.war` into a minimal `scratch` image (see `rfc-connector/Dockerfile.scanner`) and pushes it to the internal InfoSec Google Artifact Registry so it can be picked up by CVE scanning. This image is not a supported RFC runtime distribution — see the SAP JCo licensing note in `rfc-connector/README.md`.
 
 ### 4. Verify the release
 

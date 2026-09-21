@@ -9,12 +9,13 @@ on:
 
 jobs:
   unit-test:
+    permissions:
+      contents: read   # tests only need to read the repository
     uses: ./.github/workflows/rfc-reusable-unit-test.yml
     with:
       java-version: '25'
       distribution: 'temurin'
       maven-options: '-PcheckFormat'
-    secrets: inherit
 
 
   build-and-gh_release:
@@ -58,6 +59,10 @@ jobs:
         run: |
           set -euo pipefail
           RFC_WAR=$(find rfc-connector/target -maxdepth 1 -name 'rfc-*.war' -print -quit)
+          if [ -z "$RFC_WAR" ]; then
+            echo "ERROR: No WAR file found in rfc-connector/target/" >&2
+            exit 1
+          fi
           mkdir -p /tmp/rfc-scanner-context
           cp "$RFC_WAR" /tmp/rfc-scanner-context/sap-rfc-connector.war
           cp rfc-connector/Dockerfile.scanner /tmp/rfc-scanner-context/Dockerfile
