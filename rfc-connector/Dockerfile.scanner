@@ -1,8 +1,8 @@
 # This image is NOT a supported runtime distribution of the RFC connector.
 # SAP RFC/JCo licensing forbids distributing a runnable RFC connector image
-# (see AGENT.md). This image exists solely to expose the released RFC
-# connector WAR file to container-based CVE scanning in Camunda's internal
-# Google Artifact Registry.
+# (see rfc-connector/README.md). This image exists solely to expose the
+# released RFC connector WAR file to container-based CVE scanning in
+# Camunda's internal Google Artifact Registry.
 #
 # It is built from a build context that contains only the WAR file, staged
 # under the fixed name below by the release workflow.

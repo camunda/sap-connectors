@@ -9,6 +9,8 @@ on:
 
 jobs:
   unit-test:
+    permissions:
+      contents: read   # unit tests only need to check out the repo, no write/OIDC access
     uses: ./.github/workflows/rfc-reusable-unit-test.yml
     with:
       java-version: '25'
