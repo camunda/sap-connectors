@@ -25,13 +25,13 @@
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-core</artifactId>
-      <version>${version.camunda}</version>
+      <version>${version.camunda.connectors}</version>
     </dependency>
 
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-validation</artifactId>
-      <version>${version.camunda}</version>
+      <version>${version.camunda.connectors}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -79,14 +79,14 @@
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>element-template-generator-annotations</artifactId>
-      <version>${version.camunda}</version>
+      <version>${version.camunda.connectors}</version>
       <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-object-mapper</artifactId>
-      <version>${version.camunda}</version>
+      <version>${version.camunda.connectors}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -94,14 +94,14 @@
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-test</artifactId>
-      <version>${version.camunda}</version>
+      <version>${version.camunda.connectors}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-runtime-test</artifactId>
-      <version>${version.camunda}</version>
+      <version>${version.camunda.connectors}</version>
       <scope>test</scope>
     </dependency>
 
@@ -137,7 +137,7 @@
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>spring-boot-starter-camunda-connectors</artifactId>
-      <version>${version.camunda}</version>
+      <version>${version.camunda.connectors}</version>
       <scope>test</scope>
     </dependency>
 
@@ -199,7 +199,7 @@
         <plugin>
           <groupId>io.camunda.connector</groupId>
           <artifactId>element-template-generator-maven-plugin</artifactId>
-          <version>${version.camunda}</version>
+          <version>${version.camunda.connectors}</version>
           <executions>
             <execution>
               <goals>
