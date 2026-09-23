@@ -26,7 +26,7 @@
 
     <version.slf4j>2.0.17</version.slf4j>
     <version.camunda>8.10.0-SNAPSHOT</version.camunda>
-    <version.camunda.connectors>8.10.0-rc</version.camunda.connectors>
+    <version.camunda.connectors>8.10.0-rc1</version.camunda.connectors>
     <version.cloud-sdk>5.27.0</version.cloud-sdk>
     <version.assertj>3.27.7</version.assertj>
     <version.junit-jupiter>6.0.3</version.junit-jupiter>
