@@ -12,7 +12,7 @@
 
   <groupId>io.camunda.connector.sap</groupId>
   <artifactId>connectors-sap-parent</artifactId>
-  <version>8.9.6</version>
+  <version>8.9.6-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>rfc-connector</module>
