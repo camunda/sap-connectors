@@ -17,38 +17,7 @@
 
   <properties>
     <plugin.version.maven-shade-plugin>3.6.2</plugin.version.maven-shade-plugin>
-    <!-- Camunda-patched pre-release versions (e.g. 6.2.19-spring-framework-6.2.21) pulled in
-         transitively by spring-boot-starter-camunda-connectors are only published to Camunda's
-         internal Artifactory and return 401 for external builds. Pin to the public upstream
-         base releases instead; only used for local test-scope runtime bundling. -->
-    <version.spring-framework>6.2.19</version.spring-framework>
-    <version.spring-boot>3.5.16</version.spring-boot>
   </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-core</artifactId>
-        <version>${version.spring-framework}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-        <version>${version.spring-boot}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-actuator</artifactId>
-        <version>${version.spring-boot}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-configuration-processor</artifactId>
-        <version>${version.spring-boot}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
 
