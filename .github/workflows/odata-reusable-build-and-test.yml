@@ -39,23 +39,6 @@ jobs:
           secretId: ${{ secrets.VAULT_SECRET_ID}}
           secrets: |
             secret/data/products/connectors/ci/sap DESTINATIONS;
-            secret/data/products/connectors/ci/common ARTIFACTORY_USR;
-            secret/data/products/connectors/ci/common ARTIFACTORY_PSW;
-
-      # Mirror the herodevs-nes repository (Camunda's patched Spring artifacts) through the
-      # authenticated internal Artifactory, since https://artifacts.camunda.com/artifactory/herodevs-nes
-      # requires credentials and returns 401 for anonymous/public resolution.
-      - name: 'Create settings.xml'
-        uses: s4u/maven-settings-action@v4.0.0
-        with:
-          githubServer: false
-          servers: |
-            [{
-               "id": "camunda-nexus",
-               "username": "${{ steps.vault-secrets.outputs.ARTIFACTORY_USR }}",
-               "password": "${{ steps.vault-secrets.outputs.ARTIFACTORY_PSW }}"
-             }]
-          mirrors: '[{"id": "camunda-nexus", "mirrorOf": "herodevs-nes", "name": "camunda Nexus", "url": "https://artifacts.camunda.com/artifactory/internal"}]'
 
       - name: build and test with maven
         env:
