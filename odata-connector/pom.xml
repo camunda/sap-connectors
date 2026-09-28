@@ -10,7 +10,6 @@
   </parent>
   <groupId>io.camunda.connector.sap.odata</groupId>
   <artifactId>odata</artifactId>
-  <version>8.7.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>sap-odata-connector</name>
