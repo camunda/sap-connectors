@@ -2,11 +2,7 @@ package io.camunda.connector.sap.odata.model.batchType;
 
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class Options {
   private String format;
   private String top;
@@ -15,6 +11,62 @@ public class Options {
   private String expand;
   private String select;
   private String inlinecount;
+
+  public String getFormat() {
+    return format;
+  }
+
+  public void setFormat(String format) {
+    this.format = format;
+  }
+
+  public String getTop() {
+    return top;
+  }
+
+  public void setTop(String top) {
+    this.top = top;
+  }
+
+  public String getFilter() {
+    return filter;
+  }
+
+  public void setFilter(String filter) {
+    this.filter = filter;
+  }
+
+  public String getOrderby() {
+    return orderby;
+  }
+
+  public void setOrderby(String orderby) {
+    this.orderby = orderby;
+  }
+
+  public String getExpand() {
+    return expand;
+  }
+
+  public void setExpand(String expand) {
+    this.expand = expand;
+  }
+
+  public String getSelect() {
+    return select;
+  }
+
+  public void setSelect(String select) {
+    this.select = select;
+  }
+
+  public String getInlinecount() {
+    return inlinecount;
+  }
+
+  public void setInlinecount(String inlinecount) {
+    this.inlinecount = inlinecount;
+  }
 
   public Map<String, String> asMap() {
     Map<String, String> params = new HashMap<>();
