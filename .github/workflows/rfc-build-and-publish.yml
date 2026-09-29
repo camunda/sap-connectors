@@ -40,6 +40,11 @@ jobs:
       - name: build project
         run: mvn clean package -DskipTests
 
+      # the release action does not move existing tags, so re-point the rolling SNAPSHOT tag to the current commit
+      - name: move SNAPSHOT tag
+        if: inputs.final_version == 'SNAPSHOT'
+        run: git push --force origin "HEAD:refs/tags/rfc-${{ inputs.final_version }}"
+
       - name: create release
         uses: ncipollo/release-action@v1
         with:
@@ -51,6 +56,7 @@ jobs:
           commit: ${{github.ref}}
           allowUpdates: 'true'
           removeArtifacts: 'true'
+          prerelease: ${{ inputs.final_version == 'SNAPSHOT' }}
 
       # The steps below build and push a minimal `scratch` image containing only the
       # just-released RFC connector WAR, for internal CVE scanning of the sap-connectors

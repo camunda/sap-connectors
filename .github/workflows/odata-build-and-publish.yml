@@ -45,6 +45,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # the release action does not move existing tags, so re-point the rolling SNAPSHOT tag to the current commit
+      - name: move SNAPSHOT tag
+        if: inputs.final_version == 'SNAPSHOT'
+        run: git push --force origin "HEAD:refs/tags/odata-${{ inputs.final_version }}"
+
       # no need to build anything as all release-related artifacts (except the docker image) are under version control
       - name: create release
         uses: ncipollo/release-action@v1
@@ -57,6 +62,7 @@ jobs:
           commit: ${{github.ref}}
           allowUpdates: 'true'
           removeArtifacts: 'true'
+          prerelease: ${{ inputs.final_version == 'SNAPSHOT' }}
 
   build-and-publish:
     needs: [build-and-test, determine-connector-version]
