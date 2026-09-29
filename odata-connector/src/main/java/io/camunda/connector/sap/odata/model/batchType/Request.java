@@ -1,11 +1,7 @@
 package io.camunda.connector.sap.odata.model.batchType;
 
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class Request {
   public enum Method {
     GET("GET"),
@@ -33,4 +29,36 @@ public class Request {
   // only required for POST, PUT, PATCH
   //  private Payload payload;
   private Map<String, Object> payload;
+
+  public Method getMethod() {
+    return method;
+  }
+
+  public void setMethod(Method method) {
+    this.method = method;
+  }
+
+  public String getResourcePath() {
+    return resourcePath;
+  }
+
+  public void setResourcePath(String resourcePath) {
+    this.resourcePath = resourcePath;
+  }
+
+  public Options getOptions() {
+    return options;
+  }
+
+  public void setOptions(Options options) {
+    this.options = options;
+  }
+
+  public Map<String, Object> getPayload() {
+    return payload;
+  }
+
+  public void setPayload(Map<String, Object> payload) {
+    this.payload = payload;
+  }
 }
