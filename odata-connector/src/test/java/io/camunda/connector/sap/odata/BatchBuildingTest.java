@@ -7,7 +7,6 @@ import com.sap.cloud.sdk.datamodel.odata.client.ODataProtocol;
 import io.camunda.connector.sap.odata.model.BatchRequestBuilder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,14 +15,12 @@ public class BatchBuildingTest {
   String testFileContent;
 
   @BeforeEach
-  @SneakyThrows
-  void setUp() {
+  void setUp() throws Exception {
     testFileContent = Files.readString(Paths.get("src/test/resources/batch1.json"));
   }
 
   @Test
-  @SneakyThrows
-  void buildBatchRepresentation() {
+  void buildBatchRepresentation() throws Exception {
 
     //    ObjectMapper mapper =
     //        JsonMapper.builder()
@@ -51,8 +48,7 @@ public class BatchBuildingTest {
   }
 
   @Test
-  @SneakyThrows
-  void BuildBatchRequest() {
+  void BuildBatchRequest() throws Exception {
     BatchRequestBuilder builder = new BatchRequestBuilder();
     builder.setODataVersion(ODataProtocol.V2);
     builder.setODataService("/sap/opu/odata/sap/API_BUSINESS_PARTNER");

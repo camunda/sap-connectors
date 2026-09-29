@@ -21,20 +21,58 @@ import io.camunda.connector.sap.odata.model.batchType.Request;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
-import lombok.Getter;
-import lombok.Setter;
 
 public class BatchRequestBuilder {
-  @Getter @Setter private String oDataService;
-  @Getter @Setter private ODataProtocol oDataVersion;
+  private String oDataService;
+  private ODataProtocol oDataVersion;
 
-  @Setter private ObjectMapper mapper;
-  @Getter @Setter private BatchRequestRepresentation[] source;
+  private ObjectMapper mapper;
+  private BatchRequestRepresentation[] source;
 
   // we need to keep track of the individual requests for the batch
   // for later retrieving the results programmatically
-  @Getter @Setter private ArrayList<ODataRequestGeneric> requests = new ArrayList<>();
-  @Getter private ODataRequestBatch batch;
+  private ArrayList<ODataRequestGeneric> requests = new ArrayList<>();
+  private ODataRequestBatch batch;
+
+  public String getODataService() {
+    return oDataService;
+  }
+
+  public void setODataService(String oDataService) {
+    this.oDataService = oDataService;
+  }
+
+  public ODataProtocol getODataVersion() {
+    return oDataVersion;
+  }
+
+  public void setODataVersion(ODataProtocol oDataVersion) {
+    this.oDataVersion = oDataVersion;
+  }
+
+  public void setMapper(ObjectMapper mapper) {
+    this.mapper = mapper;
+  }
+
+  public BatchRequestRepresentation[] getSource() {
+    return source;
+  }
+
+  public void setSource(BatchRequestRepresentation[] source) {
+    this.source = source;
+  }
+
+  public ArrayList<ODataRequestGeneric> getRequests() {
+    return requests;
+  }
+
+  public void setRequests(ArrayList<ODataRequestGeneric> requests) {
+    this.requests = requests;
+  }
+
+  public ODataRequestBatch getBatch() {
+    return batch;
+  }
 
   private ObjectMapper setDefaultMapper() {
     ObjectMapper m =

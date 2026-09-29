@@ -65,6 +65,7 @@ public class ODataS4Test {
     static String entitySet = "MaterialSerialNumber";
 
     @Test
+    @Disabled("S/4 backend got cut")
     void count_not_for_entity_in_v4() {
       var httpMethod =
           new Get(null, null, null, null, null, null, new ODataVersionGet.V4(null, false));
@@ -91,6 +92,7 @@ public class ODataS4Test {
     }
 
     @Test
+    @Disabled("S/4 backend got cut")
     void allow_count_in_entitysets_v4() {
       var httpMethod =
           new Get(null, 5L, null, null, null, null, new ODataVersionGet.V4(null, true));
