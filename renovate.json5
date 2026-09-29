@@ -88,6 +88,7 @@
   ],
   "baseBranchPatterns": [
     "main",
-    "/^release\\/.*/"
+    "/^release\\/.*/",
+    "!/^release\\/8\\.6$/"
   ]
 }
