@@ -54,6 +54,9 @@ jobs:
 
   rfc-release:
     needs: build-final-version
+    permissions:
+      contents: write   # required by rfc-build-and-publish.yml to publish the GitHub release
+      id-token: write   # required by rfc-build-and-publish.yml for OIDC auth against Google Artifact Registry
     uses:  ./.github/workflows/rfc-build-and-publish.yml
     secrets: inherit
     with:
