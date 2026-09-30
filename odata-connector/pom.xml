@@ -17,10 +17,6 @@
 
   <properties>
     <plugin.version.maven-shade-plugin>3.6.2</plugin.version.maven-shade-plugin>
-    <!-- Camunda-patched pre-release versions (e.g. 6.2.19-spring-framework-6.2.21) pulled in
-         transitively by spring-boot-starter-camunda-connectors are only published to Camunda's
-         internal Artifactory and return 401 for external builds. Pin to the public upstream
-         base releases instead; only used for local test-scope runtime bundling. -->
   </properties>
 
   <dependencies>
@@ -270,15 +266,15 @@
 
     <!-- HeroDevs Never-Ending Support (NES) -->
     <repository>
-      <id>herodevs-nes</id>
-      <name>HeroDevs NES Repository</name>
-      <url>https://artifacts.camunda.com/artifactory/herodevs-nes</url>
       <releases>
         <enabled>true</enabled>
       </releases>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
+      <id>herodevs-nes</id>
+      <name>HeroDevs NES Repository</name>
+      <url>https://artifacts.camunda.com/artifactory/herodevs-nes</url>
     </repository>
   </repositories>
 
@@ -306,15 +302,15 @@
 
     <!-- HeroDevs Never-Ending Support (NES) -->
     <pluginRepository>
-      <id>herodevs-nes</id>
-      <name>HeroDevs NES Repository</name>
-      <url>https://artifacts.camunda.com/artifactory/herodevs-nes</url>
       <releases>
         <enabled>true</enabled>
       </releases>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
+      <id>herodevs-nes</id>
+      <name>HeroDevs NES Repository</name>
+      <url>https://artifacts.camunda.com/artifactory/herodevs-nes</url>
     </pluginRepository>
 
   </pluginRepositories>

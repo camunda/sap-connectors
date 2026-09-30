@@ -76,6 +76,8 @@ jobs:
           secrets: |
             secret/data/products/consulting/ci/common DOCKERHUB_USER;
             secret/data/products/consulting/ci/common DOCKERHUB_PASSWORD;
+            secret/data/products/connectors/ci/common ARTIFACTORY_USR;
+            secret/data/products/connectors/ci/common ARTIFACTORY_PSW;
 
       - name: set up jdk 21
         uses: actions/setup-java@v5
@@ -83,6 +85,18 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
+
+      - name: 'Create settings.xml'
+        uses: s4u/maven-settings-action@v4.0.0
+        with:
+          githubServer: false
+          servers: |
+            [{
+              "id": "camunda-nexus",
+              "username": "${{ steps.secrets.outputs.ARTIFACTORY_USR }}",
+              "password": "${{ steps.secrets.outputs.ARTIFACTORY_PSW }}"
+            }]
+          mirrors: '[{"url": "https://repository.nexus.camunda.cloud/content/groups/internal/", "id": "camunda-nexus", "mirrorOf": "camunda-nexus,herodevs-nes", "name": "camunda Nexus"}]'
 
       - name: Set connector version
         run: |
