@@ -11,6 +11,8 @@ on:
 jobs:
   determine-connector-version:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       CAMUNDA_VERSION: ${{ steps.connectors_repo_version.outputs.CAMUNDA_VERSION }}
 
@@ -31,6 +33,8 @@ jobs:
 
   build-and-test:
     needs: determine-connector-version
+    permissions:
+      contents: read
     uses: ./.github/workflows/odata-reusable-build-and-test.yml
     with:
       java-version: '21'
@@ -41,6 +45,8 @@ jobs:
   gh_release:
     needs: [ build-and-test, determine-connector-version ]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # required by ncipollo/release-action to publish the GitHub release
 
     steps:
       - uses: actions/checkout@v5
@@ -61,6 +67,8 @@ jobs:
   build-and-publish:
     needs: [build-and-test, determine-connector-version]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
 

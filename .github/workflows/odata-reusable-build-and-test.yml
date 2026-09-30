@@ -16,6 +16,10 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    # least privilege: this job builds untrusted PR code with a Vault-sourced Artifactory
+    # credential in ~/.m2/settings.xml, so keep the GITHUB_TOKEN read-only
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v5

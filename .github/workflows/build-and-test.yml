@@ -8,6 +8,8 @@ on:
 
 jobs:
   odata-tests:
+    permissions:
+      contents: read
     uses: ./.github/workflows/odata-reusable-build-and-test.yml
     with:
       java-version: '21'
@@ -16,6 +18,8 @@ jobs:
     secrets: inherit
 
   rfc-tests:
+    permissions:
+      contents: read
     uses: ./.github/workflows/rfc-reusable-unit-test.yml
     with:
       java-version: '21'
