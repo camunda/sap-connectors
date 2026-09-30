@@ -9,6 +9,8 @@ on:
 jobs:
   determine-connector-version:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       VERSION: ${{ steps.scope_version.outputs.VERSION }}
 
@@ -33,6 +35,8 @@ jobs:
 
   deploy-to-btp:
     needs: determine-connector-version
+    permissions:
+      contents: read
     uses: ./.github/workflows/rfc-reusable-deploy.yml
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}
@@ -43,6 +47,8 @@ jobs:
 
   e2e:
     needs: deploy-to-btp
+    permissions:
+      contents: read
     uses: ./.github/workflows/rfc-reusable-e2e-test.yml
     with:
       java-version: '21'
@@ -53,6 +59,8 @@ jobs:
   undeploy:
     needs: [ determine-connector-version, e2e, deploy-to-btp ]
     if: always()
+    permissions:
+      contents: read
     uses: ./.github/workflows/rfc-reusable-undeploy.yml
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}

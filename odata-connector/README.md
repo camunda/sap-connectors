@@ -13,6 +13,26 @@ It is distributed as [a Docker image](https://hub.docker.com/repository/docker/c
   - always bump the patch version first in `pom.xml`
   - don't change major or minor, as they indicate the Camunda 8 release association
 
+### HeroDevs Never-Ending Support (NES) dependencies
+
+`spring-boot-starter-camunda-connectors` (test scope) transitively pulls Camunda-patched,
+pre-release Spring artifacts (e.g. `6.2.19-spring-framework-6.2.21`) that only exist on
+Camunda's internal Artifactory (`herodevs-nes` repository in `pom.xml`). The public HeroDevs
+endpoint returns `401` without authentication, so a clean local `mvn install`/`mvn test` needs
+a mirror + credentials configured in `~/.m2/settings.xml`, same as CI:
+
+```xml
+<mirror>
+  <id>camunda-nexus</id>
+  <mirrorOf>camunda-nexus,herodevs-nes</mirrorOf>
+  <url>https://repository.nexus.camunda.cloud/content/groups/internal/</url>
+</mirror>
+```
+
+with a matching `<server>` entry (`id: camunda-nexus`) supplying your internal Artifactory
+credentials. Without this, local builds fail with `401` once the local Maven cache no longer
+has these artifacts. Ask a team member for credentials if you don't have internal Artifactory access.
+
 ### OData sample backend
 
 There's a Node.js-based OData v2 + v4 backend located in `/cap-bookshop`.

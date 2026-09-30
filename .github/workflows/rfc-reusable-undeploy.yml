@@ -25,6 +25,8 @@ on:
 jobs:
   undeploy-camunda-cluster:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Import Secrets
         id: vault-secrets
@@ -49,6 +51,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: cloudfoundry/cli:latest
+    permissions:
+      contents: read
     steps:
       - name: Import Secrets
         id: vault-secrets
