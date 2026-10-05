@@ -16,6 +16,10 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    # least privilege: this job builds untrusted PR code with a Vault-sourced Artifactory
+    # credential in ~/.m2/settings.xml, so keep the GITHUB_TOKEN read-only
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v5
@@ -39,6 +43,20 @@ jobs:
           secretId: ${{ secrets.VAULT_SECRET_ID}}
           secrets: |
             secret/data/products/connectors/ci/sap DESTINATIONS;
+            secret/data/products/connectors/ci/common ARTIFACTORY_USR;
+            secret/data/products/connectors/ci/common ARTIFACTORY_PSW;
+
+      - name: 'Create settings.xml'
+        uses: s4u/maven-settings-action@v4.0.0
+        with:
+          githubServer: false
+          servers: |
+            [{
+              "id": "camunda-nexus",
+              "username": "${{ steps.vault-secrets.outputs.ARTIFACTORY_USR }}",
+              "password": "${{ steps.vault-secrets.outputs.ARTIFACTORY_PSW }}"
+            }]
+          mirrors: '[{"url": "https://repository.nexus.camunda.cloud/content/groups/internal/", "id": "camunda-nexus", "mirrorOf": "camunda-nexus,herodevs-nes", "name": "camunda Nexus"}]'
 
       - name: build and test with maven
         env:

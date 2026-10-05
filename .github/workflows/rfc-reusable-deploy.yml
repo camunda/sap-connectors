@@ -26,6 +26,8 @@ on:
 jobs:
   extract-version:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
         camunda_release: ${{ steps.extract_release.outputs.camunda_release }}
     steps:
@@ -36,6 +38,8 @@ jobs:
   create-cluster:
     runs-on: ubuntu-latest
     needs: extract-version
+    permissions:
+      contents: read
     outputs:
         cluster-uuid: ${{ steps.create_cluster.outputs.cluster-id }}
         deployment-name: ${{ steps.set_deployment_name.outputs.deployment-name }}
@@ -103,6 +107,10 @@ jobs:
   deploy:
     needs: create-cluster
     runs-on: ubuntu-latest
+    # least privilege: this job builds PR code with a Vault-sourced Artifactory
+    # credential in ~/.m2/settings.xml, so keep the GITHUB_TOKEN read-only
+    permissions:
+      contents: read
 
     steps:
       - name: install cf cli
@@ -126,6 +134,30 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
+
+      - name: Import Secrets
+        id: artifactory-secrets
+        uses: hashicorp/vault-action@v3.4.0
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID}}
+          secrets: |
+            secret/data/products/connectors/ci/common ARTIFACTORY_USR;
+            secret/data/products/connectors/ci/common ARTIFACTORY_PSW;
+
+      - name: 'Create settings.xml'
+        uses: s4u/maven-settings-action@v4.0.0
+        with:
+          githubServer: false
+          servers: |
+            [{
+              "id": "camunda-nexus",
+              "username": "${{ steps.artifactory-secrets.outputs.ARTIFACTORY_USR }}",
+              "password": "${{ steps.artifactory-secrets.outputs.ARTIFACTORY_PSW }}"
+            }]
+          mirrors: '[{"url": "https://repository.nexus.camunda.cloud/content/groups/internal/", "id": "camunda-nexus", "mirrorOf": "camunda-nexus,herodevs-nes", "name": "camunda Nexus"}]'
 
       - name: build
         run: mvn package -DskipTests # as we've run the tests in the previous job

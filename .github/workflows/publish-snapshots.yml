@@ -16,6 +16,8 @@ jobs:
     name: Deploy snapshot artifacts
     runs-on: ubuntu-latest
     concurrency: deploy-snapshots
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
 
