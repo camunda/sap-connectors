@@ -23,6 +23,7 @@
     <maven.compiler.release>25</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
     <version.slf4j>2.0.20</version.slf4j>
     <version.camunda>8.10.0-alpha5</version.camunda>
     <version.cloud-sdk>5.34.0</version.cloud-sdk>
