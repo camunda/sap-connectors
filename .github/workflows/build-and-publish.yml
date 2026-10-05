@@ -11,6 +11,8 @@ on:
 jobs:
   validate-branch:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Validate branch name has release/ prefix
         run: |
@@ -25,6 +27,8 @@ jobs:
   build-final-version:
     needs: validate-branch
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       FINAL_VERSION: ${{ steps.final_version.outputs.FINAL_VERSION }}
 
@@ -47,6 +51,8 @@ jobs:
 
   odata-release:
     needs: build-final-version
+    permissions:
+      contents: write   # required by odata-build-and-publish.yml's gh_release job
     uses: ./.github/workflows/odata-build-and-publish.yml
     secrets: inherit
     with:
