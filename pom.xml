@@ -26,7 +26,7 @@
 
     <version.slf4j>2.0.20</version.slf4j>
     <version.camunda>8.9.14</version.camunda>
-    <version.cloud-sdk>5.34.0</version.cloud-sdk>
+    <version.cloud-sdk>5.35.0</version.cloud-sdk>
     <version.assertj>3.27.7</version.assertj>
     <version.junit-jupiter>6.1.3</version.junit-jupiter>
     <version.mockito>5.24.0</version.mockito>
