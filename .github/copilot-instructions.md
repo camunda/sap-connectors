@@ -96,7 +96,7 @@ mvn spotless:apply
 
 3. **Development Notes**:
    - Code formatting is automatic via `maven-spotless-plugin` during build/compile
-   - Always bump patch version first in PRs
+   - Don't bump the version in PRs; the branch holds the next patch as `-SNAPSHOT`, advanced in a separate PR after each release
    - Don't change major/minor versions (they indicate Camunda 8 release association)
    - Example: `sap-rfc-connector-8.5.2` → version for Camunda 8.5, connector version 2
 
@@ -112,7 +112,7 @@ mvn spotless:apply
 
 2. **Development Notes**:
    - Code formatting via `maven-spotless-plugin` during build/compile
-   - Always bump patch version first in PRs
+   - Don't bump the version in PRs; the branch holds the next patch as `-SNAPSHOT`, advanced in a separate PR after each release
    - Don't change major/minor versions
 
 ## Code Style Guidelines
@@ -197,7 +197,7 @@ Key dependencies include:
 - **Solution**: 
   - Major.Minor versions match Camunda 8 release (e.g., 8.8.x for Camunda 8.8)
   - Patch version is incremented for connector updates
-  - Always bump patch version in PRs
+  - The branch holds the next patch as `-SNAPSHOT`; don't bump it in PRs, it is advanced in a separate PR after each release
 
 ## Testing Guidelines
 
