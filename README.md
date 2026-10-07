@@ -30,8 +30,11 @@ The patch version has to match the `-SNAPSHOT` version in `pom.xml`
 (e.g. `15` to release `8.9.15` from `8.9.15-SNAPSHOT`).
 The workflow will them publish the docker image to docker hub and 
 publish the WAR of the RFC connector to the GitHub releases of the repo.
-After the release, advance `pom.xml` to the next patch `-SNAPSHOT` in a PR,
-as shown in the summary of the release run.
+Releases of the same branch run one at a time: a second run waits until the first one has finished.
+After both connectors are released, the workflow opens a dedicated version PR that advances
+`pom.xml` to the next patch `-SNAPSHOT`; merge it once CI is green.
+Don't bump the project version in regular feature/fix PRs.
+If a release fails partway, use "Re-run failed jobs" on its run.
 
 **Warning**: Whatever artifact you release last will be marked as 
 latest. So you should prefer releases from the oldest supported release to the newest.
