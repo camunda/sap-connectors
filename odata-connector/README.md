@@ -10,7 +10,7 @@ It is distributed as [a Docker image](https://hub.docker.com/repository/docker/c
 - source code formatting is done with `maven-spotless-plugin` upon build/compile
 
 - on PRs
-  - always bump the patch version first in `pom.xml`
+  - don't bump the version in `pom.xml`: the branch holds the next patch as `-SNAPSHOT` (e.g. `8.8.5-SNAPSHOT` after `8.8.4` was released), which is advanced in a separate PR right after each release
   - don't change major or minor, as they indicate the Camunda 8 release association
 
 ### HeroDevs Never-Ending Support (NES) dependencies

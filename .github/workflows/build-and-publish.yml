@@ -5,7 +5,8 @@ on:
       patch-version:
         description: |
           The release patch version. Minor is specified by the branch.
-          E.g. specify "5" to release version "8.6.5" if on branch "release/8.6"
+          E.g. specify "5" to release version "8.6.5" if on branch "release/8.6".
+          Must match the "-SNAPSHOT" version in pom.xml, e.g. "8.6.5-SNAPSHOT".
         required: true
 
 jobs:
@@ -31,6 +32,7 @@ jobs:
       contents: read
     outputs:
       FINAL_VERSION: ${{ steps.final_version.outputs.FINAL_VERSION }}
+      NEXT_SNAPSHOT_VERSION: ${{ steps.final_version.outputs.NEXT_SNAPSHOT_VERSION }}
 
     steps:
       - uses: actions/checkout@v5
@@ -44,10 +46,29 @@ jobs:
 
       - name: determine final version
         id: final_version
+        env:
+          PATCH_VERSION: ${{ github.event.inputs['patch-version'] }}
         run: |
-          MINOR_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | cut -d'.' -f1-2)
-          PATCH_VERSION=${{ github.event.inputs['patch-version'] }}
-          echo "FINAL_VERSION=${MINOR_VERSION}.${PATCH_VERSION}" >> "$GITHUB_OUTPUT"
+          # the branch carries the version to release as <major>.<minor>.<patch>-SNAPSHOT
+          PROJECT_VERSION=$(mvn -B -N -q help:evaluate -Dexpression=project.version -DforceStdout)
+          if [[ ! "$PROJECT_VERSION" =~ ^([0-9]+\.[0-9]+)\.([0-9]+)-SNAPSHOT$ ]]; then
+            echo "::error::pom.xml version '$PROJECT_VERSION' is not '<major>.<minor>.<patch>-SNAPSHOT'."
+            exit 1
+          fi
+          MINOR_VERSION="${BASH_REMATCH[1]}"
+          if [[ "$PATCH_VERSION" != "${BASH_REMATCH[2]}" ]]; then
+            echo "::error::patch-version '$PATCH_VERSION' does not match pom.xml version '$PROJECT_VERSION'."
+            exit 1
+          fi
+          FINAL_VERSION="${MINOR_VERSION}.${PATCH_VERSION}"
+          NEXT_SNAPSHOT_VERSION="${MINOR_VERSION}.$((10#$PATCH_VERSION + 1))-SNAPSHOT"
+          RELEASE_TAGS=$(git ls-remote --tags origin "refs/tags/odata-${FINAL_VERSION}" "refs/tags/rfc-${FINAL_VERSION}")
+          if [[ -n "$RELEASE_TAGS" ]]; then
+            echo "::error::${FINAL_VERSION} is already released; advance pom.xml to ${NEXT_SNAPSHOT_VERSION} first."
+            exit 1
+          fi
+          echo "FINAL_VERSION=${FINAL_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "NEXT_SNAPSHOT_VERSION=${NEXT_SNAPSHOT_VERSION}" >> "$GITHUB_OUTPUT"
 
   odata-release:
     needs: build-final-version
@@ -67,3 +88,21 @@ jobs:
     secrets: inherit
     with:
       final_version: ${{ needs.build-final-version.outputs.FINAL_VERSION }}
+
+  next-development-version:
+    needs: [ build-final-version, odata-release, rfc-release ]
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: point to the next development version
+        env:
+          FINAL_VERSION: ${{ needs.build-final-version.outputs.FINAL_VERSION }}
+          NEXT_SNAPSHOT_VERSION: ${{ needs.build-final-version.outputs.NEXT_SNAPSHOT_VERSION }}
+        run: |
+          {
+            echo "### Released ${FINAL_VERSION}"
+            echo "Open a PR against \`${GITHUB_REF_NAME}\` that advances the version to \`${NEXT_SNAPSHOT_VERSION}\`:"
+            echo '```'
+            echo "mvn versions:set -DnewVersion=${NEXT_SNAPSHOT_VERSION} -DgenerateBackupPoms=false"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
