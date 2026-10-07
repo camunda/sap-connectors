@@ -40,7 +40,7 @@ The root `pom.xml` must contain the version you are about to release as `-SNAPSH
 <version>8.9.4-SNAPSHOT</version>
 ```
 
-This is normally already the case, because the branch is advanced right after each release (see step 5). Regular PRs don't change the version.
+This is normally already the case, because the branch is advanced right after each release (see step 5). Don't bump the project version in regular feature/fix PRs.
 
 ### 2. Trigger the release workflow
 
@@ -66,10 +66,10 @@ validate-branch
     └── build-final-version          (checks PATCH against the pom.xml -SNAPSHOT version and existing tags)
             ├── odata-release        (tests → GitHub release → Docker push)
             ├── rfc-release          (tests → build .war → GitHub release)
-            └── next-development-version (after both releases: prints the next -SNAPSHOT version)
+            └── next-development-version (after both releases: opens the PR to the next -SNAPSHOT version)
 ```
 
-Both connector releases run in parallel after the version is resolved.
+Both connector releases run in parallel after the version is resolved. Only one release per branch runs at a time: a second run waits until the first one has finished.
 
 **OData pipeline:**
 1. Runs build + tests (including CAP bookshop smoke tests).
@@ -93,13 +93,13 @@ After the workflow succeeds:
 
 ### 5. Advance to the next development version
 
-Open a PR against `release/X.Y` that sets the next patch `-SNAPSHOT`, e.g. after releasing `8.9.4`:
+Once both connectors are released, the `next-development-version` job opens a version-only PR against `release/X.Y` that sets the next patch `-SNAPSHOT`. E.g. after releasing `8.9.4`, it opens the PR from the branch `chore/next-version-8.9.5-SNAPSHOT` with the result of:
 
 ```bash
 mvn versions:set -DnewVersion=8.9.5-SNAPSHOT -DgenerateBackupPoms=false
 ```
 
-The summary of the release run shows the exact command. Merge the PR once CI is green.
+The PR is never merged automatically: merge it once CI is green.
 
 ## Releasing multiple minor lines
 
@@ -122,6 +122,9 @@ You triggered the workflow on `main` or a feature branch. Re-run it and select a
 
 **Version mismatch**  
 The patch-version input is just the number (e.g. `4`), not the full string `8.9.4`, and it must match the `-SNAPSHOT` version in `pom.xml` (`8.9.4-SNAPSHOT`). If the workflow reports the version as already released, the branch was not advanced after the previous release: merge the PR from step 5 first.
+
+**Release failed partway**  
+Use "Re-run failed jobs" on the failed release run: the jobs that already succeeded are kept and only the failed ones run again, followed by the next development version PR. Don't start a new run for the same version: it is rejected once one of the version's release tags exists.
 
 **OData tests fail due to missing CAP bookshop image**  
 The reusable test workflow builds the CAP bookshop image as part of CI — this should not happen in the workflow, but if tests fail locally, run:

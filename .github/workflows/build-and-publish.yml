@@ -13,14 +13,20 @@ on:
           Ignored on "main", which always publishes "SNAPSHOT".
         required: false
 
+# one release per branch at a time: a second dispatch waits for the running one instead of racing it
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   validate-branch:
     runs-on: ubuntu-latest
     steps:
       - name: Validate branch name is main or has release/ prefix
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+          PATCH_VERSION: ${{ github.event.inputs['patch-version'] }}
         run: |
-          BRANCH_NAME="${{ github.ref_name }}"
-          PATCH_VERSION="${{ github.event.inputs['patch-version'] }}"
           if [[ "$BRANCH_NAME" == "main" ]]; then
             echo "Branch validation passed: $BRANCH_NAME (SNAPSHOT build)"
             exit 0
@@ -77,7 +83,9 @@ jobs:
           NEXT_SNAPSHOT_VERSION="${MINOR_VERSION}.$((10#$PATCH_VERSION + 1))-SNAPSHOT"
           RELEASE_TAGS=$(git ls-remote --tags origin "refs/tags/odata-${FINAL_VERSION}" "refs/tags/rfc-${FINAL_VERSION}")
           if [[ -n "$RELEASE_TAGS" ]]; then
-            echo "::error::${FINAL_VERSION} is already released; advance pom.xml to ${NEXT_SNAPSHOT_VERSION} first."
+            echo "::error::${FINAL_VERSION} is already (at least partially) released: a release tag exists." \
+              "To finish a release that failed partway, use \"Re-run failed jobs\" on its run;" \
+              "otherwise merge the PR that advances pom.xml to ${NEXT_SNAPSHOT_VERSION} first."
             exit 1
           fi
           echo "FINAL_VERSION=${FINAL_VERSION}" >> "$GITHUB_OUTPUT"
@@ -100,21 +108,80 @@ jobs:
     with:
       final_version: ${{ needs.build-final-version.outputs.FINAL_VERSION }}
 
+  # Opens a version-only PR that advances the branch to the next patch -SNAPSHOT once both connectors are released.
+  # The PR is not merged automatically.
   next-development-version:
     needs: [ build-final-version, odata-release, rfc-release ]
     if: github.ref_name != 'main'
     runs-on: ubuntu-latest
-    permissions: {}
+    permissions: {}   # pushes and opens the PR with the GitHub App token below, not with GITHUB_TOKEN
     steps:
-      - name: point to the next development version
+      - name: Import Secrets
+        id: vault-secrets
+        uses: hashicorp/vault-action@v4.0.0
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          exportEnv: false
+          secrets: |
+            secret/data/github.com/organizations/camunda BACKPORT_GH_APP_ID;
+            secret/data/github.com/organizations/camunda BACKPORT_GH_APP_KEY;
+
+      # same GitHub App as backport-pr.yml: unlike GITHUB_TOKEN, its PRs trigger the required CI checks
+      - name: Generate a GitHub token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ steps.vault-secrets.outputs.BACKPORT_GH_APP_ID }}
+          private-key: ${{ steps.vault-secrets.outputs.BACKPORT_GH_APP_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: set up jdk 25
+        uses: actions/setup-java@v6
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: open the next development version PR
         env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           FINAL_VERSION: ${{ needs.build-final-version.outputs.FINAL_VERSION }}
           NEXT_SNAPSHOT_VERSION: ${{ needs.build-final-version.outputs.NEXT_SNAPSHOT_VERSION }}
         run: |
-          {
-            echo "### Released ${FINAL_VERSION}"
-            echo "Open a PR against \`${GITHUB_REF_NAME}\` that advances the version to \`${NEXT_SNAPSHOT_VERSION}\`:"
-            echo '```'
-            echo "mvn versions:set -DnewVersion=${NEXT_SNAPSHOT_VERSION} -DgenerateBackupPoms=false"
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
+          PROJECT_VERSION=$(mvn -B -N -q help:evaluate -Dexpression=project.version -DforceStdout)
+          if [[ "$PROJECT_VERSION" == "$NEXT_SNAPSHOT_VERSION" ]]; then
+            echo "${GITHUB_REF_NAME} is already on ${NEXT_SNAPSHOT_VERSION}."
+            exit 0
+          fi
+          if [[ "$PROJECT_VERSION" != "${FINAL_VERSION}-SNAPSHOT" ]]; then
+            echo "::error::${GITHUB_REF_NAME} is on ${PROJECT_VERSION}, expected ${FINAL_VERSION}-SNAPSHOT; advance it manually."
+            exit 1
+          fi
+          VERSION_BRANCH="chore/next-version-${NEXT_SNAPSHOT_VERSION}"
+          OPEN_PR=$(gh pr list --repo "$GITHUB_REPOSITORY" --base "$GITHUB_REF_NAME" --head "$VERSION_BRANCH" --state open --json url --jq '.[].url')
+          if [[ -n "$OPEN_PR" ]]; then
+            echo "The next development version PR is already open: ${OPEN_PR}"
+            exit 0
+          fi
+          git switch -c "$VERSION_BRANCH"
+          mvn -B -q versions:set -DnewVersion="$NEXT_SNAPSHOT_VERSION" -DgenerateBackupPoms=false
+          CHANGED_FILES=$(git status --porcelain)
+          if [[ "$CHANGED_FILES" != "$(printf ' M %s\n' odata-connector/pom.xml pom.xml rfc-connector/pom.xml)" ]]; then
+            echo "::error::versions:set changed unexpected files:"$'\n'"${CHANGED_FILES}"
+            exit 1
+          fi
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit -q -am "chore: prepare next development version ${NEXT_SNAPSHOT_VERSION}"
+          git push --force origin "HEAD:refs/heads/${VERSION_BRANCH}"
+          gh pr create --repo "$GITHUB_REPOSITORY" --base "$GITHUB_REF_NAME" --head "$VERSION_BRANCH" \
+            --title "chore: prepare next development version ${NEXT_SNAPSHOT_VERSION}" \
+            --body "Advances \`${GITHUB_REF_NAME}\` to \`${NEXT_SNAPSHOT_VERSION}\` after the release of \`${FINAL_VERSION}\` in ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}. Version-only change created by the release workflow; merge it once CI is green."
