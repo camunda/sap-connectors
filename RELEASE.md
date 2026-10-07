@@ -27,23 +27,20 @@ A single release run publishes **both** connectors at the same version:
 ## Prerequisites
 
 1. **You are on the right release branch.** The workflow refuses to run on `main` or feature branches — it must be `release/X.Y` (e.g. `release/8.9`).
-2. **The patch version has been bumped in a PR.** Before triggering a release, open a PR against the target release branch that increments the `<version>` in the root `pom.xml` (patch only — never touch major or minor). Merge it before proceeding.
+2. **The branch holds the version to release as `-SNAPSHOT`.** The root `pom.xml` of `release/X.Y` always contains the next patch as `X.Y.Z-SNAPSHOT` (patch only — never touch major or minor). The workflow refuses a `patch-version` that does not match it, and versions that are already released.
 3. **CI is green.** Confirm that the latest commit on the release branch passes the `build-and-test` workflow.
 
 ## Step-by-step release
 
-### 1. Bump the patch version (if not done yet)
+### 1. Check the version to release
 
-Open a PR against `release/X.Y` with the new version in `pom.xml`:
+The root `pom.xml` must contain the version you are about to release as `-SNAPSHOT`, e.g. to release `8.9.4`:
 
 ```xml
-<!-- change this -->
-<version>8.9.3-SNAPSHOT</version>
-<!-- to this -->
 <version>8.9.4-SNAPSHOT</version>
 ```
 
-Merge the PR and wait for CI to go green.
+This is normally already the case, because the branch is advanced right after each release (see step 5). Regular PRs don't change the version.
 
 ### 2. Trigger the release workflow
 
@@ -60,15 +57,16 @@ Click **"Run workflow"** and fill in the two fields:
 | **Branch** | The release branch to cut from | `release/8.9` |
 | **patch-version** | The patch number only (not the full version) | `4` |
 
-The final version is assembled automatically: the workflow reads `MAJOR.MINOR` from the `pom.xml` on the selected branch and appends the patch number you provided → `8.9.4`.
+The final version is assembled automatically: the workflow reads `MAJOR.MINOR` from the `pom.xml` on the selected branch and appends the patch number you provided → `8.9.4`. The patch number must match the `-SNAPSHOT` version in `pom.xml` (`8.9.4-SNAPSHOT`), otherwise the workflow fails.
 
 ### 3. What the workflow does
 
 ```
 validate-branch
-    └── build-final-version          (reads MAJOR.MINOR from pom.xml, appends PATCH)
+    └── build-final-version          (checks PATCH against the pom.xml -SNAPSHOT version and existing tags)
             ├── odata-release        (tests → GitHub release → Docker push)
-            └── rfc-release          (tests → build .war → GitHub release)
+            ├── rfc-release          (tests → build .war → GitHub release)
+            └── next-development-version (after both releases: prints the next -SNAPSHOT version)
 ```
 
 Both connector releases run in parallel after the version is resolved.
@@ -93,6 +91,16 @@ After the workflow succeeds:
 - [ ] `europe-west1-docker.pkg.dev/team-infosec/camunda/sap-rfc-connector:X.Y.Z` is visible in the internal Artifact Registry.
 - [ ] Download and sanity-check the element templates JSON from each release.
 
+### 5. Advance to the next development version
+
+Open a PR against `release/X.Y` that sets the next patch `-SNAPSHOT`, e.g. after releasing `8.9.4`:
+
+```bash
+mvn versions:set -DnewVersion=8.9.5-SNAPSHOT -DgenerateBackupPoms=false
+```
+
+The summary of the release run shows the exact command. Merge the PR once CI is green.
+
 ## Releasing multiple minor lines
 
 When you need to release across several supported branches (e.g. backporting a fix to 8.7, 8.8, and 8.9), run the workflow once per branch.
@@ -113,7 +121,7 @@ When a new Camunda minor version ships (e.g. Camunda 8.10):
 You triggered the workflow on `main` or a feature branch. Re-run it and select a `release/X.Y` branch.
 
 **Version mismatch**  
-The patch-version input is just the number (e.g. `4`), not the full string `8.9.4`. Double-check the input field.
+The patch-version input is just the number (e.g. `4`), not the full string `8.9.4`, and it must match the `-SNAPSHOT` version in `pom.xml` (`8.9.4-SNAPSHOT`). If the workflow reports the version as already released, the branch was not advanced after the previous release: merge the PR from step 5 first.
 
 **OData tests fail due to missing CAP bookshop image**  
 The reusable test workflow builds the CAP bookshop image as part of CI — this should not happen in the workflow, but if tests fail locally, run:
