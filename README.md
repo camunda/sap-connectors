@@ -26,8 +26,12 @@ of the product so we don't have an `alpha/` branch.
 
 To trigger a release invoke [the release workflow](https://github.com/camunda/sap-connectors/actions/workflows/build-and-publish.yml)
 manually. You will be asked for the target branch and the patch version.
+The patch version has to match the `-SNAPSHOT` version in `pom.xml`
+(e.g. `15` to release `8.9.15` from `8.9.15-SNAPSHOT`).
 The workflow will them publish the docker image to docker hub and 
 publish the WAR of the RFC connector to the GitHub releases of the repo.
+After the release, advance `pom.xml` to the next patch `-SNAPSHOT` in a PR,
+as shown in the summary of the release run.
 
 **Warning**: Whatever artifact you release last will be marked as 
 latest. So you should prefer releases from the oldest supported release to the newest.

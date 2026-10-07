@@ -23,7 +23,7 @@ So the Connector needs to be deployed as a `.war` Java application on Cloud Foun
 - make IDE recognize local `sapjco3.jar`, fex by setting "add dependencies with 'provided' scope to classpath"
 - source code formatting is done with `maven-spotless-plugin` upon build/compile
 - on PRs
-    - always bump the patch version first in `pom.xml`
+    - don't bump the version in `pom.xml`: the branch holds the next patch as `-SNAPSHOT` (e.g. `8.9.15-SNAPSHOT` after `8.9.14` was released), which is advanced in a separate PR right after each release
     - don't change major or minor, as they indicate the Camunda 8 release association
       &rarr; `sap-rfc-connector-8.5.2` is the version for Camunda 8.5, and the connector version 2
 
