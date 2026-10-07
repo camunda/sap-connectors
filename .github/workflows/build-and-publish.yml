@@ -5,8 +5,9 @@ on:
       patch-version:
         description: |
           The release patch version. Minor is specified by the branch.
-          E.g. specify "5" to release version "8.6.5" if on branch "release/8.6".
-          Must match the "-SNAPSHOT" version in pom.xml, e.g. "8.6.5-SNAPSHOT".
+          E.g. specify "5" to release version "8.6.5" from branch "release/8.6".
+          The patch number must match the patch component of the version in pom.xml,
+          e.g. input "5" for "8.6.5-SNAPSHOT".
         required: true
 
 # one release per branch at a time: a second dispatch waits for the running one instead of racing it
@@ -21,8 +22,9 @@ jobs:
       contents: read
     steps:
       - name: Validate branch name has release/ prefix
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
         run: |
-          BRANCH_NAME="${{ github.ref_name }}"
           if [[ ! "$BRANCH_NAME" =~ ^release/ ]]; then
             echo "Error: This workflow can only be run on branches with 'release/' prefix."
             echo "Current branch: $BRANCH_NAME"
