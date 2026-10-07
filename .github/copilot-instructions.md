@@ -96,7 +96,7 @@ mvn spotless:apply
 
 3. **Development Notes**:
    - Code formatting is automatic via `maven-spotless-plugin` during build/compile
-   - Always bump patch version first in PRs
+   - Don't bump the project version in regular feature/fix PRs. The maintenance branch already carries the next patch as `-SNAPSHOT`; after each release it is advanced in a dedicated version PR.
    - Don't change major/minor versions (they indicate Camunda 8 release association)
    - Example: `sap-rfc-connector-8.5.2` → version for Camunda 8.5, connector version 2
 
@@ -112,7 +112,7 @@ mvn spotless:apply
 
 2. **Development Notes**:
    - Code formatting via `maven-spotless-plugin` during build/compile
-   - Always bump patch version first in PRs
+   - Don't bump the project version in regular feature/fix PRs. The maintenance branch already carries the next patch as `-SNAPSHOT`; after each release it is advanced in a dedicated version PR.
    - Don't change major/minor versions
 
 ## Code Style Guidelines
@@ -197,7 +197,11 @@ Key dependencies include:
 - **Solution**: 
   - Major.Minor versions match Camunda 8 release (e.g., 8.8.x for Camunda 8.8)
   - Patch version is incremented for connector updates
-  - Always bump patch version in PRs
+  - Don't bump the project version in regular feature/fix PRs. The maintenance branch already carries the next patch as `-SNAPSHOT`; after each release it is advanced in a dedicated version PR.
+
+### Release Failed Partway
+- **Issue**: A run of `build-and-publish.yml` failed after part of the release was already published
+- **Solution**: Use "Re-run failed jobs" on the failed run: the jobs that already succeeded are kept, only the failed ones run again (followed by the next version PR). A new run for the same version is rejected once one of its release tags exists.
 
 ## Testing Guidelines
 
