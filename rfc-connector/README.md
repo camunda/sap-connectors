@@ -27,3 +27,13 @@ So the Connector needs to be deployed as a `.war` Java application on Cloud Foun
     - don't change major or minor, as they indicate the Camunda 8 release association
       &rarr; `sap-rfc-connector-8.5.2` is the version for Camunda 8.5, and the connector version 2
 
+### Dependency management
+
+The RFC module imports Spring Boot's BOM rather than inheriting its parent. Its local
+Jackson 3 and Netty BOMs must precede the SAP and Boot BOMs; Jackson 2 stays separately
+managed and first so that its shared annotations version is preserved. Embedded Tomcat
+and Commons Lang need explicit local management, and Logback core/classic share one version.
+Keep the existing provided scopes for Tomcat, Commons Lang, and Logback when updating
+these families, and verify both the effective dependency tree and `WEB-INF/lib-provided`
+in the executable WAR. The buildpack supplies the cloud-profile JSON logging encoder;
+the local profile uses Spring Boot's console configuration, without Janino conditionals.
