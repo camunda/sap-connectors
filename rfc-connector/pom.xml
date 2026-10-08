@@ -19,6 +19,8 @@
   <properties>
     <version.spring-boot>4.1.1</version.spring-boot>
     <version.logback>1.6.4</version.logback>
+    <version.tomcat-embed>11.0.26</version.tomcat-embed>
+    <version.bouncycastle>1.86</version.bouncycastle>
     <plugin.version.maven-exec-plugin>3.6.4</plugin.version.maven-exec-plugin>
   </properties>
 
@@ -33,6 +35,71 @@
         <version>${version.jackson}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+
+      <!-- CVE pins. These must stay declared BEFORE the BOM imports below,
+           which otherwise manage these artifacts down to vulnerable versions.
+           Drop an entry once the owning BOM ships the fixed version. -->
+      <!-- CVE-2026-93491, CVE-2026-89044 (netty-codec-http), pinned over the Camunda/Cloud SDK BOMs -->
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-bom</artifactId>
+        <version>4.2.18.Final</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- Jackson 3.x jackson-core/jackson-databind 3.1.5 are affected by 7 CVEs,
+           all fixed in 3.1.7. Note this is Jackson 3.x (groupId tools.jackson), pulled
+           in by the connector runtime, separate from the Jackson 2.x bom imported above. -->
+      <dependency>
+        <groupId>tools.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>3.1.7</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- bcprov/bcpkix 1.85 are affected by 8 CVEs, all fixed in 1.86. bcpkix already
+           resolves to 1.86 elsewhere in the tree but loses to bcprov 1.85 by nearest-wins. -->
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk18on</artifactId>
+        <version>${version.bouncycastle}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcpkix-jdk18on</artifactId>
+        <version>${version.bouncycastle}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcutil-jdk18on</artifactId>
+        <version>${version.bouncycastle}</version>
+      </dependency>
+      <!-- tomcat-embed 11.0.24 is affected by 7 CVEs, incl. CVE-2026-76183 (critical),
+           all fixed in 11.0.26. Pinned over the Spring Boot BOM; Tomcat modules must
+           stay aligned, so all three are pinned together. -->
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>${version.tomcat-embed}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-el</artifactId>
+        <version>${version.tomcat-embed}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-websocket</artifactId>
+        <version>${version.tomcat-embed}</version>
+      </dependency>
+      <!-- CVE-2025-48924: cf-tomee7-bom downgrades commons-lang3 to 3.15.0;
+           restore the version the rest of the tree asks for, keeping its managed scope -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.20.0</version>
+        <scope>provided</scope>
       </dependency>
 
       <!-- SAP BTP cf related artifacts -->
