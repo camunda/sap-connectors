@@ -21,6 +21,10 @@
     <version.spring-boot-starter-camunda>${version.camunda}</version.spring-boot-starter-camunda>
     <version.logback>1.6.4</version.logback>
     <version.jackson>2.22.3</version.jackson>
+    <version.netty>4.1.138.Final</version.netty>
+    <version.tomcat>10.1.60</version.tomcat>
+    <version.commons-lang3>3.20.0</version.commons-lang3>
+    <version.log4j>2.25.5</version.log4j>
     <plugin.version.maven-war-plugin>3.4.0</plugin.version.maven-war-plugin>
     <plugin.version.maven-exec-plugin>3.6.4</plugin.version.maven-exec-plugin>
     <plugin.version.maven-spring-boot>${version.spring-boot}</plugin.version.maven-spring-boot>
@@ -35,6 +39,21 @@
         <groupId>com.fasterxml.jackson</groupId>
         <artifactId>jackson-bom</artifactId>
         <version>${version.jackson}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- Family overrides must precede the SAP and Spring Boot BOM imports. -->
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-bom</artifactId>
+        <version>${version.netty}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-bom</artifactId>
+        <version>${version.log4j}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -65,6 +84,35 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-tomcat</artifactId>
         <scope>provided</scope>
+      </dependency>
+
+      <!-- Preserve buildpack-provided scope while replacing its stale Lang version. -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${version.commons-lang3}</version>
+        <scope>provided</scope>
+      </dependency>
+      <!-- Imported Boot BOM properties cannot be overridden by local properties. -->
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>${version.tomcat}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-el</artifactId>
+        <version>${version.tomcat}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-jasper</artifactId>
+        <version>${version.tomcat}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-websocket</artifactId>
+        <version>${version.tomcat}</version>
       </dependency>
 
       <!-- Spring Boot BOM -->
