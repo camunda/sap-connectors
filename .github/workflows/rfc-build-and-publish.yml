@@ -35,6 +35,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Set connector version
+        if: github.ref_name != 'main'
         run: |
           mvn versions:set -DnewVersion=${{ inputs.final_version }} -DgenerateBackupPoms=false
       - name: build project
