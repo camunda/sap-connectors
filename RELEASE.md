@@ -13,6 +13,16 @@ Example: `sap-rfc-connector-8.9.3` is the third release of the RFC connector for
 
 Each `MAJOR.MINOR` line has its own long-lived branch: `release/8.9`, `release/8.8`, etc.
 
+### Deprecated release lines
+
+| Line | Branch | Status |
+|------|--------|--------|
+| 8.6 | `release/8.6` | Deprecated: emergency releases only |
+| 8.7 | `release/8.7` | Deprecated: emergency releases only |
+
+Deprecated branches stay open so that an emergency fix (e.g. a critical security fix) can still be released, but they get no
+regular releases, backports or Renovate updates. To release from one of them, follow the `RELEASE.md` on that branch.
+
 ## What gets released
 
 A single release run publishes **both** connectors at the same version:
@@ -95,9 +105,9 @@ After the workflow succeeds:
 
 ## Releasing multiple minor lines
 
-When you need to release across several supported branches (e.g. backporting a fix to 8.7, 8.8, and 8.9), run the workflow once per branch.
+When you need to release across several supported branches (e.g. backporting a fix to 8.8, 8.9, and 8.10), run the workflow once per branch.
 
-> **Release from oldest to newest.** The `latest` Docker tag is driven by whichever push lands last. To ensure `latest` always points to the newest version, release `release/8.7` first, then `release/8.8`, then `release/8.9`.
+> **Release from oldest to newest.** The `latest` Docker tag is driven by whichever push lands last. To ensure `latest` always points to the newest version, release `release/8.8` first, then `release/8.9`, then `release/8.10`.
 
 ## Creating a new release branch
 

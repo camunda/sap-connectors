@@ -45,6 +45,8 @@ before running the unit tests of the OData connector.
 
 # Regarding the release/8.6 branch
 
+> **Note:** `release/8.6` and `release/8.7` are deprecated and only receive emergency releases, see [RELEASE.md](./RELEASE.md).
+
 The 8.6 release of the SAP connectors got broken during migration
 as we decided to test against our INT environment but still wanted 
 to support the Console Secret provider in the connector runtime.
