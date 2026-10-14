@@ -2,6 +2,18 @@
 
 This file contains information for AI agents working on the Camunda SAP Connectors repository.
 
+## ⚠️ Deprecated Release Line: `release/8.6`
+
+This branch is **deprecated**. The 8.6 line is no longer actively maintained and only receives **emergency** changes
+(e.g. critical security fixes) followed by an emergency patch release. See `README.md` and `RELEASE.md`.
+
+When working on this branch:
+- Tell the user up front that `release/8.6` is deprecated, and confirm the change is an emergency fix that must ship for 8.6.
+  New features, refactorings, cleanups and routine dependency upgrades belong on `main` or a supported release branch.
+- Once the user confirms, proceed normally: do not refuse or block emergency changes.
+- Keep the change minimal and scoped to the emergency; do not opportunistically fix or upgrade unrelated things.
+- Keep the deprecation notices in `README.md`, `RELEASE.md`, this file and the release workflows in place.
+
 ## Project Overview
 
 This repository serves as the central location for all Camunda SAP connectors, providing integration solutions between Camunda and SAP S/4/ECC systems. It contains multiple connector projects, each tailored to a specific SAP protocol and deployment scenario.
