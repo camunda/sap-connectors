@@ -9,6 +9,20 @@ on:
        type: string
 
 jobs:
+  # 8.7 is deprecated: warn on every release run, but never block it (emergency releases must stay possible)
+  deprecation-notice:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Warn that the 8.7 release line is deprecated
+        env:
+          FINAL_VERSION: ${{ inputs.final_version }}
+        run: |
+          MESSAGE="release/8.7 is deprecated. Releasing the OData connector ${FINAL_VERSION} is only intended for emergencies (e.g. critical security fixes). See RELEASE.md on release/8.7."
+          echo "::warning title=Deprecated release line 8.7::${MESSAGE}"
+          echo "> [!WARNING]" >> "$GITHUB_STEP_SUMMARY"
+          echo "> ${MESSAGE}" >> "$GITHUB_STEP_SUMMARY"
+
   determine-connector-version:
     runs-on: ubuntu-latest
     permissions:
@@ -58,6 +72,7 @@ jobs:
           artifacts: "odata-connector/element-templates/*.json,odata-connector/mtad.yaml.example"
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: "odata-${{ inputs.final_version }}"
+          makeLatest: "false"   # deprecated line: an emergency release must not become the "Latest" GitHub release
           name: "OData ${{ inputs.final_version }}"
           body: "OData Release ${{ inputs.final_version }}"
           commit: ${{github.ref}}

@@ -1,9 +1,12 @@
 name: Release all artifacts
+# release/8.7 is deprecated: the run name flags every release run from it
+run-name: "[DEPRECATED 8.7] Release all artifacts ${{ github.ref_name }} (patch ${{ inputs.patch-version }})"
 on:
   workflow_dispatch:
     inputs:
       patch-version:
         description: |
+          DEPRECATED: release/8.7 only gets emergency releases (see RELEASE.md).
           The release patch version. Minor is specified by the branch.
           E.g. specify "5" to release version "8.6.5" from branch "release/8.6".
           The patch number must match the patch component of the version in pom.xml,
