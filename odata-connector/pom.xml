@@ -19,6 +19,23 @@
     <plugin.version.maven-shade-plugin>3.6.2</plugin.version.maven-shade-plugin>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <!-- CVE-2026-102554 (guava 33.7.1-jre via the Cloud SDK), fixed in 33.7.2-jre -->
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${version.guava}</version>
+      </dependency>
+      <!-- CVE-2026-85473 (java-jwt 4.6.1 via the Cloud SDK), fixed in 4.6.2 -->
+      <dependency>
+        <groupId>com.auth0</groupId>
+        <artifactId>java-jwt</artifactId>
+        <version>${version.java-jwt}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 
     <!-- connector base -->
