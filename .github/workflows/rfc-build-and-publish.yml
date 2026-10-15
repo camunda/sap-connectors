@@ -8,6 +8,20 @@ on:
        type: string
 
 jobs:
+  # 8.6 is deprecated: warn on every release run, but never block it (emergency releases must stay possible)
+  deprecation-notice:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Warn that the 8.6 release line is deprecated
+        env:
+          FINAL_VERSION: ${{ inputs.final_version }}
+        run: |
+          MESSAGE="release/8.6 is deprecated. Releasing the RFC connector ${FINAL_VERSION} is only intended for emergencies (e.g. critical security fixes). See RELEASE.md on release/8.6."
+          echo "::warning title=Deprecated release line 8.6::${MESSAGE}"
+          echo "> [!WARNING]" >> "$GITHUB_STEP_SUMMARY"
+          echo "> ${MESSAGE}" >> "$GITHUB_STEP_SUMMARY"
+
   unit-test:
     uses: ./.github/workflows/rfc-reusable-unit-test.yml
     with:
@@ -42,6 +56,7 @@ jobs:
           artifacts: "rfc-connector/target/*.war,rfc-connector/element-templates/*.json,rfc-connector/mtad.yaml.example"
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: "rfc-${{ inputs.final_version }}"
+          makeLatest: "false"   # deprecated line: an emergency release must not become the "Latest" GitHub release
           name: "RFC ${{ inputs.final_version }}"
           body: "RFC Release ${{ inputs.final_version }}"
           commit: ${{github.ref}}

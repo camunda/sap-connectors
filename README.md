@@ -1,5 +1,13 @@
 # Camunda SAP Connectors – Central Repository
 
+> [!WARNING]
+> **`release/8.6` is DEPRECATED.** The 8.6 line of the Camunda SAP connectors is no longer actively maintained:
+> no new features, no routine dependency updates and no regular patch releases.
+>
+> - Use a supported version instead. The supported release lines are listed on the [`main` branch](https://github.com/camunda/sap-connectors/tree/main).
+> - This branch is kept open **for emergencies only** (e.g. a critical security fix that must be shipped for 8.6).
+>   Such changes are still accepted and released as usual, see [RELEASE.md](./RELEASE.md).
+
 This repository serves as the central location for all Camunda SAP connectors, providing integration solutions between Camunda and SAP S/4/ECC systems. It aggregates multiple connector projects, each tailored to a specific SAP protocol and deployment scenario.
 
 ## Overview of Connectors
