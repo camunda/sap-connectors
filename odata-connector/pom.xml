@@ -16,8 +16,25 @@
   <description>Camunda SAP OData protocol outbound Connector</description>
 
   <properties>
+    <version.guava>33.7.2-jre</version.guava>
+    <version.java-jwt>4.6.2</version.java-jwt>
     <plugin.version.maven-shade-plugin>3.6.2</plugin.version.maven-shade-plugin>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${version.guava}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.auth0</groupId>
+        <artifactId>java-jwt</artifactId>
+        <version>${version.java-jwt}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
 
