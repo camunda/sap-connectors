@@ -32,7 +32,25 @@
     <version.mockito>5.21.0</version.mockito>
     <version.testcontainers>1.21.4</version.testcontainers>
     <plugin.version.spotless-maven-plugin>3.1.0</plugin.version.spotless-maven-plugin>
+    <!-- Identity < 8.6.30 is only available from the authenticated Camunda Artifactory;
+         8.6.30+ is published to Maven Central. Connectors 8.6.x still pin 8.6.20. -->
+    <version.identity>8.6.32</version.identity>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.camunda</groupId>
+        <artifactId>identity-sdk</artifactId>
+        <version>${version.identity}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.camunda</groupId>
+        <artifactId>identity-spring-boot-autoconfigure</artifactId>
+        <version>${version.identity}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <pluginManagement>
