@@ -26,6 +26,12 @@
         <artifactId>commons-codec</artifactId>
         <version>1.18.0</version>
       </dependency>
+      <!-- CVE-2026-102554 (guava 33.7.1-jre via the Cloud SDK), fixed in 33.7.2-jre -->
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${version.guava}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
