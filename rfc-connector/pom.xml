@@ -18,7 +18,7 @@
 
   <properties>
     <version.spring-boot>4.1.1</version.spring-boot>
-    <version.logback>1.6.4</version.logback>
+    <version.logback>1.6.5</version.logback>
     <version.tomcat-embed>11.0.26</version.tomcat-embed>
     <version.bouncycastle>1.86</version.bouncycastle>
     <plugin.version.maven-exec-plugin>3.6.4</plugin.version.maven-exec-plugin>
@@ -92,6 +92,18 @@
         <groupId>org.apache.tomcat.embed</groupId>
         <artifactId>tomcat-embed-websocket</artifactId>
         <version>${version.tomcat-embed}</version>
+      </dependency>
+      <!-- CVE-2026-102554 (guava 33.7.1-jre via the Cloud SDK), fixed in 33.7.2-jre -->
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${version.guava}</version>
+      </dependency>
+      <!-- CVE-2026-85473 (java-jwt 4.6.1 via the connector runtime), fixed in 4.6.2 -->
+      <dependency>
+        <groupId>com.auth0</groupId>
+        <artifactId>java-jwt</artifactId>
+        <version>${version.java-jwt}</version>
       </dependency>
       <!-- CVE-2025-48924: cf-tomee7-bom downgrades commons-lang3 to 3.15.0;
            restore the version the rest of the tree asks for, keeping its managed scope -->
