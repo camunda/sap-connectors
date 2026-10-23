@@ -37,3 +37,8 @@ Keep the existing provided scopes for Tomcat, Commons Lang, and Logback when upd
 these families, and verify both the effective dependency tree and `WEB-INF/lib-provided`
 in the executable WAR. The buildpack supplies the cloud-profile JSON logging encoder;
 the local profile uses Spring Boot's console configuration, without Janino conditionals.
+
+The Protobuf BOM must also precede the SAP and Boot BOMs: Camunda 8.10's gateway
+messages use gencode 4.36.2, which cannot run with Boot's older 4.35.1 runtime.
+The gRPC compatibility test uses the actual Camunda topology request so that this
+mismatch is detected before packaging, rather than only by runtime health checks.
