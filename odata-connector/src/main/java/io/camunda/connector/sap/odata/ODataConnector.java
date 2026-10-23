@@ -7,6 +7,7 @@ import io.camunda.connector.api.annotation.OutboundConnector;
 import io.camunda.connector.api.outbound.OutboundConnectorContext;
 import io.camunda.connector.api.outbound.OutboundConnectorFunction;
 import io.camunda.connector.generator.java.annotation.ElementTemplate;
+import io.camunda.connector.sap.odata.model.LegacyODataConnectorRequest;
 import io.camunda.connector.sap.odata.model.ODataConnectorRequest;
 
 @OutboundConnector(
@@ -36,6 +37,9 @@ public class ODataConnector implements OutboundConnectorFunction {
   @Override
   public Object execute(OutboundConnectorContext context) {
     ODataConnectorRequest request = context.bindVariables(ODataConnectorRequest.class);
+    if (request.requestDetails() == null) {
+      request = context.bindVariables(LegacyODataConnectorRequest.class).toODataConnectorRequest();
+    }
     // check that request.requestDetails() is of type BatchRequest
     if (request.requestDetails() instanceof BatchRequest) {
       ODataBatchRequestExecutor batchExecutor = new ODataBatchRequestExecutor();
