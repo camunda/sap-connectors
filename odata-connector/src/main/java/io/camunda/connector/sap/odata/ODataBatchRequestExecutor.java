@@ -96,7 +96,7 @@ public class ODataBatchRequestExecutor {
         response =
             CommonExecutor.buildResponse(
                 result,
-                oDataVersion.getProtocolVersion().equals("V2")
+                oDataVersion == ODataProtocol.V2
                     ? HttpMethod.ODataVersion.V2
                     : HttpMethod.ODataVersion.V4);
       } catch (ODataServiceErrorException e) {
