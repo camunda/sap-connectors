@@ -8,7 +8,8 @@ It is distributed as [a Docker image](https://hub.docker.com/repository/docker/c
 The supported worker remains `io.camunda:sap-odata:2`, with simple and batch
 requests under `requestDetails`. Flat v1 requests and historical worker types
 are not supported by this patch; migrate them to the current template.
-Missing, null or malformed request details fail validation before execution.
+Missing or null `requestDetails` fails input validation before execution.
+Malformed shapes or discriminators fail binding; not every nested field is validated.
 Batch response schemas are unchanged: V2 retains `result.d`, including
 `d.results` and `d.__next`; successful empty 204 responses remain successful.
 
