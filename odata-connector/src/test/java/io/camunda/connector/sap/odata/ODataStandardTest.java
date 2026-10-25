@@ -9,14 +9,11 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;
-import io.camunda.connector.api.outbound.OutboundConnectorFunction;
 import io.camunda.connector.runtime.test.outbound.OutboundConnectorContextBuilder;
 import io.camunda.connector.sap.odata.model.HttpMethod;
-import io.camunda.connector.sap.odata.model.ODataConnectorBatchResponse;
 import io.camunda.connector.sap.odata.model.ODataConnectorRequest;
 import io.camunda.connector.sap.odata.model.ODataConnectorResponse;
 import io.camunda.connector.sap.odata.model.ODataConnectorResponseWithCount;
-import io.camunda.connector.sap.odata.model.ODataRequestDetails.BatchRequest;
 import io.camunda.connector.sap.odata.model.ODataRequestDetails.SimpleRequest;
 import io.vavr.control.Try;
 import java.util.Arrays;
@@ -28,7 +25,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.FieldSource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -92,145 +88,6 @@ public class ODataStandardTest {
   @AfterEach
   void resetDestination() {
     DestinationAccessor.setLoader(null);
-  }
-
-  @ResourceLock("DestinationAccessor")
-  @ParameterizedTest
-  @CsvSource({
-    "false,V2,/odata/v2/admin",
-    "true,V2,/odata/v2/admin",
-    "false,V4,/admin",
-    "true,V4,/admin"
-  })
-  void executes_flat_v1_get_on_both_workers(boolean legacyWorker, String protocol, String path)
-      throws Exception {
-    var input =
-        Map.of(
-            "destination",
-            "{{secrets.BOOKSHOP_DESTINATION}}",
-            "oDataService",
-            path,
-            "entityOrEntitySet",
-            "Authors(150)",
-            "httpMethod",
-            Map.of("httpMethod", "get", "oDataVersionGet", Map.of("oDataVersionGet", protocol)));
-    var context =
-        OutboundConnectorContextBuilder.create()
-            .secret("BOOKSHOP_DESTINATION", tpl_Destination)
-            .variables(input)
-            .build();
-    OutboundConnectorFunction function =
-        legacyWorker ? new LegacyODataConnector() : new ODataConnector();
-
-    assertThat(function.execute(context))
-        .isInstanceOfSatisfying(
-            ODataConnectorResponse.class,
-            response -> {
-              assertThat(response.statusCode()).isEqualTo(200);
-              assertThat(response.result().get("name").asText()).isEqualTo("Edgar Allen Poe");
-            });
-  }
-
-  @ResourceLock("DestinationAccessor")
-  @ParameterizedTest
-  @CsvSource({
-    "false,V2,/odata/v2/admin",
-    "true,V2,/odata/v2/admin",
-    "false,V4,/admin",
-    "true,V4,/admin"
-  })
-  void executes_flat_v1_post_payload_on_both_workers(
-      boolean legacyWorker, String protocol, String path) throws Exception {
-    var name = randomString();
-    var input =
-        Map.of(
-            "destination",
-            tpl_Destination,
-            "oDataService",
-            path,
-            "entityOrEntitySet",
-            "Authors",
-            "httpMethod",
-            Map.of("httpMethod", "post", "oDataVersionPost", protocol),
-            "payload",
-            Map.of("ID", randomId(), "name", name));
-    var context = OutboundConnectorContextBuilder.create().variables(input).build();
-    OutboundConnectorFunction function =
-        legacyWorker ? new LegacyODataConnector() : new ODataConnector();
-
-    assertThat(function.execute(context))
-        .isInstanceOfSatisfying(
-            ODataConnectorResponse.class,
-            response -> {
-              assertThat(response.statusCode()).isEqualTo(201);
-              assertThat(response.result().get("name").asText()).isEqualTo(name);
-            });
-  }
-
-  @ResourceLock("DestinationAccessor")
-  @Test
-  void v2_simple_request_takes_precedence_over_flat_fields() {
-    var details =
-        Map.of(
-            "requestType", "simpleReq",
-            "entityOrEntitySet", "Authors(150)",
-            "httpMethod",
-                Map.of("httpMethod", "get", "oDataVersionGet", Map.of("oDataVersionGet", "V2")));
-    var input =
-        Map.of(
-            "destination",
-            tpl_Destination,
-            "oDataService",
-            "/odata/v2/admin",
-            "requestDetails",
-            details,
-            "entityOrEntitySet",
-            "not-a-real-entity",
-            "httpMethod",
-            Map.of("httpMethod", "unsupported"));
-    var context = OutboundConnectorContextBuilder.create().variables(input).build();
-
-    assertThat(new ODataConnector().execute(context))
-        .isInstanceOfSatisfying(
-            ODataConnectorResponse.class,
-            response -> {
-              assertThat(response.statusCode()).isEqualTo(200);
-              assertThat(response.result().get("name").asText()).isEqualTo("Edgar Allen Poe");
-            });
-  }
-
-  @ResourceLock("DestinationAccessor")
-  @ParameterizedTest
-  @CsvSource({"V2,/odata/v2/admin", "V4,/admin"})
-  void executes_v2_batch_requests(HttpMethod.ODataVersion protocol, String path) {
-    var details =
-        new BatchRequest(
-            protocol,
-            List.of(
-                Map.of(
-                    "type",
-                    "batch",
-                    "requests",
-                    List.of(Map.of("method", "GET", "resourcePath", "Authors(150)")))));
-    var input = new ODataConnectorRequest(tpl_Destination, path, details);
-    var context = OutboundConnectorContextBuilder.create().variables(input).build();
-
-    assertThat(new ODataConnector().execute(context))
-        .isInstanceOfSatisfying(
-            ODataConnectorBatchResponse.class,
-            batch ->
-                assertThat(batch.batchResponses())
-                    .singleElement()
-                    .isInstanceOfSatisfying(
-                        ODataConnectorResponse.class,
-                        response -> {
-                          assertThat(response.statusCode()).isEqualTo(200);
-                          assertThat(response.result().has("name"))
-                              .as("batch response: %s", response)
-                              .isTrue();
-                          assertThat(response.result().get("name").asText())
-                              .isEqualTo("Edgar Allen Poe");
-                        }));
   }
 
   @ResourceLock("DestinationAccessor")

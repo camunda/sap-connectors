@@ -4,6 +4,7 @@ import io.camunda.connector.generator.java.annotation.FeelMode;
 import io.camunda.connector.generator.java.annotation.TemplateProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record ODataConnectorRequest(
@@ -22,4 +23,4 @@ public record ODataConnectorRequest(
         @Pattern(regexp = "^([/=]).*", message = "oDataService must start with a '/'")
         @NotEmpty
         String oDataService,
-    @Valid ODataRequestDetails requestDetails) {}
+    @NotNull @Valid ODataRequestDetails requestDetails) {}
