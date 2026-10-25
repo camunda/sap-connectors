@@ -8,17 +8,22 @@ It is distributed as [a Docker image](https://hub.docker.com/repository/docker/c
 The supported worker remains `io.camunda:sap-odata:2`, with simple and batch
 requests under `requestDetails`. Flat v1 requests and historical worker types
 are not supported by this patch; migrate them to the current template.
-Missing, null or malformed request details fail validation before execution.
+Missing or null `requestDetails` fails input validation before execution.
+Malformed shapes or discriminators fail binding; not every nested field is validated.
 Batch response schemas are unchanged: V2 retains `result.d`, including
 `d.results` and `d.__next`; successful empty 204 responses remain successful.
 
 ### Docker startup regression
 
 The 8.8 Dockerfile sets `SPRING_HTTP_CONVERTERS_PREFERRED_JSON_MAPPER=jackson`.
-The `8.8.22` base image supplies `jackson2`, which its Spring Boot 3 enum does not
+The `8.8.24` base image still supplies `jackson2`, which its Spring Boot 3 enum does not
 support. Keep this correction specific to 8.8; do not copy it to Boot 4 runtimes.
 
-After packaging and building a local image, run:
+Runtime `8.8.24` also fixes Guava dependency mediation. In `8.8.22`, the launcher
+loads Guava 33.5.0 from `/opt/app` before the fixed 33.7.2 in the SAP custom JAR;
+a custom-JAR version pin alone does not protect the running application.
+
+After packaging and building a local image, run with a Java 21+ JDK:
 
 ```bash
 bash scripts/test-odata-runtime.sh sap-odata-local
@@ -26,6 +31,11 @@ bash scripts/test-odata-runtime.sh sap-odata-local
 
 CI runs the same check on its test image before publication. The publishing job
 rebuilds the final-version artifact separately; this is not artifact promotion.
+The check uses a temporary test-only Java agent in the image's actual JVM to
+verify the loaded origins and fixed 33.7.2 bytes of the three affected Guava
+collection classes. It fails on the old shadowing runtime; update the expected
+hashes only after verifying a future Guava upgrade. The agent is not packaged
+in the product image.
 The check requires completed Spring startup
 and actuator liveness `UP`, with loopback-only client addresses and no SAP
 credentials. Workers are registered; inbound polling and webhooks are disabled.
