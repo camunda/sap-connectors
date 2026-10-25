@@ -32,6 +32,7 @@ jobs:
         run: echo "VERSION=${{ env.VERSION }}" >> "$GITHUB_OUTPUT"
 
   deploy-to-btp:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     needs: determine-connector-version
     uses: ./.github/workflows/rfc-reusable-deploy.yml
     with:
@@ -52,7 +53,7 @@ jobs:
 
   undeploy:
     needs: [ determine-connector-version, e2e, deploy-to-btp ]
-    if: always()
+    if: always() && needs.deploy-to-btp.result != 'skipped'
     uses: ./.github/workflows/rfc-reusable-undeploy.yml
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}
