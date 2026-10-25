@@ -3,15 +3,14 @@
 Camunda Connector to interact with an SAP S/4 and ECC system via OData v2 + v4.
 It is distributed as [a Docker image](https://hub.docker.com/repository/docker/camunda/sap-odata-connector) and needs deployment to BTP.
 
-### Element template compatibility
+### Maintenance compatibility
 
-The current worker (`io.camunda:sap-odata:2`) accepts both v2 requests under
-`requestDetails` and the flat v1 fields (`entityOrEntitySet`, `httpMethod`, `payload`).
-The legacy worker type `io.camunda:sap:odata:outbound:` is also registered. Both use
-the same execution path; the v2 template ID and batch request format are unchanged.
-Malformed v2 request details are rejected, not retried as v1 requests.
-OData v2 batch responses unwrap the protocol's `d` envelope, matching simple v2
-requests; OData v4 response handling is unchanged.
+The supported worker remains `io.camunda:sap-odata:2`, with simple and batch
+requests under `requestDetails`. Flat v1 requests and historical worker types
+are not supported by this patch; migrate them to the current template.
+Missing, null or malformed request details fail validation before execution.
+Batch response schemas are unchanged: V2 retains `result.d`, including
+`d.results` and `d.__next`; successful empty 204 responses remain successful.
 
 ### Docker startup regression
 
@@ -25,12 +24,17 @@ After packaging and building a local image, run:
 bash scripts/test-odata-runtime.sh sap-odata-local
 ```
 
-CI runs the same check before publication. It requires completed Spring startup
+CI runs the same check on its test image before publication. The publishing job
+rebuilds the final-version artifact separately; this is not artifact promotion.
+The check requires completed Spring startup
 and actuator liveness `UP`, with loopback-only client addresses and no SAP
 credentials. Workers are registered; inbound polling and webhooks are disabled.
 This is not a broker-readiness or SAP connectivity test. With a matching
 local Camunda stack, separately verify `/actuator/health` is `UP` and execute a
 bookshop process.
+
+Draft PRs skip RFC deployment, live SAP E2E, and undeployment jobs. Local tests
+and the normal build workflow still run; a skipped SAP E2E job is not a pass.
 
 ## development hints
 
