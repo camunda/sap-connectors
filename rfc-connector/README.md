@@ -38,7 +38,9 @@ these families, and verify both the effective dependency tree and `WEB-INF/lib-p
 in the executable WAR. The buildpack supplies the cloud-profile JSON logging encoder;
 the local profile uses Spring Boot's console configuration, without Janino conditionals.
 
-The Protobuf BOM must also precede the SAP and Boot BOMs: Camunda 8.10's gateway
-messages use gencode 4.36.2, which cannot run with Boot's older 4.35.1 runtime.
-The gRPC compatibility test uses the actual Camunda topology request so that this
-mismatch is detected before packaging, rather than only by runtime health checks.
+Connector runtime 8.10.2 replaces the earlier transitive 8.10.0-rc1 client with
+stable client/gateway 8.10.5. Its gateway uses gencode 4.34.2, compatible with
+Boot's Protobuf 4.35.1; no local Protobuf BOM override is needed. The earlier
+RC gateway used gencode 4.36.2 and failed initialization with that runtime.
+The gRPC compatibility test uses the actual Camunda topology request to detect
+future generated-code/runtime mismatches before packaging.
