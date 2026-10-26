@@ -7,7 +7,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.protobuf.StringValue;
+import io.camunda.zeebe.gateway.protocol.GatewayOuterClass.TopologyRequest;
 import io.grpc.CallOptions;
 import io.grpc.MethodDescriptor;
 import io.grpc.ServerServiceDefinition;
@@ -93,11 +93,11 @@ class DependencyCompatibilityTest {
   @Test
   void grpcRoundTripsOverNettyHttp2() throws Exception {
     var method =
-        MethodDescriptor.<StringValue, StringValue>newBuilder()
+        MethodDescriptor.<TopologyRequest, TopologyRequest>newBuilder()
             .setType(MethodDescriptor.MethodType.UNARY)
             .setFullMethodName(MethodDescriptor.generateFullMethodName("test.Echo", "echo"))
-            .setRequestMarshaller(ProtoUtils.marshaller(StringValue.getDefaultInstance()))
-            .setResponseMarshaller(ProtoUtils.marshaller(StringValue.getDefaultInstance()))
+            .setRequestMarshaller(ProtoUtils.marshaller(TopologyRequest.getDefaultInstance()))
+            .setResponseMarshaller(ProtoUtils.marshaller(TopologyRequest.getDefaultInstance()))
             .build();
     var service =
         ServerServiceDefinition.builder("test.Echo")
@@ -118,7 +118,7 @@ class DependencyCompatibilityTest {
       var channel =
           NettyChannelBuilder.forAddress("127.0.0.1", server.getPort()).usePlaintext().build();
       try {
-        var request = StringValue.of("RFC");
+        var request = TopologyRequest.getDefaultInstance();
         assertThat(
                 ClientCalls.blockingUnaryCall(
                     channel,

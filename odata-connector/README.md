@@ -3,6 +3,36 @@
 Camunda Connector to interact with an SAP S/4 and ECC system via OData v2 + v4.
 It is distributed as [a Docker image](https://hub.docker.com/repository/docker/camunda/sap-odata-connector) and needs deployment to BTP.
 
+### Maintenance compatibility
+
+The supported worker remains `io.camunda:sap-odata:2`, with simple and batch
+requests under `requestDetails`. Flat v1 requests and historical worker types
+are not supported by this patch; migrate them to the current template.
+Missing or null `requestDetails` fails input validation before execution.
+Malformed shapes or discriminators fail binding; not every nested field is validated.
+Batch response schemas are unchanged: V2 retains `result.d`, including
+`d.results` and `d.__next`; successful empty 204 responses remain successful.
+
+### Docker startup regression
+
+After packaging and building a local image, run:
+
+```bash
+bash scripts/test-odata-runtime.sh sap-odata-local
+```
+
+CI runs the same check on its test image before publication. The publishing job
+rebuilds the final-version artifact separately; this is not artifact promotion.
+The check requires completed Spring startup
+and actuator liveness `UP`, with loopback-only client addresses and no SAP
+credentials. Workers are registered; inbound polling and webhooks are disabled.
+This is not a broker-readiness or SAP connectivity test. With a matching
+local Camunda stack, separately verify `/actuator/health` is `UP` and execute a
+bookshop process.
+
+Draft PRs skip RFC deployment, live SAP E2E, and undeployment jobs. Local tests
+and the normal build workflow still run; a skipped SAP E2E job is not a pass.
+
 
 ### OData sample backend
 
