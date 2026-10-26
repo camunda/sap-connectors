@@ -2,6 +2,7 @@ name: rfc-e2e-test
 
 on:
     pull_request:
+        types: [opened, synchronize, reopened, ready_for_review]
         branches: [ "release/*", "main" ]
     push:
         branches: [ "release/*", "main" ]
