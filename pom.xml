@@ -25,7 +25,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <version.slf4j>2.0.20</version.slf4j>
-    <version.camunda>8.8.24</version.camunda>
+    <!-- also controls the camunda/connectors base image tag used by odata-connector/Dockerfile (see CAMUNDA_CONNECTORS_VERSION build-arg wired up in CI) -->
+    <version.camunda>8.8.25</version.camunda>
     <version.cloud-sdk>5.35.0</version.cloud-sdk>
     <version.assertj>3.27.7</version.assertj>
     <version.junit-jupiter>5.14.4</version.junit-jupiter>
@@ -52,15 +53,22 @@
         <scope>import</scope>
       </dependency>
 
-      <!-- Jackson 3.x (tools.jackson groupId) pulled in transitively alongside the 2.x line -->
+      <!-- Jackson 3.x (tools.jackson.core groupId) pulled in transitively alongside the 2.x line -->
       <!-- CVE-2026-110879 -->
       <dependency>
-        <groupId>tools.jackson</groupId>
+        <groupId>tools.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
         <version>${version.jackson3-databind}</version>
       </dependency>
 
       <!-- CVE-2026-101356, CVE-2026-101296, CVE-2026-103119, CVE-2026-88041, CVE-2026-93446, CVE-2026-74048 -->
+      <!-- NOTE: these tomcat-embed/hibernate-validator pins (and the jackson ones above) only take effect for
+           rfc-connector's self-contained WAR. odata-connector's shipped Docker image copies just the connector
+           jar onto the camunda/connectors base image (see odata-connector/Dockerfile), so its own Tomcat/
+           Hibernate Validator/log4j/jakarta.validation classes always come from that base image, unaffected by
+           this dependencyManagement. Fixing CVEs sourced from the base image requires bumping version.camunda
+           (and thus the base image tag) to a release that bundles patched versions, then re-verifying the
+           resulting image. -->
       <dependency>
         <groupId>org.apache.tomcat.embed</groupId>
         <artifactId>tomcat-embed-core</artifactId>
