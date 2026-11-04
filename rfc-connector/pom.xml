@@ -19,8 +19,9 @@
   <properties>
     <version.spring-boot>4.1.1</version.spring-boot>
     <version.logback>1.6.5</version.logback>
-    <version.tomcat-embed>11.0.26</version.tomcat-embed>
+    <version.tomcat-embed>11.0.27</version.tomcat-embed>
     <version.bouncycastle>1.86</version.bouncycastle>
+    <version.hibernate-validator>9.1.5.Final</version.hibernate-validator>
     <plugin.version.maven-exec-plugin>3.6.4</plugin.version.maven-exec-plugin>
   </properties>
 
@@ -48,13 +49,13 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <!-- Jackson 3.x jackson-core/jackson-databind 3.1.5 are affected by 7 CVEs,
-           all fixed in 3.1.7. Note this is Jackson 3.x (groupId tools.jackson), pulled
-           in by the connector runtime, separate from the Jackson 2.x bom imported above. -->
+      <!-- CVE-2026-110879 (tools.jackson.core:jackson-databind 3.1.7), fixed in 3.1.8.
+           Note this is Jackson 3.x (groupId tools.jackson), pulled in by the connector
+           runtime, separate from the Jackson 2.x bom imported above. -->
       <dependency>
         <groupId>tools.jackson</groupId>
         <artifactId>jackson-bom</artifactId>
-        <version>3.1.7</version>
+        <version>3.1.8</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -75,8 +76,9 @@
         <artifactId>bcutil-jdk18on</artifactId>
         <version>${version.bouncycastle}</version>
       </dependency>
-      <!-- tomcat-embed 11.0.24 is affected by 7 CVEs, incl. CVE-2026-76183 (critical),
-           all fixed in 11.0.26. Pinned over the Spring Boot BOM; Tomcat modules must
+      <!-- tomcat-embed 11.0.26 is affected by CVE-2026-101356, CVE-2026-101296,
+           CVE-2026-103119, CVE-2026-88041, CVE-2026-93446, CVE-2026-74048,
+           all fixed in 11.0.27. Pinned over the Spring Boot BOM; Tomcat modules must
            stay aligned, so all three are pinned together. -->
       <dependency>
         <groupId>org.apache.tomcat.embed</groupId>
@@ -104,6 +106,13 @@
         <groupId>com.auth0</groupId>
         <artifactId>java-jwt</artifactId>
         <version>${version.java-jwt}</version>
+      </dependency>
+      <!-- CVE-2026-93879 (hibernate-validator 9.1.3.Final via the connector runtime BOM,
+           downgraded from 9.1.5.Final), fixed in 9.1.5.Final -->
+      <dependency>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>${version.hibernate-validator}</version>
       </dependency>
       <!-- CVE-2025-48924: cf-tomee7-bom downgrades commons-lang3 to 3.15.0;
            restore the version the rest of the tree asks for, keeping its managed scope -->

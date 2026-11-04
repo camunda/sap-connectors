@@ -33,6 +33,31 @@
         <artifactId>java-jwt</artifactId>
         <version>${version.java-jwt}</version>
       </dependency>
+      <!-- SNYK-JAVA-COMMONSCODEC-561518 (commons-codec 1.6 via the Cloud SDK), fixed in 1.14.
+           Pinned to the version already resolved elsewhere in the test classpath. -->
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>1.19.0</version>
+      </dependency>
+      <!-- CVE-2026-110879 (tools.jackson.core:jackson-databind 3.1.5, test scope only,
+           pulled in transitively by test dependencies), fixed in 3.1.8 -->
+      <dependency>
+        <groupId>tools.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>3.1.8</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- tomcat-embed 11.0.24 (test scope only, pulled in transitively by test
+           dependencies) is affected by CVE-2026-101356, CVE-2026-101296,
+           CVE-2026-103119, CVE-2026-88041, CVE-2026-93446, CVE-2026-74048,
+           all fixed in 11.0.27 -->
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>11.0.27</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
