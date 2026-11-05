@@ -1,4 +1,4 @@
-name: build-and-publish
+name: odata-build-and-publish
 # - docker-image
 
 on:
@@ -31,7 +31,7 @@ jobs:
 
   build-and-test:
     needs: determine-connector-version
-    uses: ./.github/workflows/odata-reusable-build-and-test.yml
+    uses: ./.github/workflows/odata-reusable-unit-test.yml
     with:
       java-version: '25'
       distribution: 'temurin'

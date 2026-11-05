@@ -1,4 +1,4 @@
-name: odata-reusable-build-and-test
+name: odata-reusable-e2e-test
 
 on:
   workflow_call:
@@ -40,6 +40,7 @@ jobs:
       - name: e2e tests (deployed connector, against c8 + ecc)
         env:
           e2e: true
+          MAVEN_OPTIONS: ${{ inputs.maven-options }}
         run: |
           # by env var e2e, only the respective tests are run
           export CLIENT_ID=$(jq -r .clientId values.json)
@@ -47,5 +48,5 @@ jobs:
           export CLUSTER_ID=$(jq -r .clusterId values.json)
           export REGION_ID=$(jq -r .regionId values.json)
           export BASE_DOMAIN=$(jq -r .baseDomain values.json)
-          mvn -pl odata-connector ${{ inputs.maven-options }} test -Dtest=io.camunda.connector.sap.odata.E2eTest
+          mvn -pl odata-connector "$MAVEN_OPTIONS" test -Dtest=io.camunda.connector.sap.odata.E2eTest
 
