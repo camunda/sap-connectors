@@ -1,0 +1,70 @@
+name: odata-reusable-undeploy
+
+on:
+  workflow_call:
+    inputs:
+      connector_version: # fex: 8.5.7 - 8.5 for Camunda release, 7 for connector version
+        required: true
+        type: string
+      deployment_name: # unique deployment name (e.g., sap-odata-connector-8.5.7-main-123456)
+        required: true
+        type: string
+      cf_api_endpoint:
+        required: true
+        type: string
+      cf_org:
+        required: true
+        type: string
+      cf_space:
+        required: true
+        type: string
+      cluster_uuid:
+        required: true
+        type: string
+
+jobs:
+  undeploy-camunda-cluster:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Import Secrets
+        id: vault-secrets
+        uses: hashicorp/vault-action@v4.0.0
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID}}
+          secrets: |
+            secret/data/products/connectors/ci/sap CONSOLE_CLIENT_ID;
+            secret/data/products/connectors/ci/sap CONSOLE_CLIENT_SECRET;
+      - name: Checkout repository
+        uses: actions/checkout@v7
+      - name: Delete cluster
+        run: node scripts/manage_cluster.js -d ${{inputs.cluster_uuid}}
+        env:
+          CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
+          CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
+
+  undeploy-btp:
+    runs-on: ubuntu-latest
+    container:
+      image: cloudfoundry/cli:latest
+    steps:
+      - name: Import Secrets
+        id: vault-secrets
+        uses: hashicorp/vault-action@v4.0.0
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID}}
+          secrets: |
+            secret/data/products/connectors/ci/sap SAP_CLOUDFOUNDRY_EMAIL;
+            secret/data/products/connectors/ci/sap SAP_CLOUDFOUNDRY_PASSWORD;
+      - name: undeploy ${{inputs.connector_version}} from BTP
+        run: |
+          cf install-plugin multiapps -f
+          ls -al .
+          cf login -a ${{ inputs.cf_api_endpoint }} -u ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_EMAIL }} \
+            -p ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_PASSWORD }} -o ${{ inputs.cf_org }} -s ${{ inputs.cf_space }}
+          cf delete ${{ inputs.deployment_name }} -f -r

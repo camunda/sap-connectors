@@ -1,5 +1,5 @@
 name: odata-reusable-deploy
-### This is currently not used. We should start using it however
+
 on:
   workflow_call:
     inputs:
@@ -22,12 +22,12 @@ on:
 jobs:
   extract-version:
     runs-on: ubuntu-latest
+    outputs:
+        camunda_release: ${{ steps.extract_release.outputs.camunda_release }}
     steps:
       - name: extract release branch # first two digits of connector_version
-        run: echo "camunda_release=$(echo ${{ inputs.connector_version }} | cut -d'.' -f1-2)" >> "$GITHUB_ENV"
-
-#      - name: extract connector version for release # last digit of connector_version
-#        run: echo "connector_version=$(echo ${{ inputs.connector_version }} | cut -d'.' -f3)" >> $GITHUB_ENV
+        run: echo "camunda_release=$(echo ${{ inputs.connector_version }} | cut -d'.' -f1-2)" >> "$GITHUB_OUTPUT"
+        id: extract_release
 
   mtad-yaml: # get the mtad.yaml.example from the release branch via sparse checkout
     runs-on: ubuntu-latest
