@@ -120,13 +120,3 @@ jobs:
           platforms: linux/amd64
           provenance: false
 
-#  deploy-to-btp:
-#    needs: build-and-publish
-#    uses: ./.github/workflows/reusable-deploy.yml
-#    with:
-#      connector_version: ${{ needs.build-and-publish.outputs.VERSION }}
-#      region: 'bru-2'
-#      cf_api_endpoint: 'https://api.cf.eu10-004.hana.ondemand.com'
-#      cf_org: camunda-dev
-#      cf_space: sap-integration
-#    secrets: inherit

@@ -94,6 +94,7 @@ jobs:
           path: values.json
           retention-days: 1
 
+      # Static 8.10.3 used until alternative container image storage configured for development "$VERSION" testing
       - name: fill in target cluster credentials
         env:
           VERSION: ${{ needs.determine-connector-version.outputs.VERSION }}
@@ -105,7 +106,7 @@ jobs:
         run: |
           scripts/replace_mtad_placeholders.js \
           odata-connector/mtad.yaml.example \
-          "$VERSION" \
+          "8.10.3" \
           "$REGION_ID" \
           "$CLUSTER_ID" \
           "ultrawombat.com" \
