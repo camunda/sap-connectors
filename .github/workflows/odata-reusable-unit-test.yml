@@ -1,4 +1,4 @@
-name: odata-reusable-build-and-test
+name: odata-reusable-unit-test
 
 on:
   workflow_call:

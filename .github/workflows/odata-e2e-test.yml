@@ -1,0 +1,51 @@
+name: odata-e2e-test
+
+on:
+  workflow_call:
+    inputs:
+      connector_version: # fex: 8.5.7 - 8.5 for Camunda release, 7 for connector version
+        required: true
+        type: string
+      deployment_name:
+        required: true
+        type: string
+      cf_api_endpoint:
+        required: true
+        type: string
+      cf_org:
+        required: true
+        type: string
+      cf_space:
+        required: true
+        type: string
+
+jobs:
+  deploy-to-btp:
+    uses: ./.github/workflows/odata-reusable-deploy.yml
+    with:
+      connector_version: ${{ inputs.connector_version }}
+      deployment_name: ${{ inputs.deployment_name }}
+      cf_api_endpoint: ${{ inputs.cf_api_endpoint }}
+      cf_org: ${{ inputs.cf_org }}
+      cf_space: ${{ inputs.cf_space }}
+    secrets: inherit
+
+  e2e:
+    needs: deploy-to-btp
+    uses: ./.github/workflows/odata-reusable-e2e-test.yml
+    with:
+      java-version: '25'
+      distribution: 'temurin'
+      maven-options: ''
+
+  undeploy:
+    needs: [ e2e, deploy-to-btp ]
+    if: always()
+    uses: ./.github/workflows/odata-reusable-undeploy.yml
+    with:
+      connector_version: ${{ inputs.connector_version }}
+      deployment_name: ${{ inputs.deployment_name }}
+      cf_api_endpoint: ${{ inputs.cf_api_endpoint }}
+      cf_org: ${{ inputs.cf_org }}
+      cf_space: ${{ inputs.cf_space }}
+    secrets: inherit
