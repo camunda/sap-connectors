@@ -36,6 +36,11 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: '3.9.11'
+
       - name: build
         run: mvn package -DskipTests # as we've run the tests in the previous job
 
