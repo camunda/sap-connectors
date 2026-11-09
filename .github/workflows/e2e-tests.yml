@@ -107,7 +107,7 @@ jobs:
         run: |
           scripts/replace_mtad_placeholders.js \
           odata-connector/mtad.yaml.example \
-          "$VERSION" \
+          "8.10.3" \
           "$REGION_ID" \
           "$CLUSTER_ID" \
           "ultrawombat.com" \

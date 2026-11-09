@@ -18,7 +18,7 @@ function safeReplace(content, placeholder, replacement) {
 function main() {
     const args = process.argv.slice(2);
     
-    if (args.length !== 8) {
+    if (args.length !== 9) {
         console.error('Usage: node replace_mtad_placeholders.js <input_file> <app_version> <region_id> <cluster_id> <base_domain> <client_id> <client_secret> <deployment_name> <image_tag>');
         process.exit(1);
     }
