@@ -55,4 +55,5 @@ jobs:
             cf delete "$APP" -f -r || true
             cf delete-service "dest-$APP" -f || true
             cf delete-service "conn-$APP" -f || true
+            false
           fi
