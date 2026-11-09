@@ -3,11 +3,10 @@ name: e2e-tests
 on:
   workflow_dispatch:
   push:
-    branches: [ "sap-connectors-e2e-test-refactoring" ]
-#    pull_request:
-#        branches: [ "release/*", "main" ]
-#  push:
-#    branches: [ "release/*", "main" ]
+    pull_request:
+        branches: [ "release/*", "main" ]
+  push:
+    branches: [ "release/*", "main", "sap-connectors-e2e-test-refactoring" ]
 
 jobs:
   determine-connector-version:

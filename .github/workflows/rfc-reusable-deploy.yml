@@ -86,7 +86,8 @@ jobs:
           "ultrawombat.com" \
           "${{ steps.create_cluster.outputs.client-id }}" \
           "${{ steps.create_cluster.outputs.client-secret }}" \
-          "${{ steps.set_deployment_name.outputs.deployment-name }}"
+          "${{ steps.set_deployment_name.outputs.deployment-name }}" \
+          "${{ inputs.connector_version }}"
           mv rfc-connector/mtad.yaml.example mtad.yaml
 
       # no worries: gh marks secrets with *** also when cat'ing files
