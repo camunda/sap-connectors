@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Web Modeler" exporterVersion="7342efd" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
-  <bpmn:process id="Process_1u706kj" name="New BPMN diagram" isExecutable="true">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Web Modeler" exporterVersion="8b8e4cb" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="odata-service-get-products" name="odata-service-get-products" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_1jcantr</bpmn:outgoing>
     </bpmn:startEvent>
@@ -20,7 +20,7 @@
         <zeebe:taskHeaders>
           <zeebe:header key="elementTemplateVersion" value="2" />
           <zeebe:header key="elementTemplateId" value="SAP_ODATA_CONNECTOR" />
-          <zeebe:header key="resultVariable" value="result" />
+          <zeebe:header key="resultVariable" value="products" />
           <zeebe:header key="resultExpression" />
           <zeebe:header key="errorExpression" />
           <zeebe:header key="retryBackoff" value="PT30S" />
@@ -36,7 +36,7 @@
     <bpmn:sequenceFlow id="Flow_05zwjiy" sourceRef="Activity_1hhnst6" targetRef="Event_1ytprtf" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1u706kj">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="odata-service-get-products">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="150" y="100" width="36" height="36" />
       </bpmndi:BPMNShape>
