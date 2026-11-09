@@ -95,7 +95,7 @@ jobs:
           retention-days: 1
 
       # Static 8.10.3 used until alternative container image storage configured for development "$VERSION" testing
-      - name: fill in target cluster credentials
+      - name: fill in ODATA target cluster credentials
         env:
           VERSION: ${{ needs.determine-connector-version.outputs.VERSION }}
           REGION_ID: ${{ steps.create_cluster.outputs.region-id }}
@@ -118,14 +118,14 @@ jobs:
           mv odata-connector/mtad.yaml.example mtad.yaml
 
       # no worries: gh marks secrets with *** also when cat'ing files
-      - name: check substitution result
+      - name: check ODATA substitution result
         run: |
           cat mtad.yaml
 
-      - name: Upload mtad.yaml
+      - name: Upload ODATA mtad.yaml
         uses: actions/upload-artifact@v7
         with:
-          name: mtad
+          name: odata-mtad
           path: mtad.yaml
           retention-days: 1
 
