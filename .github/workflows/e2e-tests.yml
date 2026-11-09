@@ -103,16 +103,18 @@ jobs:
           CLIENT_ID: ${{ steps.create_cluster.outputs.client-id }}
           CLIENT_SECRET: ${{ steps.create_cluster.outputs.client-secret }}
           DEPLOYMENT_NAME: ${{ steps.set_deployment_name.outputs.deployment-name }}
+          IMAGE_TAG: "SNAPSHOT"
         run: |
           scripts/replace_mtad_placeholders.js \
           odata-connector/mtad.yaml.example \
-          "SNAPSHOT" \
+          "$VERSION" \
           "$REGION_ID" \
           "$CLUSTER_ID" \
           "ultrawombat.com" \
           "$CLIENT_ID" \
           "$CLIENT_SECRET" \
-          "$DEPLOYMENT_NAME"
+          "$DEPLOYMENT_NAME" \
+          "$IMAGE_TAG"
           mv odata-connector/mtad.yaml.example mtad.yaml
 
       # no worries: gh marks secrets with *** also when cat'ing files
