@@ -2,9 +2,8 @@ name: e2e-tests
 
 on:
   workflow_dispatch:
-  push:
-    pull_request:
-        branches: [ "release/*", "main" ]
+  pull_request:
+    branches: [ "release/*", "main" ]
   push:
     branches: [ "release/*", "main", "sap-connectors-e2e-test-refactoring" ]
 
