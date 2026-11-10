@@ -104,7 +104,7 @@ jobs:
           IMAGE_TAG: "SNAPSHOT"
         run: |
           scripts/replace_mtad_placeholders.js \
-          odata-connector/mtad.yaml.example \
+          odata-connector/mtad.yaml.dev \
           "8.10.3" \
           "$REGION_ID" \
           "$CLUSTER_ID" \
@@ -113,7 +113,7 @@ jobs:
           "$CLIENT_SECRET" \
           "$DEPLOYMENT_NAME" \
           "$IMAGE_TAG"
-          mv odata-connector/mtad.yaml.example mtad.yaml
+          mv odata-connector/mtad.yaml.dev mtad.yaml
 
       # no worries: gh marks secrets with *** also when cat'ing files
       - name: check ODATA substitution result
