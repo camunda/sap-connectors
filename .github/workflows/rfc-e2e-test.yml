@@ -33,6 +33,9 @@ jobs:
 
   deploy-to-btp:
     needs: determine-connector-version
+    permissions:
+      contents: read
+      id-token: write # Vault JWT login in the reusable workflow
     uses: ./.github/workflows/rfc-reusable-deploy.yml
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}
@@ -53,6 +56,9 @@ jobs:
   undeploy:
     needs: [ determine-connector-version, e2e, deploy-to-btp ]
     if: always()
+    permissions:
+      contents: read
+      id-token: write # Vault JWT login in the reusable workflow
     uses: ./.github/workflows/rfc-reusable-undeploy.yml
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}

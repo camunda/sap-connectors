@@ -64,6 +64,9 @@ jobs:
 
   odata-release:
     needs: build-final-version
+    permissions:
+      contents: write   # required by odata-build-and-publish.yml to publish the GitHub release
+      id-token: write   # required by odata-build-and-publish.yml for the Vault JWT login
     uses: ./.github/workflows/odata-build-and-publish.yml
     secrets: inherit
     with:
