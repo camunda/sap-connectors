@@ -26,6 +26,8 @@ modules:
     disk-quota: 2G
     docker:
       image: registry.camunda.cloud/team-connectors/sap-odata-connector/<deployment-name>:latest
+      username: ${docker-user}
+      password: ${docker-password}
     enable-ssh: true
     health-check-type: process
     instances: 1

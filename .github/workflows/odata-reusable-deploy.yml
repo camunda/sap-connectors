@@ -51,6 +51,8 @@ jobs:
           secrets: |
             secret/data/products/connectors/ci/sap SAP_CLOUDFOUNDRY_EMAIL;
             secret/data/products/connectors/ci/sap SAP_CLOUDFOUNDRY_PASSWORD;
+            secret/data/products/connectors/ci/harbor username | HARBOR_USERNAME;
+            secret/data/products/connectors/ci/harbor password | HARBOR_PASSWORD;
 
       # third, actual deployment
       - name: deploy ${{inputs.connector_version}} to BTP
@@ -61,6 +63,8 @@ jobs:
           CF_SPACE: ${{ inputs.cf_space }}
           CF_USER: ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_EMAIL }}
           CF_PASSWORD: ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_PASSWORD }}
+          __MTA_docker-user: ${{ steps.vault-secrets.outputs.HARBOR_USERNAME }}
+          __MTA_docker-password: ${{ steps.vault-secrets.outputs.HARBOR_PASSWORD }}
         run: |
           cf install-plugin multiapps -f
           cd odata-connector
