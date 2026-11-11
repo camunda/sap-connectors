@@ -22,6 +22,7 @@
     <version.tomcat-embed>11.0.27</version.tomcat-embed>
     <version.bouncycastle>1.86</version.bouncycastle>
     <version.hibernate-validator>9.1.5.Final</version.hibernate-validator>
+    <version.org-json>20260814</version.org-json>
     <plugin.version.maven-exec-plugin>3.6.4</plugin.version.maven-exec-plugin>
   </properties>
 
@@ -113,6 +114,14 @@
         <groupId>org.hibernate.validator</groupId>
         <artifactId>hibernate-validator</artifactId>
         <version>${version.hibernate-validator}</version>
+      </dependency>
+      <!-- Transitive via com.sap.cloud.sdk.s4hana:rfc; pin to a version patched for CVE-2026-59171.
+           Compile scope so the patched jar is packaged in WEB-INF/lib (RFCConnector uses org.json directly) -->
+      <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>${version.org-json}</version>
+        <scope>compile</scope>
       </dependency>
       <!-- CVE-2025-48924: cf-tomee7-bom downgrades commons-lang3 to 3.15.0;
            restore the version the rest of the tree asks for, keeping its managed scope -->
