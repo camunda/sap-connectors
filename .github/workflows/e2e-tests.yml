@@ -64,7 +64,7 @@ jobs:
           # Unique deployment name; run ID comes first so truncation never removes it
           DEPLOYMENT_NAME="sap-odata-${RUN_ID}-${VERSION}-${REF_NAME}"
           # Sanitize the name to make it compatible with SAP BTP (replace invalid characters with hyphens), then truncate
-          DEPLOYMENT_NAME=$(echo "$DEPLOYMENT_NAME" | sed 's/[^a-zA-Z0-9-]/-/g' | sed 's/--*/-/g' | cut -c1-50 | sed 's/-$//')
+          DEPLOYMENT_NAME=$(echo "$DEPLOYMENT_NAME" | sed 's/[^a-zA-Z0-9-]/-/g' | sed 's/--*/-/g' | cut -c1-50 | sed 's/-$//' | tr '[:upper:]' '[:lower:]')
           echo "deployment-name=$DEPLOYMENT_NAME" >> "$GITHUB_OUTPUT"
           echo "Using deployment name: $DEPLOYMENT_NAME"
       - name: Import Secrets

@@ -60,7 +60,7 @@ jobs:
           with:
             context: .
             push: true
-            tags: registry.camunda.cloud/team-connectors/sap-odata-connector/${{ inputs.deployment_name.lowercase }}:latest
+            tags: registry.camunda.cloud/team-connectors/sap-odata-connector/${{ inputs.deployment_name }}:latest
 
 
   deploy-to-btp:
