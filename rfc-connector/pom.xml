@@ -115,14 +115,6 @@
         <artifactId>hibernate-validator</artifactId>
         <version>${version.hibernate-validator}</version>
       </dependency>
-      <!-- Transitive via com.sap.cloud.sdk.s4hana:rfc; pin to a version patched for CVE-2026-59171.
-           Compile scope so the patched jar is packaged in WEB-INF/lib (RFCConnector uses org.json directly) -->
-      <dependency>
-        <groupId>org.json</groupId>
-        <artifactId>json</artifactId>
-        <version>${version.org-json}</version>
-        <scope>compile</scope>
-      </dependency>
       <!-- CVE-2025-48924: cf-tomee7-bom downgrades commons-lang3 to 3.15.0;
            restore the version the rest of the tree asks for, keeping its managed scope -->
       <dependency>
@@ -198,6 +190,15 @@
       <groupId>org.apache.httpcomponents.core5</groupId>
       <artifactId>httpcore5-h2</artifactId>
       <version>5.4.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- Used directly by RFCConnector and otherwise only transitive via com.sap.cloud.sdk.s4hana:rfc
+         (managed as provided at 20240303 by the SAP BTP buildpack BOM). Declared here with compile
+         scope so the version patched for CVE-2026-59171 is packaged in WEB-INF/lib. -->
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>${version.org-json}</version>
       <scope>compile</scope>
     </dependency>
 
