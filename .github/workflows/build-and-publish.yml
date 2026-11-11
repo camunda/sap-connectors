@@ -64,6 +64,9 @@ jobs:
 
   odata-release:
     needs: build-final-version
+    permissions:
+      contents: write
+      id-token: write
     uses: ./.github/workflows/odata-build-and-publish.yml
     secrets: inherit
     with:

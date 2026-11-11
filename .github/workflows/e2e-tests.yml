@@ -46,6 +46,9 @@ jobs:
 
   create-cluster:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: [extract-version,determine-connector-version]
     outputs:
         cluster-uuid: ${{ steps.create_cluster.outputs.cluster-id }}
@@ -66,12 +69,13 @@ jobs:
           echo "Using deployment name: $DEPLOYMENT_NAME"
       - name: Import Secrets
         id: vault-secrets
-        uses: hashicorp/vault-action@v4.0.0
+        uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
         with:
           url: ${{ secrets.VAULT_ADDR }}
-          method: approle
-          roleId: ${{ secrets.VAULT_ROLE_ID }}
-          secretId: ${{ secrets.VAULT_SECRET_ID}}
+          method: jwt
+          path: ${{ secrets.VAULT_JWT_PATH }}
+          role: ${{ secrets.VAULT_JWT_ROLE }}
+          jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
           secrets: |
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_ID;
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_SECRET;
@@ -139,6 +143,9 @@ jobs:
 
   odata-e2e:
     needs: [ determine-connector-version, create-cluster ]
+    permissions:
+      contents: read
+      id-token: write
     uses: ./.github/workflows/odata-e2e-test.yml
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}
@@ -150,17 +157,21 @@ jobs:
 
   delete-cluster:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: [ create-cluster, odata-e2e ]
     if: always() && needs.create-cluster.outputs.cluster-uuid != ''
     steps:
       - name: Import Secrets
         id: vault-secrets
-        uses: hashicorp/vault-action@v4.0.0
+        uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
         with:
           url: ${{ secrets.VAULT_ADDR }}
-          method: approle
-          roleId: ${{ secrets.VAULT_ROLE_ID }}
-          secretId: ${{ secrets.VAULT_SECRET_ID}}
+          method: jwt
+          path: ${{ secrets.VAULT_JWT_PATH }}
+          role: ${{ secrets.VAULT_JWT_ROLE }}
+          jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
           secrets: |
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_ID;
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_SECRET;

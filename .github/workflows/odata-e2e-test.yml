@@ -22,19 +22,23 @@ on:
 jobs:
   build-and-publish-dev-container-image:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
         - name: Import Secrets
           id: secrets
-          uses: hashicorp/vault-action@v3.4.0
+          uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
           with:
             url: ${{ secrets.VAULT_ADDR }}
-            method: approle
-            roleId: ${{ secrets.VAULT_ROLE_ID }}
-            secretId: ${{ secrets.VAULT_SECRET_ID }}
+            method: jwt
+            path: ${{ secrets.VAULT_JWT_PATH }}
+            role: ${{ secrets.VAULT_JWT_ROLE }}
+            jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
             exportEnv: false
             secrets: |
-              secret/data/products/cambpm/ci/harbor username | HARBOR_USERNAME;
-              secret/data/products/cambpm/ci/harbor password | HARBOR_PASSWORD;
+              secret/data/products/connectors/ci/harbor username | HARBOR_USERNAME;
+              secret/data/products/connectors/ci/harbor password | HARBOR_PASSWORD;
  
         - name: Checkout repository
           uses: actions/checkout@v4
@@ -56,10 +60,13 @@ jobs:
           with:
             context: .
             push: true
-            tags: registry.camunda.cloud/team-cambpm/sap-odata-connector/${{ inputs.deployment_name.lowercase }}:latest
+            tags: registry.camunda.cloud/team-connectors/sap-odata-connector/${{ inputs.deployment_name.lowercase }}:latest
 
 
   deploy-to-btp:
+    permissions:
+      contents: read
+      id-token: write
     uses: ./.github/workflows/odata-reusable-deploy.yml
     with:
       connector_version: ${{ inputs.connector_version }}
@@ -80,6 +87,9 @@ jobs:
   undeploy:
     needs: [ e2e, deploy-to-btp ]
     if: always()
+    permissions:
+      contents: read
+      id-token: write
     uses: ./.github/workflows/odata-reusable-undeploy.yml
     with:
       connector_version: ${{ inputs.connector_version }}
