@@ -25,6 +25,9 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    defaults:
+      run:
+        working-directory: ./odata-connector/
     steps:
         - name: Import Secrets
           id: secrets
