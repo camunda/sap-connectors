@@ -25,9 +25,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    defaults:
-      run:
-        working-directory: ./odata-connector/
     steps:
         - name: Import Secrets
           id: secrets
@@ -61,7 +58,8 @@ jobs:
         - name: Build and push
           uses: docker/build-push-action@v6
           with:
-            context: .
+            context: ./odata-connector/
+            file: ./odata-connector/Dockerfile
             push: true
             tags: registry.camunda.cloud/team-connectors/sap-odata-connector/${{ inputs.deployment_name }}:latest
 
