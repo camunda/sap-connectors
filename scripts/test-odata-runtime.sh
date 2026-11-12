@@ -53,7 +53,7 @@ for attempt in $(seq 1 60); do
     exit 1
   fi
   docker logs "$container" >"$log_file" 2>&1
-  if grep -q 'PASS: effective runtime Guava classes match fixed 33.7.2-jre' "$log_file" &&
+  if grep -q 'PASS: effective runtime Guava classes match fixed 33.8.0-jre' "$log_file" &&
     grep -q 'Started ConnectorRuntimeApplication' "$log_file" &&
     curl -fsS --max-time 3 "http://$address/actuator/health/liveness" 2>/dev/null |
       jq -e '.status == "UP"' >/dev/null; then
