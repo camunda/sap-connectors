@@ -63,8 +63,8 @@ jobs:
           CF_SPACE: ${{ inputs.cf_space }}
           CF_USER: ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_EMAIL }}
           CF_PASSWORD: ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_PASSWORD }}
-          __MTA_docker-user: ${{ steps.vault-secrets.outputs.HARBOR_USERNAME }}
-          __MTA_docker-password: ${{ steps.vault-secrets.outputs.HARBOR_PASSWORD }}
+          __MTA___docker-user: ${{ steps.vault-secrets.outputs.HARBOR_USERNAME }}
+          __MTA___docker-password: ${{ steps.vault-secrets.outputs.HARBOR_PASSWORD }}
         run: |
           cf install-plugin multiapps -f
           cd odata-connector
