@@ -163,12 +163,13 @@ jobs:
           url: ${{ secrets.VAULT_ADDR }}
           method: jwt
           path: ${{ secrets.VAULT_JWT_PATH }}
-          role: ${{ secrets.VAULT_JWT_ROLE }}
+          # Dedicated delete-capable robot; this role only works from runs of e2e-tests.yml.
+          role: github-actions-sap-connectors-harbor-cleanup-ci
           jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
           exportEnv: false
           secrets: |
-            secret/data/products/connectors/ci/harbor username | HARBOR_USERNAME;
-            secret/data/products/connectors/ci/harbor password | HARBOR_PASSWORD;
+            secret/data/products/sap-connectors/ci/harbor-cleanup username | HARBOR_USERNAME;
+            secret/data/products/sap-connectors/ci/harbor-cleanup password | HARBOR_PASSWORD;
 
       - name: Remove published image and registry metadata
         env:
