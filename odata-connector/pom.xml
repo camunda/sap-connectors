@@ -19,11 +19,21 @@
     <version.commons-codec>1.18.0</version.commons-codec>
     <version.guava>33.7.2-jre</version.guava>
     <version.java-jwt>4.6.2</version.java-jwt>
+    <version.jackson3-bom>3.1.8</version.jackson3-bom>
     <plugin.version.maven-shade-plugin>3.6.2</plugin.version.maven-shade-plugin>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <!-- Jackson 3 (tools.jackson) pulled in transitively via Spring Boot (test scope);
+           pin to a version patched for CVE-2026-110879 -->
+      <dependency>
+        <groupId>tools.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${version.jackson3-bom}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
