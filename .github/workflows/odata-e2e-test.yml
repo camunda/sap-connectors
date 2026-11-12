@@ -112,6 +112,7 @@ jobs:
               CAMUNDA_CONNECTORS_VERSION=${{ needs.determine-connector-version.outputs.CAMUNDA_VERSION }}
 
   deploy-to-btp:
+    needs: build-and-publish-dev-container-image
     permissions:
       contents: read
       id-token: write
