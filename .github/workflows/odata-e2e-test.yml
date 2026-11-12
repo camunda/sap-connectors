@@ -150,10 +150,67 @@ jobs:
 
   delete-dev-container-image-from-repository:
     runs-on: ubuntu-latest
-    needs: build-and-publish-dev-container-image
-    if: always()
+    needs: [ build-and-publish-dev-container-image, undeploy ]
+    if: always() && needs.build-and-publish-dev-container-image.result == 'success'
+    permissions:
+      contents: read
+      id-token: write
     steps:
-      - name: remove container dev image
+      - name: Import Secrets
+        id: secrets
+        uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: jwt
+          path: ${{ secrets.VAULT_JWT_PATH }}
+          role: ${{ secrets.VAULT_JWT_ROLE }}
+          jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
+          exportEnv: false
+          secrets: |
+            secret/data/products/connectors/ci/harbor username | HARBOR_USERNAME;
+            secret/data/products/connectors/ci/harbor password | HARBOR_PASSWORD;
+
+      - name: Remove published image and registry metadata
+        env:
+          DEPLOYMENT_NAME: ${{ inputs.deployment_name }}
+          HARBOR_USERNAME: ${{ steps.secrets.outputs.HARBOR_USERNAME }}
+          HARBOR_PASSWORD: ${{ steps.secrets.outputs.HARBOR_PASSWORD }}
         run: |
-          true
+          set -euo pipefail
+
+          if [[ ! "$DEPLOYMENT_NAME" =~ ^[a-z0-9][a-z0-9-]*$ ]]; then
+            echo "Invalid deployment name: $DEPLOYMENT_NAME" >&2
+            exit 1
+          fi
+
+          REPOSITORY_NAME="sap-odata-connector/$DEPLOYMENT_NAME"
+          ENCODED_REPOSITORY_NAME=$(printf '%s' "$REPOSITORY_NAME" | jq -sRr @uri)
+          ENCODED_REPOSITORY_NAME=${ENCODED_REPOSITORY_NAME//%2F/%252F}
+          REPOSITORY_URL="https://registry.camunda.cloud/api/v2.0/projects/team-connectors/repositories/$ENCODED_REPOSITORY_NAME"
+
+          echo "Repository metadata before deletion:"
+          curl --fail-with-body --silent --show-error \
+            --user "$HARBOR_USERNAME:$HARBOR_PASSWORD" \
+            "$REPOSITORY_URL" | jq .
+
+          RESPONSE_FILE=$(mktemp)
+          trap 'rm -f "$RESPONSE_FILE"' EXIT
+          HTTP_STATUS=$(curl --silent --show-error \
+            --user "$HARBOR_USERNAME:$HARBOR_PASSWORD" \
+            --request DELETE \
+            --output "$RESPONSE_FILE" \
+            --write-out '%{http_code}' \
+            "$REPOSITORY_URL")
+
+          echo "Repository deletion HTTP status: $HTTP_STATUS"
+          if [[ -s "$RESPONSE_FILE" ]]; then
+            cat "$RESPONSE_FILE"
+          else
+            echo "Repository deletion response body is empty."
+          fi
+
+          if (( HTTP_STATUS < 200 || HTTP_STATUS >= 300 )); then
+            echo "Failed to remove repository metadata." >&2
+            exit 1
+          fi
 
