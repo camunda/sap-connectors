@@ -26,6 +26,7 @@
     <version.commons-lang3>3.20.0</version.commons-lang3>
     <version.guava>33.7.2-jre</version.guava>
     <version.java-jwt>4.6.2</version.java-jwt>
+    <version.org-json>20260814</version.org-json>
     <plugin.version.maven-exec-plugin>3.6.4</plugin.version.maven-exec-plugin>
   </properties>
 
@@ -129,6 +130,13 @@
         <groupId>com.auth0</groupId>
         <artifactId>java-jwt</artifactId>
         <version>${version.java-jwt}</version>
+      </dependency>
+      <!-- Transitive via com.sap.cloud.sdk.s4hana:rfc; pin to a version patched for CVE-2026-59171 -->
+      <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>${version.org-json}</version>
+        <scope>compile</scope>
       </dependency>
 
       <!-- Spring Boot BOM -->
