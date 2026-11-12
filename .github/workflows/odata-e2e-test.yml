@@ -189,11 +189,6 @@ jobs:
           ENCODED_REPOSITORY_NAME=${ENCODED_REPOSITORY_NAME//%2F/%252F}
           REPOSITORY_URL="https://registry.camunda.cloud/api/v2.0/projects/team-connectors/repositories/$ENCODED_REPOSITORY_NAME"
 
-          echo "Repository metadata before deletion:"
-          curl --fail-with-body --silent --show-error \
-            --user "$HARBOR_USERNAME:$HARBOR_PASSWORD" \
-            "$REPOSITORY_URL" | jq .
-
           RESPONSE_FILE=$(mktemp)
           trap 'rm -f "$RESPONSE_FILE"' EXIT
           HTTP_STATUS=$(curl --silent --show-error \
