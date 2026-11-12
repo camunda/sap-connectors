@@ -70,7 +70,7 @@ jobs:
           cd odata-connector
           ls -al .
           cf login -a "$CF_API" -u "$CF_USER" -p "$CF_PASSWORD" -o "$CF_ORG" -s "$CF_SPACE"
-          cf deploy --require-secure-parameters --disposable-user-provided-service ./ -f
+          cf deploy ./ -f --require-secure-parameters --disposable-user-provided-service
 
       - name: dump app + MTA logs on failure
         if: failure()
