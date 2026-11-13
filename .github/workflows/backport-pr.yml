@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write # so it can comment
   pull-requests: write # so it can create pull requests
+  id-token: write # so it can authenticate against Vault via GitHub OIDC (JWT)
 
 jobs:
   backport:
@@ -30,12 +31,13 @@ jobs:
     steps:
       - name: Import Secrets
         id: vault-secrets
-        uses: hashicorp/vault-action@v4.0.0
+        uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
         with:
           url: ${{ secrets.VAULT_ADDR }}
-          method: approle
-          roleId: ${{ secrets.VAULT_ROLE_ID }}
-          secretId: ${{ secrets.VAULT_SECRET_ID}}
+          method: jwt
+          path: ${{ secrets.VAULT_JWT_PATH }}
+          role: ${{ secrets.VAULT_JWT_ROLE }}
+          jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
           secrets: |
             secret/data/github.com/organizations/camunda BACKPORT_GH_APP_ID;
             secret/data/github.com/organizations/camunda BACKPORT_GH_APP_KEY;

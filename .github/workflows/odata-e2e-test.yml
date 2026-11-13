@@ -1,0 +1,210 @@
+name: odata-e2e-test
+
+on:
+  workflow_call:
+    inputs:
+      connector_version: # fex: 8.5.7 - 8.5 for Camunda release, 7 for connector version
+        required: true
+        type: string
+      deployment_name:
+        required: true
+        type: string
+      cf_api_endpoint:
+        required: true
+        type: string
+      cf_org:
+        required: true
+        type: string
+      cf_space:
+        required: true
+        type: string
+
+jobs:
+  determine-connector-version:
+    runs-on: ubuntu-latest
+    outputs:
+      CAMUNDA_VERSION: ${{ steps.connectors_repo_version.outputs.CAMUNDA_VERSION }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: set up jdk 25
+        uses: actions/setup-java@v6
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Set connectors repo version in output
+        id: connectors_repo_version
+        run: echo "CAMUNDA_VERSION=$(mvn help:evaluate -Dexpression=version.camunda -q -DforceStdout)" >> "$GITHUB_OUTPUT"
+  
+  build-and-publish-dev-container-image:
+    needs: determine-connector-version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+        - name: Import Secrets
+          id: secrets
+          uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
+          with:
+            url: ${{ secrets.VAULT_ADDR }}
+            method: jwt
+            path: ${{ secrets.VAULT_JWT_PATH }}
+            role: ${{ secrets.VAULT_JWT_ROLE }}
+            jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
+            exportEnv: false
+            secrets: |
+              secret/data/products/connectors/ci/harbor username | HARBOR_USERNAME;
+              secret/data/products/connectors/ci/harbor password | HARBOR_PASSWORD;
+ 
+        - name: Checkout repository
+          uses: actions/checkout@v4
+
+        - name: set up jdk 25
+          uses: actions/setup-java@v6
+          with:
+            java-version: '25'
+            distribution: 'temurin'
+            cache: maven
+ 
+        - name: determine final version
+          id: final_version
+          run: |
+            if [[ "${{ github.ref_name }}" == "main" ]]; then
+              echo "FINAL_VERSION=SNAPSHOT" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "FINAL_VERSION=${{ inputs.connector_version }}" >> "$GITHUB_OUTPUT"
+
+        - name: Set connector version
+          if: github.ref_name != 'main'
+          run: |
+            mvn versions:set -DnewVersion=${{ steps.final_version.outputs.FINAL_VERSION }} -DgenerateBackupPoms=false
+
+        - name: build
+          run: mvn -B -PcheckFormat package --file pom.xml -DskipTests
+
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v4
+ 
+        # Log in to GitHub Container Registry
+        - name: Log in to hurbor
+          uses: docker/login-action@v3
+          with:
+            registry: registry.camunda.cloud
+            username: ${{ steps.secrets.outputs.HARBOR_USERNAME }}
+            password: ${{ steps.secrets.outputs.HARBOR_PASSWORD }}
+ 
+        # Build and push to your private GHCR repo
+        - name: Build and push
+          uses: docker/build-push-action@v6
+          with:
+            context: ./odata-connector/
+            file: ./odata-connector/Dockerfile
+            push: true
+            tags: registry.camunda.cloud/team-connectors/sap-odata-connector/${{ inputs.deployment_name }}:latest
+            build-args: |
+              CAMUNDA_CONNECTORS_VERSION=${{ needs.determine-connector-version.outputs.CAMUNDA_VERSION }}
+
+  deploy-to-btp:
+    needs: build-and-publish-dev-container-image
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/odata-reusable-deploy.yml
+    with:
+      connector_version: ${{ inputs.connector_version }}
+      deployment_name: ${{ inputs.deployment_name }}
+      cf_api_endpoint: ${{ inputs.cf_api_endpoint }}
+      cf_org: ${{ inputs.cf_org }}
+      cf_space: ${{ inputs.cf_space }}
+    secrets: inherit
+
+  e2e:
+    needs: deploy-to-btp
+    uses: ./.github/workflows/odata-reusable-e2e-test.yml
+    with:
+      java-version: '25'
+      distribution: 'temurin'
+      maven-options: ''
+
+  undeploy:
+    needs: [ e2e, deploy-to-btp ]
+    if: always()
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/odata-reusable-undeploy.yml
+    with:
+      connector_version: ${{ inputs.connector_version }}
+      deployment_name: ${{ inputs.deployment_name }}
+      cf_api_endpoint: ${{ inputs.cf_api_endpoint }}
+      cf_org: ${{ inputs.cf_org }}
+      cf_space: ${{ inputs.cf_space }}
+    secrets: inherit
+
+  delete-dev-container-image-from-repository:
+    runs-on: ubuntu-latest
+    needs: [ build-and-publish-dev-container-image, undeploy ]
+    if: always() && needs.build-and-publish-dev-container-image.result == 'success'
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Import Secrets
+        id: secrets
+        uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: jwt
+          path: ${{ secrets.VAULT_JWT_PATH }}
+          # Dedicated delete-capable robot; this role only works from runs of e2e-tests.yml.
+          role: github-actions-sap-connectors-harbor-cleanup-ci
+          jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
+          exportEnv: false
+          secrets: |
+            secret/data/products/sap-connectors/ci/harbor-cleanup username | HARBOR_USERNAME;
+            secret/data/products/sap-connectors/ci/harbor-cleanup password | HARBOR_PASSWORD;
+
+      - name: Remove published image and registry metadata
+        env:
+          DEPLOYMENT_NAME: ${{ inputs.deployment_name }}
+          HARBOR_USERNAME: ${{ steps.secrets.outputs.HARBOR_USERNAME }}
+          HARBOR_PASSWORD: ${{ steps.secrets.outputs.HARBOR_PASSWORD }}
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$DEPLOYMENT_NAME" =~ ^[a-z0-9][a-z0-9-]*$ ]]; then
+            echo "Invalid deployment name: $DEPLOYMENT_NAME" >&2
+            exit 1
+          fi
+
+          REPOSITORY_NAME="sap-odata-connector/$DEPLOYMENT_NAME"
+          ENCODED_REPOSITORY_NAME=$(printf '%s' "$REPOSITORY_NAME" | jq -sRr @uri)
+          ENCODED_REPOSITORY_NAME=${ENCODED_REPOSITORY_NAME//%2F/%252F}
+          REPOSITORY_URL="https://registry.camunda.cloud/api/v2.0/projects/team-connectors/repositories/$ENCODED_REPOSITORY_NAME"
+
+          RESPONSE_FILE=$(mktemp)
+          trap 'rm -f "$RESPONSE_FILE"' EXIT
+          HTTP_STATUS=$(curl --silent --show-error \
+            --user "$HARBOR_USERNAME:$HARBOR_PASSWORD" \
+            --request DELETE \
+            --output "$RESPONSE_FILE" \
+            --write-out '%{http_code}' \
+            "$REPOSITORY_URL")
+
+          echo "Repository deletion HTTP status: $HTTP_STATUS"
+          if [[ -s "$RESPONSE_FILE" ]]; then
+            cat "$RESPONSE_FILE"
+          else
+            echo "Repository deletion response body is empty."
+          fi
+
+          if (( HTTP_STATUS < 200 || HTTP_STATUS >= 300 )); then
+            echo "Failed to remove repository metadata." >&2
+            exit 1
+          fi
+

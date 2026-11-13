@@ -35,6 +35,9 @@ jobs:
 
   create-cluster:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: extract-version
     outputs:
         cluster-uuid: ${{ steps.create_cluster.outputs.cluster-id }}
@@ -51,12 +54,13 @@ jobs:
           echo "Using deployment name: $DEPLOYMENT_NAME"
       - name: Import Secrets
         id: vault-secrets
-        uses: hashicorp/vault-action@v4.0.0
+        uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
         with:
           url: ${{ secrets.VAULT_ADDR }}
-          method: approle
-          roleId: ${{ secrets.VAULT_ROLE_ID }}
-          secretId: ${{ secrets.VAULT_SECRET_ID}}
+          method: jwt
+          path: ${{ secrets.VAULT_JWT_PATH }}
+          role: ${{ secrets.VAULT_JWT_ROLE }}
+          jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
           secrets: |
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_ID;
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_SECRET;
@@ -86,7 +90,8 @@ jobs:
           "ultrawombat.com" \
           "${{ steps.create_cluster.outputs.client-id }}" \
           "${{ steps.create_cluster.outputs.client-secret }}" \
-          "${{ steps.set_deployment_name.outputs.deployment-name }}"
+          "${{ steps.set_deployment_name.outputs.deployment-name }}" \
+          "${{ inputs.connector_version }}"
           mv rfc-connector/mtad.yaml.example mtad.yaml
 
       # no worries: gh marks secrets with *** also when cat'ing files
@@ -103,6 +108,9 @@ jobs:
   deploy:
     needs: create-cluster
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: install cf cli
@@ -136,12 +144,13 @@ jobs:
           path: rfc-connector/
       - name: Import Secrets
         id: vault-secrets
-        uses: hashicorp/vault-action@v4.0.0
+        uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
         with:
           url: ${{ secrets.VAULT_ADDR }}
-          method: approle
-          roleId: ${{ secrets.VAULT_ROLE_ID }}
-          secretId: ${{ secrets.VAULT_SECRET_ID}}
+          method: jwt
+          path: ${{ secrets.VAULT_JWT_PATH }}
+          role: ${{ secrets.VAULT_JWT_ROLE }}
+          jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
           secrets: |
             secret/data/products/connectors/ci/sap SAP_CLOUDFOUNDRY_EMAIL;
             secret/data/products/connectors/ci/sap SAP_CLOUDFOUNDRY_PASSWORD;
