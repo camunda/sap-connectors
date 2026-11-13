@@ -412,6 +412,9 @@ async function main() {
     requireEnv('CAMUNDA_DESIRED_GENERATION');
     const selection = await selectChannelAndGeneration(accessToken);
     const clusterInfo = await createCluster(accessToken, selection);
+    if (process.env.GITHUB_OUTPUT) {
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, `cluster-id=${clusterId}\n`);
+    }
     const clientInfo = await createClient(accessToken, clusterInfo.clusterId);
     if(args[0]) {
         const outputPath = args[0];
