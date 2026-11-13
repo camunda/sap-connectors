@@ -217,6 +217,16 @@ async function createCluster(accessToken, selection) {
         const clusterId = data.clusterId;
         ok(`Cluster created id=${clusterId} (pending readiness)`);
 
+        // Publish the id right away so the undeploy job can delete the cluster
+        // even if the readiness polling below fails (the final output overrides this).
+        if (process.env.GITHUB_OUTPUT) {
+            try {
+                fs.appendFileSync(process.env.GITHUB_OUTPUT, `cluster-id=${clusterId}\n`);
+            } catch (error) {
+                warn(`Failed to write early cluster-id output: ${error.message}`);
+            }
+        }
+
         // Poll for readiness
         const startTime = Date.now();
         let clusterJson;
@@ -238,10 +248,8 @@ async function createCluster(accessToken, selection) {
                 fail(`Malformed cluster status response: No status field`);
             }
 
-            const readyState = clusterJson.status.ready;
-            if (!readyState) {
-                fail(`Malformed cluster status response: No ready field in status`);
-            }
+            // right after creation the API may not have populated status.ready yet: keep polling
+            const readyState = clusterJson.status.ready || 'Pending';
 
             log(`Cluster state: ${readyState}`);
 

@@ -22,6 +22,7 @@
     <version.tomcat-embed>11.0.27</version.tomcat-embed>
     <version.bouncycastle>1.86</version.bouncycastle>
     <version.hibernate-validator>9.1.5.Final</version.hibernate-validator>
+    <version.org-json>20260814</version.org-json>
     <plugin.version.maven-exec-plugin>3.6.4</plugin.version.maven-exec-plugin>
   </properties>
 
@@ -189,6 +190,15 @@
       <groupId>org.apache.httpcomponents.core5</groupId>
       <artifactId>httpcore5-h2</artifactId>
       <version>5.4.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- Used directly by RFCConnector and otherwise only transitive via com.sap.cloud.sdk.s4hana:rfc
+         (managed as provided at 20240303 by the SAP BTP buildpack BOM). Declared here with compile
+         scope so the version patched for CVE-2026-59171 is packaged in WEB-INF/lib. -->
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>${version.org-json}</version>
       <scope>compile</scope>
     </dependency>
 
