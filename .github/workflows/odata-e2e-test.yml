@@ -77,9 +77,7 @@ jobs:
               echo "FINAL_VERSION=SNAPSHOT" >> "$GITHUB_OUTPUT"
               exit 0
             fi
-            MINOR_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | cut -d'.' -f1-2)
-            PATCH_VERSION=${{ github.event.inputs['patch-version'] }}
-            echo "FINAL_VERSION=${MINOR_VERSION}.${PATCH_VERSION}" >> "$GITHUB_OUTPUT"
+            echo "FINAL_VERSION=${{ inputs.connector_version }}" >> "$GITHUB_OUTPUT"
 
         - name: Set connector version
           if: github.ref_name != 'main'
