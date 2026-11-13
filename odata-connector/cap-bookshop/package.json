@@ -21,5 +21,14 @@
     "genres": "cds serve test/genres.cds",
     "start": "cds-serve",
     "watch": "cds watch"
+  },
+  "overrides": {
+    "qs": "6.16.2",
+    "express": {
+      "body-parser": "1.20.9"
+    },
+    "follow-redirects": "1.16.2",
+    "http-proxy-middleware": "3.0.7",
+    "proxy-addr": "2.0.8"
   }
 }
