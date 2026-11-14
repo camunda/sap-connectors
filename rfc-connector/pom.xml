@@ -19,14 +19,14 @@
   <properties>
     <version.spring-boot>3.5.16</version.spring-boot>
     <version.spring-boot-starter-camunda-connectors>${version.camunda}</version.spring-boot-starter-camunda-connectors>
-    <version.netty>4.1.139.Final</version.netty>
+    <version.netty>4.2.20.Final</version.netty>
     <!-- CVE-2026-101356, CVE-2026-101296, CVE-2026-103119, CVE-2026-88041, CVE-2026-93446, CVE-2026-74048 -->
     <version.tomcat>10.1.61</version.tomcat>
-    <version.commons-lang3>3.20.0</version.commons-lang3>
-    <version.log4j>2.25.5</version.log4j>
-    <version.logback>1.6.5</version.logback>
+    <version.commons-lang3>3.22.0</version.commons-lang3>
+    <version.log4j>2.26.1</version.log4j>
+    <version.logback>1.6.7</version.logback>
     <plugin.version.maven-war-plugin>3.4.0</plugin.version.maven-war-plugin>
-    <plugin.version.maven-exec-plugin>3.6.4</plugin.version.maven-exec-plugin>
+    <plugin.version.maven-exec-plugin>3.7.0</plugin.version.maven-exec-plugin>
     <plugin.version.maven-spring-boot>${version.spring-boot}</plugin.version.maven-spring-boot>
   </properties>
 
@@ -154,7 +154,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
       <artifactId>httpclient5</artifactId>
-      <version>5.6.4</version>
+      <version>5.6.5</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
