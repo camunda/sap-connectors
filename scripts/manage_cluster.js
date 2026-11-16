@@ -425,6 +425,10 @@ async function main() {
         await deleteCluster(accessToken, args[1]);
         ok('Cluster deletion completed');
         return;
+    } else if (args[0] === '-l') {
+        await getClusters(accessToken);
+        ok('Cluster list completed');
+        return;
     }
 
     requireEnv('CAMUNDA_DESIRED_GENERATION');
@@ -437,6 +441,29 @@ async function main() {
     }
 
     printSummary(accessToken, selection, clusterInfo, clientInfo);
+}
+
+// Get Clusters
+async function getClusters(accessToken) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/clusters`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Accept': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            fail(`Getting clusters failed: (${response.status}): ${errorText}`);
+        }
+
+        const clusters = await response.json();
+        clusters.forEach((c) => log(`Name: ${c.name}; ID: ${c.uuid}`));
+
+    } catch (error) {
+        fail(`Failed to get clusters: ${error.message}`);
+    }
 }
 
 // Run main function

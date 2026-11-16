@@ -81,6 +81,11 @@ jobs:
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_SECRET;
       - name: Checkout repository
         uses: actions/checkout@v7
+      - name: List available clusters
+        run: node scripts/manage_cluster.js -l
+        env:
+          CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
+          CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
       - name: Create cluster
         id: create_cluster
         run: node scripts/manage_cluster.js values.json
@@ -181,5 +186,10 @@ jobs:
         run: node scripts/manage_cluster.js -d "$CLUSTER_UUID"
         env:
           CLUSTER_UUID: ${{ needs.create-cluster.outputs.cluster-uuid }}
+          CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
+          CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
+      - name: List available clusters
+        run: node scripts/manage_cluster.js -l
+        env:
           CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
           CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
