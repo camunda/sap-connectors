@@ -330,6 +330,21 @@ async function deleteCluster(accessToken, clusterId) {
         }
 
         ok(`Cluster deletion request sent for id=${clusterId}`);
+
+        const clusterResponse = await fetch(`${API_BASE_URL}/clusters/${clusterId}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Accept': 'application/json'
+            }
+        });
+
+        if (clusterResponse.ok) {
+            const clusterJson = await clusterResponse.json();
+            fail(`Successfully fetched cluster status  (${clusterId}=${clusterJson.status}) after deletion!!!`);
+        }
+
+        log(`Cluster completely deleted by ID: ${clusterId}`);
+
     } catch (error) {
         fail(`Failed to delete cluster: ${error.message}`);
     }
