@@ -1,6 +1,6 @@
 package io.camunda.connector.sap.odata;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.camunda.client.CamundaClient;
 import java.time.Duration;
@@ -51,7 +51,10 @@ public class E2eTest {
 
     var result = processInstanceResult.getVariablesAsMap();
     LinkedHashMap products = (LinkedHashMap) result.get("products");
-    LOGGER.info("//> products result size: " + products.size());
-    assertTrue(products.size() >= 1, products.size() + " products returned");
+    LOGGER.info("//> products result response statusCode: " + products.get("statusCode"));
+    assertEquals(
+        200,
+        (int) ((Integer) products.get("statusCode")),
+        products.get("statusCode") + " : products status code returned");
   }
 }
