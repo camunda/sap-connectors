@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ "release/*", "main" ]
   push:
-    branches: [ "release/*", "main", "sap-connectors-e2e-test-refactoring" ]
+    branches: [ "release/*", "main" ]
 
 jobs:
   determine-connector-version:
