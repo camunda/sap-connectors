@@ -95,6 +95,9 @@ jobs:
 
   odata-release:
     needs: build-final-version
+    permissions:
+      contents: write   # required by odata-build-and-publish.yml to publish the GitHub release
+      id-token: write   # required by odata-build-and-publish.yml for the Vault JWT login
     uses: ./.github/workflows/odata-build-and-publish.yml
     secrets: inherit
     with:
@@ -116,16 +119,18 @@ jobs:
     needs: [ build-final-version, odata-release, rfc-release ]
     if: github.ref_name != 'main'
     runs-on: ubuntu-latest
-    permissions: {}   # pushes and opens the PR with the GitHub App token below, not with GITHUB_TOKEN
+    permissions:
+      id-token: write # Vault JWT login; GitHub App token below handles push/PR
     steps:
       - name: Import Secrets
         id: vault-secrets
-        uses: hashicorp/vault-action@v4.0.0
+        uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
         with:
           url: ${{ secrets.VAULT_ADDR }}
-          method: approle
-          roleId: ${{ secrets.VAULT_ROLE_ID }}
-          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          method: jwt
+          role: ${{ secrets.VAULT_JWT_ROLE }}
+          path: ${{ secrets.VAULT_JWT_PATH }}
+          jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
           exportEnv: false
           secrets: |
             secret/data/github.com/organizations/camunda BACKPORT_GH_APP_ID;
