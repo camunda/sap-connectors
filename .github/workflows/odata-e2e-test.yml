@@ -9,6 +9,21 @@ on:
       deployment_name:
         required: true
         type: string
+      client_id:
+        required: true
+        type: string
+      client_secret:
+        required: true
+        type: string
+      cluster_id:
+        required: true
+        type: string
+      region_id:
+        required: true
+        type: string
+      base_domain:
+        required: true
+        type: string
       cf_api_endpoint:
         required: true
         type: string
@@ -130,6 +145,11 @@ jobs:
       java-version: '25'
       distribution: 'temurin'
       maven-options: ''
+      client_id: ${{ inputs.client_id }}
+      client_secret: ${{ inputs.client_secret }}
+      cluster_id: ${{ inputs.cluster_id }}
+      region_id: ${{ inputs.region_id }}
+      base_domain: ${{ inputs.base_domain }}
 
   undeploy:
     needs: [ e2e, deploy-to-btp ]

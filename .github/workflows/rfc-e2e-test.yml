@@ -52,6 +52,11 @@ jobs:
       java-version: '25'
       distribution: 'temurin'
       maven-options: ''
+      client_id: ${{ needs.deploy-to-btp.outputs.client_id }}
+      client_secret: ${{ needs.deploy-to-btp.outputs.client_secret }}
+      cluster_id: ${{ needs.deploy-to-btp.outputs.cluster_uuid }}
+      region_id: ${{ needs.deploy-to-btp.outputs.region_id }}
+      base_domain: ${{ needs.deploy-to-btp.outputs.base_domain }}
     secrets: inherit
 
   undeploy:

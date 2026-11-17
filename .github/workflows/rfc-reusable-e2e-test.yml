@@ -12,6 +12,21 @@ on:
       maven-options:
         required: true
         type: string
+      client_id:
+        required: true
+        type: string
+      client_secret:
+        required: true
+        type: string
+      cluster_id:
+        required: true
+        type: string
+      region_id:
+        required: true
+        type: string
+      base_domain:
+        required: true
+        type: string
 
 jobs:
   e2e:
@@ -27,24 +42,17 @@ jobs:
           distribution: ${{ inputs.distribution }}
           cache: maven
 
-      # second, prep deployment descriptor
-      - name: download mtad.yaml
-        uses: actions/download-artifact@v8
-        with:
-          name: client-config
-          path: .
-
       # this runs w/ the deployed (!) connector
       # against c8 saas
       # and ecc
       - name: e2e tests (deployed connector, against c8 + ecc)
         env:
           e2e: true
+          CLIENT_ID: ${{ inputs.client_id }}
+          CLIENT_SECRET: ${{ inputs.client_secret }}
+          CLUSTER_ID: ${{ inputs.cluster_id }}
+          REGION_ID: ${{ inputs.region_id }}
+          BASE_DOMAIN: ${{ inputs.base_domain }}
         run: |
           # by env var e2e, only the respective tests are run
-          export CLIENT_ID=$(jq -r .clientId values.json)
-          export CLIENT_SECRET=$(jq -r .clientSecret values.json)
-          export CLUSTER_ID=$(jq -r .clusterId values.json)
-          export REGION_ID=$(jq -r .regionId values.json)
-          export BASE_DOMAIN=$(jq -r .baseDomain values.json)
           mvn -pl rfc-connector ${{ inputs.maven-options }} test

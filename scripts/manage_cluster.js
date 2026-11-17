@@ -57,13 +57,12 @@ function writeGithubOutput(clientId, clientSecret, clusterId, regionId) {
             `client-id=${clientId}`,
             `client-secret=${clientSecret}`,
             `cluster-id=${clusterId}`,
-            `region-id=${regionId}`
+            `region-id=${regionId}`,
+            `base-domain=${BASE_HOSTNAME}`
         ].join('\n') + '\n';
 
         fs.appendFileSync(githubOutput, outputs);
-        // Prevents secret from being logged in GitHub Actions
-        console.log("::add-mask::" + clientSecret);
-        ok('Wrote GitHub outputs (client-id, client-secret, cluster-id, region-id)');
+        ok('Wrote GitHub outputs (client-id, client-secret, cluster-id, region-id, base-domain)');
     } catch (error) {
         warn(`Failed to write GitHub outputs: ${error.message}`);
     }
@@ -359,7 +358,6 @@ function printSummary(accessToken, selection, clusterInfo, clientInfo) {
     const { channelName, channelUuid, genName, genUuid, candidatesJson } = selection;
     const { clusterId, finalPlanName, regionIdentifier } = clusterInfo;
     const { clientId, clientSecret } = clientInfo;
-    // This marks the clientSecret as a secret in GitHub Actions logs
     writeGithubOutput(clientId, clientSecret, clusterId, regionIdentifier);
 
     // Build final JSON
@@ -383,7 +381,7 @@ function printSummary(accessToken, selection, clusterInfo, clientInfo) {
         },
         client: {
             id: clientId,
-            secret: clientSecret,
+            secret: '***',
             oauth: TOKEN_ISSUER
         },
         candidateGenerations: candidatesJson
@@ -392,19 +390,6 @@ function printSummary(accessToken, selection, clusterInfo, clientInfo) {
     console.log(JSON.stringify(finalJson, null, 2));
     ok('Cluster and client provisioning complete');
     log(`Artifacts exported: cluster id=${clusterId}, client id=${clientId}`);
-}
-
-function dumpClientCredentials(outputPath, clientInfo, clusterInfo) {
-    if(fs.existsSync(outputPath)) {
-        warn(`File at ${outputPath} already exists. Overwriting.`);
-    }
-    fs.writeFileSync(outputPath, JSON.stringify({
-        clientId: clientInfo.clientId,
-        clientSecret: clientInfo.clientSecret,
-        clusterId: clusterInfo.clusterId,
-        regionId: clusterInfo.regionIdentifier,
-        baseDomain: BASE_HOSTNAME}));
-    ok(`Wrote client credentials to ${outputPath}`);
 }
 
 // Main function
@@ -439,11 +424,6 @@ async function main() {
     const selection = await selectChannelAndGeneration(accessToken);
     const clusterInfo = await createCluster(accessToken, selection);
     const clientInfo = await createClient(accessToken, clusterInfo.clusterId);
-    if(args[0]) {
-        const outputPath = args[0];
-        dumpClientCredentials(outputPath, clientInfo, clusterInfo);
-    }
-
     printSummary(accessToken, selection, clusterInfo, clientInfo);
 }
 
