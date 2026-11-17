@@ -9,12 +9,6 @@ on:
       deployment_name:
         required: true
         type: string
-      client_id:
-        required: true
-        type: string
-      client_secret:
-        required: true
-        type: string
       cluster_id:
         required: true
         type: string
@@ -140,16 +134,18 @@ jobs:
 
   e2e:
     needs: deploy-to-btp
+    permissions:
+      contents: read
+      id-token: write
     uses: ./.github/workflows/odata-reusable-e2e-test.yml
     with:
       java-version: '25'
       distribution: 'temurin'
       maven-options: ''
-      client_id: ${{ inputs.client_id }}
-      client_secret: ${{ inputs.client_secret }}
       cluster_id: ${{ inputs.cluster_id }}
       region_id: ${{ inputs.region_id }}
       base_domain: ${{ inputs.base_domain }}
+    secrets: inherit
 
   undeploy:
     needs: [ e2e, deploy-to-btp ]

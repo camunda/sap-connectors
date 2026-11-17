@@ -52,8 +52,6 @@ jobs:
     needs: [extract-version,determine-connector-version]
     outputs:
         cluster-uuid: ${{ steps.create_cluster.outputs.cluster-id }}
-        client-id: ${{ steps.create_cluster.outputs.client-id }}
-        client-secret: ${{ steps.create_cluster.outputs.client-secret }}
         region-id: ${{ steps.create_cluster.outputs.region-id }}
         base-domain: ${{ steps.create_cluster.outputs.base-domain }}
         deployment-name: ${{ steps.set_deployment_name.outputs.deployment-name }}
@@ -153,8 +151,6 @@ jobs:
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}
       deployment_name: ${{ needs.create-cluster.outputs.deployment-name }}
-      client_id: ${{ needs.create-cluster.outputs.client-id }}
-      client_secret: ${{ needs.create-cluster.outputs.client-secret }}
       cluster_id: ${{ needs.create-cluster.outputs.cluster-uuid }}
       region_id: ${{ needs.create-cluster.outputs.region-id }}
       base_domain: ${{ needs.create-cluster.outputs.base-domain }}

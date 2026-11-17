@@ -47,13 +47,14 @@ jobs:
 
   e2e:
     needs: deploy-to-btp
+    permissions:
+      contents: read
+      id-token: write
     uses: ./.github/workflows/rfc-reusable-e2e-test.yml
     with:
       java-version: '25'
       distribution: 'temurin'
       maven-options: ''
-      client_id: ${{ needs.deploy-to-btp.outputs.client_id }}
-      client_secret: ${{ needs.deploy-to-btp.outputs.client_secret }}
       cluster_id: ${{ needs.deploy-to-btp.outputs.cluster_uuid }}
       region_id: ${{ needs.deploy-to-btp.outputs.region_id }}
       base_domain: ${{ needs.deploy-to-btp.outputs.base_domain }}

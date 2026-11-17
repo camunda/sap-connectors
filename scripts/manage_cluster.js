@@ -8,6 +8,11 @@
  *   3. createCluster (includes readiness polling)
  *   4. createClient (includes connection detail retries)
  *   5. printSummary (final JSON + exports already set)
+ *
+ * Other modes:
+ *   -c <cluster_id>  create a client for an existing cluster and write it to GITHUB_OUTPUT
+ *   -d <cluster_id>  delete a cluster
+ *   -l               list clusters
  */
 
 const fs = require('fs');
@@ -68,6 +73,17 @@ function writeGithubOutput(clientId, clientSecret, clusterId, regionId) {
     } catch (error) {
         warn(`Failed to write GitHub outputs: ${error.message}`);
     }
+}
+
+// Write only the client credentials as step outputs (for -c mode)
+function writeClientOutput(clientId, clientSecret) {
+    const githubOutput = process.env.GITHUB_OUTPUT;
+    if (!githubOutput) return;
+
+    // Mask first so the secret never appears in logs
+    console.log("::add-mask::" + clientSecret);
+    fs.appendFileSync(githubOutput, `client-id=${clientId}\nclient-secret=${clientSecret}\n`);
+    ok('Wrote GitHub outputs (client-id, client-secret)');
 }
 
 // ---------------- Step 1: OAuth Token ----------------
@@ -415,6 +431,13 @@ async function main() {
         }
         await deleteCluster(accessToken, args[1]);
         ok('Cluster deletion completed');
+        return;
+    } else if (args[0] === '-c') {
+        if (!args[1]) {
+            fail('Cluster ID required when using -c flag. Usage: node manage_cluster.js -c <cluster_id>');
+        }
+        const clientInfo = await createClient(accessToken, args[1]);
+        writeClientOutput(clientInfo.clientId, clientInfo.clientSecret);
         return;
     } else if (args[0] === '-l') {
         await getClusters(accessToken);

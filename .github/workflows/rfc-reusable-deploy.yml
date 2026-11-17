@@ -22,10 +22,6 @@ on:
       deployment_name:
         description: 'The name of the deployment'
         value: ${{ jobs.create-cluster.outputs.deployment-name }}
-      client_id:
-        value: ${{ jobs.create-cluster.outputs.client-id }}
-      client_secret:
-        value: ${{ jobs.create-cluster.outputs.client-secret }}
       region_id:
         value: ${{ jobs.create-cluster.outputs.region-id }}
       base_domain:
@@ -49,8 +45,6 @@ jobs:
     needs: extract-version
     outputs:
         cluster-uuid: ${{ steps.create_cluster.outputs.cluster-id }}
-        client-id: ${{ steps.create_cluster.outputs.client-id }}
-        client-secret: ${{ steps.create_cluster.outputs.client-secret }}
         region-id: ${{ steps.create_cluster.outputs.region-id }}
         base-domain: ${{ steps.create_cluster.outputs.base-domain }}
         deployment-name: ${{ steps.set_deployment_name.outputs.deployment-name }}
