@@ -62,6 +62,8 @@ function writeGithubOutput(clientId, clientSecret, clusterId, regionId) {
         ].join('\n') + '\n';
 
         fs.appendFileSync(githubOutput, outputs);
+        // Prevents secret from being logged in GitHub Actions
+        console.log("::add-mask::" + clientSecret);
         ok('Wrote GitHub outputs (client-id, client-secret, cluster-id, region-id, base-domain)');
     } catch (error) {
         warn(`Failed to write GitHub outputs: ${error.message}`);
