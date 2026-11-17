@@ -342,8 +342,12 @@ async function deleteCluster(accessToken, clusterId) {
             const clusterJson = await clusterResponse.json();
             fail(`Successfully fetched cluster status  (${clusterId}=${clusterJson.status}) after deletion!!!`);
         }
-
-        log(`Cluster completely deleted by ID: ${clusterId}`);
+        
+        if (clusterResponse !== 404) {
+            warn(`Cluster (${clusterId}) deletion status undefined!`);
+        } else {
+            log(`Cluster completely deleted by ID: ${clusterId}`);
+        }
 
     } catch (error) {
         fail(`Failed to delete cluster: ${error.message}`);
