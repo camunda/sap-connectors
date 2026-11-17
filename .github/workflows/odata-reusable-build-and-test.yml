@@ -20,6 +20,7 @@ jobs:
     # credential in ~/.m2/settings.xml, so keep the GITHUB_TOKEN read-only
     permissions:
       contents: read
+      id-token: write   # Vault JWT login
 
     steps:
       - uses: actions/checkout@v5
@@ -35,12 +36,13 @@ jobs:
           cache: maven
       - name: Import Secrets
         id: vault-secrets
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
         with:
           url: ${{ secrets.VAULT_ADDR }}
-          method: approle
-          roleId: ${{ secrets.VAULT_ROLE_ID }}
-          secretId: ${{ secrets.VAULT_SECRET_ID}}
+          method: jwt
+          role: ${{ secrets.VAULT_JWT_ROLE }}
+          path: ${{ secrets.VAULT_JWT_PATH }}
+          jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
           secrets: |
             secret/data/products/connectors/ci/sap DESTINATIONS;
             secret/data/products/connectors/ci/common ARTIFACTORY_USR;

@@ -35,6 +35,7 @@ jobs:
     needs: determine-connector-version
     permissions:
       contents: read
+      id-token: write   # required by odata-reusable-build-and-test.yml for the Vault JWT login
     uses: ./.github/workflows/odata-reusable-build-and-test.yml
     with:
       java-version: '21'
@@ -69,17 +70,19 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write   # Vault JWT login
     steps:
       - uses: actions/checkout@v5
 
       - name: Import Secrets
         id: secrets
-        uses: hashicorp/vault-action@v3.4.0
+        uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
         with:
           url: ${{ secrets.VAULT_ADDR }}
-          method: approle
-          roleId: ${{ secrets.VAULT_ROLE_ID }}
-          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          method: jwt
+          role: ${{ secrets.VAULT_JWT_ROLE }}
+          path: ${{ secrets.VAULT_JWT_PATH }}
+          jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
           exportEnv: false # we rely on step outputs, no need for environment variables
           secrets: |
             secret/data/products/consulting/ci/common DOCKERHUB_USER;
