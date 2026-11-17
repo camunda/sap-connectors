@@ -37,6 +37,7 @@ jobs:
     needs: determine-connector-version
     permissions:
       contents: read
+      id-token: write   # required by rfc-reusable-deploy.yml for the Vault JWT login
     uses: ./.github/workflows/rfc-reusable-deploy.yml
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}
@@ -61,6 +62,7 @@ jobs:
     if: always()
     permissions:
       contents: read
+      id-token: write   # required by rfc-reusable-undeploy.yml for the Vault JWT login
     uses: ./.github/workflows/rfc-reusable-undeploy.yml
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}
