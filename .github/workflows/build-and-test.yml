@@ -8,6 +8,9 @@ on:
 
 jobs:
   odata-tests:
+    permissions:
+      contents: read
+      id-token: write # Vault JWT login in the reusable workflow
     uses: ./.github/workflows/odata-reusable-build-and-test.yml
     with:
       java-version: '25'
