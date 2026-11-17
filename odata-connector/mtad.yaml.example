@@ -25,7 +25,7 @@ modules:
   parameters:
     disk-quota: 2G
     docker:
-      image: camunda/sap-odata-connector:<app-version>
+      image: camunda/sap-odata-connector:<image-tag>
     enable-ssh: true
     health-check-type: process
     instances: 1

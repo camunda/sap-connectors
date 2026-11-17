@@ -6,11 +6,14 @@ import io.camunda.client.CamundaClient;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// Does not work without active MMCUSA SAP Cloud Connector.
+@Disabled
 @EnabledIfEnvironmentVariable(named = "e2e", matches = "true")
 public class E2eTest {
 
@@ -19,7 +22,7 @@ public class E2eTest {
   CamundaClient camundaClient;
 
   E2eTest() {
-    // the env vars are set in the GitHub action
+    // the env vars are set in the GitHub Action
     // derived from the repo secrets
     camundaClient =
         CamundaClient.newCloudClientBuilder()
