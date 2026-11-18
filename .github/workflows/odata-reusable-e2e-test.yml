@@ -48,6 +48,7 @@ jobs:
           path: ${{ secrets.VAULT_JWT_PATH }}
           role: ${{ secrets.VAULT_JWT_ROLE }}
           jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
+          exportEnv: false
           secrets: |
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_ID;
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_SECRET;
@@ -58,6 +59,7 @@ jobs:
         run: node scripts/manage_cluster.js -c "$CLUSTER_ID"
         env:
           CLUSTER_ID: ${{ inputs.cluster_id }}
+          BASE_HOSTNAME: ${{ inputs.base_domain }}
           CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
           CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
 
