@@ -26,6 +26,7 @@
     "proxy-addr": "2.0.8",
     "express": {
       "body-parser": "1.20.9"
-    }
+    },
+    "qs": "6.16.2"
   }
 }
