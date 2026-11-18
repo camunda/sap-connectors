@@ -127,6 +127,9 @@ jobs:
     with:
       connector_version: ${{ inputs.connector_version }}
       deployment_name: ${{ inputs.deployment_name }}
+      cluster_id: ${{ inputs.cluster_id }}
+      region_id: ${{ inputs.region_id }}
+      base_domain: ${{ inputs.base_domain }}
       cf_api_endpoint: ${{ inputs.cf_api_endpoint }}
       cf_org: ${{ inputs.cf_org }}
       cf_space: ${{ inputs.cf_space }}

@@ -97,41 +97,6 @@ jobs:
           CAMUNDA_DESIRED_GENERATION: ${{ needs.extract-version.outputs.camunda_release }}
           CLUSTER_NAME: ${{ steps.set_deployment_name.outputs.deployment-name }}
 
-      # Static 8.10.3 used until alternative container image storage configured for development "$VERSION" testing
-      - name: fill in ODATA target cluster credentials
-        env:
-          VERSION: ${{ needs.determine-connector-version.outputs.VERSION }}
-          REGION_ID: ${{ steps.create_cluster.outputs.region-id }}
-          CLUSTER_ID: ${{ steps.create_cluster.outputs.cluster-id }}
-          CLIENT_ID: ${{ steps.create_cluster.outputs.client-id }}
-          CLIENT_SECRET: ${{ steps.create_cluster.outputs.client-secret }}
-          DEPLOYMENT_NAME: ${{ steps.set_deployment_name.outputs.deployment-name }}
-          IMAGE_TAG: "SNAPSHOT"
-        run: |
-          scripts/replace_mtad_placeholders.js \
-          odata-connector/mtad.yaml.dev \
-          "8.10.3" \
-          "$REGION_ID" \
-          "$CLUSTER_ID" \
-          "ultrawombat.com" \
-          "$CLIENT_ID" \
-          "$CLIENT_SECRET" \
-          "$DEPLOYMENT_NAME" \
-          "$IMAGE_TAG"
-          mv odata-connector/mtad.yaml.dev mtad.yaml
-
-      # no worries: gh marks secrets with *** also when cat'ing files
-      - name: check ODATA substitution result
-        run: |
-          cat mtad.yaml
-
-      - name: Upload ODATA mtad.yaml
-        uses: actions/upload-artifact@v7
-        with:
-          name: odata-mtad
-          path: mtad.yaml
-          retention-days: 1
-
 #  rfc-e2e:
 #    needs: determine-connector-version
 #    uses: ./.github/workflows/rfc-reusable-deploy.yml

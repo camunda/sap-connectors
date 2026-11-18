@@ -9,6 +9,15 @@ on:
       deployment_name:
         required: true
         type: string
+      cluster_id:
+        required: true
+        type: string
+      region_id:
+        required: true
+        type: string
+      base_domain:
+        required: true
+        type: string
       cf_api_endpoint:
         required: true
         type: string
@@ -25,19 +34,20 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    container:
-      image: cloudfoundry/cli:latest
 
     steps:
-      # first, build the connector
       - uses: actions/checkout@v7
 
-      # second, prep deployment descriptor
-      - name: download ODATA mtad.yaml
-        uses: actions/download-artifact@v8
-        with:
-          name: odata-mtad
-          path: odata-connector/
+      # runs on the runner (not in the cf container) as node is needed for the helper scripts
+      - name: install cf cli
+        run: |
+          set -euo pipefail
+          # apt-key was removed from ubuntu-latest runners; use a signed-by keyring instead
+          wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/cli.cloudfoundry.org.gpg
+          echo "deb [signed-by=/usr/share/keyrings/cli.cloudfoundry.org.gpg] https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+          sudo apt-get update
+          sudo apt-get install -y cf8-cli
+          cf install-plugin multiapps -f
 
       - name: Import Secrets
         id: vault-secrets
@@ -48,15 +58,27 @@ jobs:
           path: ${{ secrets.VAULT_JWT_PATH }}
           role: ${{ secrets.VAULT_JWT_ROLE }}
           jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
+          exportEnv: false
           secrets: |
+            secret/data/products/connectors/ci/sap CONSOLE_CLIENT_ID;
+            secret/data/products/connectors/ci/sap CONSOLE_CLIENT_SECRET;
             secret/data/products/connectors/ci/sap SAP_CLOUDFOUNDRY_EMAIL;
             secret/data/products/connectors/ci/sap SAP_CLOUDFOUNDRY_PASSWORD;
             secret/data/products/connectors/ci/harbor username | HARBOR_USERNAME;
             secret/data/products/connectors/ci/harbor password | HARBOR_PASSWORD;
 
-      # third, actual deployment
+      # the client secret must not travel via job outputs or artifacts, so create the client here
+      - name: Create client for the deployed connector
+        id: create_client
+        run: node scripts/manage_cluster.js -c "$CLUSTER_ID"
+        env:
+          CLUSTER_ID: ${{ inputs.cluster_id }}
+          BASE_HOSTNAME: ${{ inputs.base_domain }}
+          CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
+          CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
+
+      # the only place where the deployment descriptor contains sensitive information
       - name: deploy ${{inputs.connector_version}} to BTP
-        # download-artifact puts the file w/o subdir here
         env:
           CF_API: ${{ inputs.cf_api_endpoint }}
           CF_ORG: ${{ inputs.cf_org }}
@@ -65,10 +87,31 @@ jobs:
           CF_PASSWORD: ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_PASSWORD }}
           __MTA___docker-user: ${{ steps.vault-secrets.outputs.HARBOR_USERNAME }}
           __MTA___docker-password: ${{ steps.vault-secrets.outputs.HARBOR_PASSWORD }}
+          REGION_ID: ${{ inputs.region_id }}
+          CLUSTER_ID: ${{ inputs.cluster_id }}
+          BASE_DOMAIN: ${{ inputs.base_domain }}
+          CLIENT_ID: ${{ steps.create_client.outputs.client-id }}
+          CLIENT_SECRET: ${{ steps.create_client.outputs.client-secret }}
+          DEPLOYMENT_NAME: ${{ inputs.deployment_name }}
+          # Static 8.10.3 used until alternative container image storage configured for development "$VERSION" testing
+          APP_VERSION: "8.10.3"
+          IMAGE_TAG: "SNAPSHOT"
         run: |
-          cf install-plugin multiapps -f
+          set -euo pipefail
           cd odata-connector
-          ls -al .
+          # remove the filled-in descriptor, whatever the deploy outcome
+          trap 'rm -f mtad.yaml' EXIT
+          cp mtad.yaml.dev mtad.yaml
+          ../scripts/replace_mtad_placeholders.js \
+            mtad.yaml \
+            "$APP_VERSION" \
+            "$REGION_ID" \
+            "$CLUSTER_ID" \
+            "$BASE_DOMAIN" \
+            "$CLIENT_ID" \
+            "$CLIENT_SECRET" \
+            "$DEPLOYMENT_NAME" \
+            "$IMAGE_TAG"
           cf login -a "$CF_API" -u "$CF_USER" -p "$CF_PASSWORD" -o "$CF_ORG" -s "$CF_SPACE"
           cf deploy ./ -f --require-secure-parameters --disposable-user-provided-service
 
