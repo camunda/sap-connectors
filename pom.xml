@@ -38,6 +38,7 @@
     <!-- CVE-2026-110879 -->
     <version.jackson3-databind>3.1.8</version.jackson3-databind>
     <version.guava>33.7.2-jre</version.guava>
+    <version.java-jwt>4.6.2</version.java-jwt>
     <!-- CVE-2026-101356, CVE-2026-101296, CVE-2026-103119, CVE-2026-88041, CVE-2026-93446, CVE-2026-74048 -->
     <version.tomcat-embed>11.0.27</version.tomcat-embed>
     <!-- CVE-2026-93879: restore the version the connector runtime BOM downgrades to 9.1.3.Final -->
