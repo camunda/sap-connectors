@@ -70,7 +70,7 @@ jobs:
       # the client secret must not travel via job outputs or artifacts, so create the client here
       - name: Create client for the deployed connector
         id: create_client
-        run: node scripts/manage_cluster.js -c "$CLUSTER_ID" "${{ github.action }}"
+        run: node scripts/manage_cluster.js -c "$CLUSTER_ID" "${{ github.job }}"
         env:
           CLUSTER_ID: ${{ inputs.cluster_id }}
           BASE_HOSTNAME: ${{ inputs.base_domain }}
