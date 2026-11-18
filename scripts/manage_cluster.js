@@ -10,7 +10,7 @@
  *   5. printSummary (final JSON + exports already set)
  *
  * Other modes:
- *   -c <cluster_id>  create a client for an existing cluster and write it to GITHUB_OUTPUT
+ *   -c <cluster_id> <client_id_prefix>  create a client for an existing cluster and write it to GITHUB_OUTPUT
  *   -d <cluster_id>  delete a cluster
  *   -l               list clusters
  */
@@ -295,7 +295,7 @@ async function createCluster(accessToken, selection) {
 }
 
 // Step 4: Create Client
-async function createClient(accessToken, clusterId) {
+async function createClient(accessToken, clusterId, clientIdPrefix) {
     try {
         const response = await fetch(`${API_BASE_URL}/clusters/${clusterId}/clients`, {
             method: 'POST',
@@ -304,7 +304,7 @@ async function createClient(accessToken, clusterId) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                clientName: `client-${CLUSTER_NAME}`
+                clientName: `${clientIdPrefix}-client-${CLUSTER_NAME}`
             })
         });
 
@@ -433,10 +433,10 @@ async function main() {
         ok('Cluster deletion completed');
         return;
     } else if (args[0] === '-c') {
-        if (!args[1]) {
-            fail('Cluster ID required when using -c flag. Usage: node manage_cluster.js -c <cluster_id>');
+        if (!args[1] && !args[2]) {
+            fail('Cluster ID and Client Name Prefix required when using -c flag. Usage: node manage_cluster.js -c <cluster_id> <client_name_prefix>');
         }
-        const clientInfo = await createClient(accessToken, args[1]);
+        const clientInfo = await createClient(accessToken, args[1], args[2]);
         writeClientOutput(clientInfo.clientId, clientInfo.clientSecret);
         return;
     } else if (args[0] === '-l') {
@@ -448,7 +448,7 @@ async function main() {
     requireEnv('CAMUNDA_DESIRED_GENERATION');
     const selection = await selectChannelAndGeneration(accessToken);
     const clusterInfo = await createCluster(accessToken, selection);
-    const clientInfo = await createClient(accessToken, clusterInfo.clusterId);
+    const clientInfo = await createClient(accessToken, clusterInfo.clusterId, "default");
     printSummary(accessToken, selection, clusterInfo, clientInfo);
 }
 

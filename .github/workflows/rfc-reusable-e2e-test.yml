@@ -56,7 +56,7 @@ jobs:
       # the client secret must not travel via job outputs (GitHub drops masked values), so create a client here
       - name: Create client for e2e test
         id: create_client
-        run: node scripts/manage_cluster.js -c "$CLUSTER_ID"
+        run: node scripts/manage_cluster.js -c "$CLUSTER_ID" "${{ github.action }}"
         env:
           CLUSTER_ID: ${{ inputs.cluster_id }}
           CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
