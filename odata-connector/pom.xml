@@ -33,6 +33,12 @@
         <artifactId>guava</artifactId>
         <version>${version.guava}</version>
       </dependency>
+      <!-- CVE-2026-85473 (java-jwt 4.6.1 via the Cloud SDK), fixed in 4.6.2 -->
+      <dependency>
+        <groupId>com.auth0</groupId>
+        <artifactId>java-jwt</artifactId>
+        <version>${version.java-jwt}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
