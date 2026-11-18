@@ -48,6 +48,7 @@ jobs:
           path: ${{ secrets.VAULT_JWT_PATH }}
           role: ${{ secrets.VAULT_JWT_ROLE }}
           jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
+          exportEnv: false
           secrets: |
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_ID;
             secret/data/products/connectors/ci/sap CONSOLE_CLIENT_SECRET;
