@@ -7,6 +7,9 @@ modules:
     path: target/rfc-<app-version>.war
     properties:
       JBP_CONFIG_SAP_MACHINE_JRE: '{ version: 25.+ }'
+      # CVE-2026-114938 (Java4Shell): disable the AVX-512 Base64 decoder intrinsic. Keep this until the
+      # SAP Java buildpack serves a patched SapMachine (>= 25.0.5.1), then remove it and restage.
+      JBP_CONFIG_JAVA_OPTS: "[java_opts: '-XX:-UseBASE64Intrinsics']"
       LOGGING_LEVEL_COM_SAP_CLOUD_SDK: DEBUG # any of TRACE, DEBUG, INFO, WARN, ERROR, OFF
       LOGGING_LEVEL_COM_SAP_CORE_CONNECTIVITY_JCO: DEBUG # any of TRACE, DEBUG, INFO, WARN, ERROR, OFF
       LOGGING_LEVEL_IO_CAMUNDA_CONNECTOR_SAP_RFC: DEBUG # any of TRACE, DEBUG, INFO, WARN, ERROR, OFF
