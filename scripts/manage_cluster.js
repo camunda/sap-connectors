@@ -360,7 +360,7 @@ async function deleteCluster(accessToken, clusterId) {
             fail(`Successfully fetched cluster status  (${clusterId}=${clusterJson.status}) after deletion!!!`);
         }
         
-        if (clusterResponse !== 404) {
+        if (clusterResponse.status !== 404) {
             warn(`Cluster (${clusterId}) deletion status undefined!`);
         } else {
             log(`Cluster completely deleted by ID: ${clusterId}`);
@@ -474,6 +474,8 @@ async function getClusters(accessToken) {
         fail(`Failed to get clusters: ${error.message}`);
     }
 }
+
+module.exports = { deleteCluster };
 
 // Run main function
 if (require.main === module) {
