@@ -21,5 +21,8 @@
     "genres": "cds serve test/genres.cds",
     "start": "cds-serve",
     "watch": "cds watch"
+  },
+  "overrides": {
+    "proxy-addr": "2.0.8"
   }
 }
