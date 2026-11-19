@@ -138,7 +138,7 @@ jobs:
           CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
           CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
 
-      # the only place where the deployment descriptor contains sensitive information
+      # sensitive values are passed to cf deploy via __MTA___ env vars and never written to the descriptor
       - name: deploy ${{inputs.connector_version}} to BTP
         env:
           CF_API: ${{ inputs.cf_api_endpoint }}
@@ -147,11 +147,12 @@ jobs:
           CF_USER: ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_EMAIL }}
           CF_PASSWORD: ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_PASSWORD }}
           APP_VERSION: ${{ inputs.connector_version }}
-          REGION_ID: ${{ needs.create-cluster.outputs.region-id }}
-          CLUSTER_ID: ${{ needs.create-cluster.outputs.cluster-uuid }}
-          BASE_DOMAIN: ${{ needs.create-cluster.outputs.base-domain }}
-          CLIENT_ID: ${{ steps.create_client.outputs.client-id }}
-          CLIENT_SECRET: ${{ steps.create_client.outputs.client-secret }}
+          # resolved by `cf deploy` into the ${...} parameters of mtad.yaml.example
+          __MTA___region-id: ${{ needs.create-cluster.outputs.region-id }}
+          __MTA___cluster-id: ${{ needs.create-cluster.outputs.cluster-uuid }}
+          __MTA___base-domain: ${{ needs.create-cluster.outputs.base-domain }}
+          __MTA___client-id: ${{ steps.create_client.outputs.client-id }}
+          __MTA___client-secret: ${{ steps.create_client.outputs.client-secret }}
           DEPLOYMENT_NAME: ${{ needs.create-cluster.outputs.deployment-name }}
         run: |
           set -euo pipefail
@@ -159,16 +160,8 @@ jobs:
           # remove the filled-in descriptor, whatever the deploy outcome
           trap 'rm -f mtad.yaml' EXIT
           cp mtad.yaml.example mtad.yaml
-          ../scripts/replace_mtad_placeholders.js \
-            mtad.yaml \
-            "$APP_VERSION" \
-            "$REGION_ID" \
-            "$CLUSTER_ID" \
-            "$BASE_DOMAIN" \
-            "$CLIENT_ID" \
-            "$CLIENT_SECRET" \
-            "$DEPLOYMENT_NAME" \
-            "$APP_VERSION"
+          # only the structural placeholders (MTA ID, names, war path) are filled in here
+          ../scripts/replace_mtad_placeholders.js mtad.yaml "$APP_VERSION" "$DEPLOYMENT_NAME"
           ls -al . target
           cf login -a "$CF_API" -u "$CF_USER" -p "$CF_PASSWORD" -o "$CF_ORG" -s "$CF_SPACE"
           cf deploy ./ -f
