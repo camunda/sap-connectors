@@ -37,7 +37,15 @@ jobs:
 
       - name: Set connectors repo version in output
         id: connectors_repo_version
-        run: echo "CAMUNDA_VERSION=$(mvn help:evaluate -Dexpression=version.camunda -q -DforceStdout)" >> "$GITHUB_OUTPUT"
+        # Used as the camunda/connectors base image tag. Snapshot images are tagged <major>.<minor>-SNAPSHOT
+        # (e.g. 8.11-SNAPSHOT), while the Maven artifacts are <major>.<minor>.<patch>-SNAPSHOT.
+        run: |
+          set -euo pipefail
+          VERSION=$(mvn help:evaluate -Dexpression=version.camunda -q -DforceStdout)
+          if [[ "$VERSION" =~ ^([0-9]+\.[0-9]+)\.[0-9]+-SNAPSHOT$ ]]; then
+            VERSION="${BASH_REMATCH[1]}-SNAPSHOT"
+          fi
+          echo "CAMUNDA_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
   
   build-and-publish-dev-container-image:
     needs: determine-connector-version

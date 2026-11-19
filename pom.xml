@@ -25,7 +25,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <version.slf4j>2.0.20</version.slf4j>
-    <version.camunda>8.10.0-alpha5</version.camunda>
+    <version.camunda>8.11.0-SNAPSHOT</version.camunda>
     <version.cloud-sdk>5.34.0</version.cloud-sdk>
     <version.assertj>3.27.7</version.assertj>
     <version.junit-jupiter>6.1.3</version.junit-jupiter>
@@ -126,6 +126,34 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <!-- main tracks the camunda/connectors development line (<major>.<minor>.0-SNAPSHOT) -->
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>connectors-snapshots</id>
+      <name>Connectors Snapshot Repository</name>
+      <url>https://artifacts.camunda.com/artifactory/connectors-snapshots/</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>connectors-snapshots</id>
+      <name>Connectors Snapshot Repository</name>
+      <url>https://artifacts.camunda.com/artifactory/connectors-snapshots/</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <profiles>
     <!-- auto-format sources during build (inherited by all modules) -->
