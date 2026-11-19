@@ -1,4 +1,7 @@
-### This is currently not used. We should start using it however
+### Descriptor used by the e2e workflow.
+### Structural values (MTA ID, version, names, image path) are filled in by scripts/replace_mtad_placeholders.js.
+### All property values are ${...} MTA parameters, resolved by `cf deploy` from __MTA___<name> environment variables,
+### so no sensitive value is ever written to this file.
 _schema-version: 3.3.0
 ID: odata-<deployment-name>
 version: "<app-version>"
@@ -7,11 +10,11 @@ modules:
   type: application
   properties:
     CAMUNDA_CLIENT_MODE: saas
-    CAMUNDA_CLIENT_CLOUD_DOMAIN: <base-domain>
-    CAMUNDA_CLIENT_CLOUD_REGION: <region-id>
-    CAMUNDA_CLIENT_CLOUD_CLUSTERID: <cluster-id>
-    CAMUNDA_CLIENT_AUTH_CLIENTID: <client-id>
-    CAMUNDA_CLIENT_AUTH_CLIENTSECRET: <client-secret>
+    CAMUNDA_CLIENT_CLOUD_DOMAIN: ${base-domain}
+    CAMUNDA_CLIENT_CLOUD_REGION: ${region-id}
+    CAMUNDA_CLIENT_CLOUD_CLUSTERID: ${cluster-id}
+    CAMUNDA_CLIENT_AUTH_CLIENTID: ${client-id}
+    CAMUNDA_CLIENT_AUTH_CLIENTSECRET: ${client-secret}
     CAMUNDA_CLIENT_ENABLED: true
     # CAMUNDA_CLIENT_ZEEBE_PREFERRESTOVERGRPC: true
     CAMUNDA_CONNECTOR_POLLING_ENABLED: false
