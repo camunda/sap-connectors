@@ -22,6 +22,10 @@ on:
       deployment_name:
         description: 'The name of the deployment'
         value: ${{ jobs.create-cluster.outputs.deployment-name }}
+      region_id:
+        value: ${{ jobs.create-cluster.outputs.region-id }}
+      base_domain:
+        value: ${{ jobs.create-cluster.outputs.base-domain }}
 
 jobs:
   extract-version:
@@ -41,6 +45,8 @@ jobs:
     needs: extract-version
     outputs:
         cluster-uuid: ${{ steps.create_cluster.outputs.cluster-id }}
+        region-id: ${{ steps.create_cluster.outputs.region-id }}
+        base-domain: ${{ steps.create_cluster.outputs.base-domain }}
         deployment-name: ${{ steps.set_deployment_name.outputs.deployment-name }}
     steps:
       - name: Set deployment name
@@ -68,42 +74,12 @@ jobs:
         uses: actions/checkout@v7
       - name: Create cluster
         id: create_cluster
-        run: node scripts/manage_cluster.js values.json
+        run: node scripts/manage_cluster.js
         env:
           CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
           CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
           CAMUNDA_DESIRED_GENERATION: ${{ needs.extract-version.outputs.camunda_release }}
           CLUSTER_NAME: ${{ steps.set_deployment_name.outputs.deployment-name }}
-      - name: Upload client config for e2e test
-        uses: actions/upload-artifact@v7
-        with:
-          name: client-config
-          path: values.json
-
-      - name: fill in target cluster credentials
-        run: |
-          scripts/replace_mtad_placeholders.js \
-          rfc-connector/mtad.yaml.example \
-          "${{ inputs.connector_version }}" \
-          "${{ steps.create_cluster.outputs.region-id }}" \
-          "${{ steps.create_cluster.outputs.cluster-id }}" \
-          "ultrawombat.com" \
-          "${{ steps.create_cluster.outputs.client-id }}" \
-          "${{ steps.create_cluster.outputs.client-secret }}" \
-          "${{ steps.set_deployment_name.outputs.deployment-name }}" \
-          "${{ inputs.connector_version }}"
-          mv rfc-connector/mtad.yaml.example mtad.yaml
-
-      # no worries: gh marks secrets with *** also when cat'ing files
-      - name: check substitution result
-        run: |
-          cat mtad.yaml
-
-      - name: Upload mtad.yaml
-        uses: actions/upload-artifact@v7
-        with:
-          name: mtad
-          path: mtad.yaml
 
   deploy:
     needs: create-cluster
@@ -136,12 +112,6 @@ jobs:
       - name: build
         run: mvn package -DskipTests # as we've run the tests in the previous job
 
-      # second, prep deployment descriptor
-      - name: download mtad.yaml
-        uses: actions/download-artifact@v8
-        with:
-          name: mtad
-          path: rfc-connector/
       - name: Import Secrets
         id: vault-secrets
         uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
@@ -151,19 +121,50 @@ jobs:
           path: ${{ secrets.VAULT_JWT_PATH }}
           role: ${{ secrets.VAULT_JWT_ROLE }}
           jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
+          exportEnv: false
           secrets: |
+            secret/data/products/connectors/ci/sap CONSOLE_CLIENT_ID;
+            secret/data/products/connectors/ci/sap CONSOLE_CLIENT_SECRET;
             secret/data/products/connectors/ci/sap SAP_CLOUDFOUNDRY_EMAIL;
             secret/data/products/connectors/ci/sap SAP_CLOUDFOUNDRY_PASSWORD;
-      # third, actual deployment
+
+      # the client secret must not travel via job outputs or artifacts, so create the client here
+      - name: Create client for the deployed connector
+        id: create_client
+        run: node scripts/manage_cluster.js -c "$CLUSTER_ID" "${{ github.job }}"
+        env:
+          CLUSTER_ID: ${{ needs.create-cluster.outputs.cluster-uuid }}
+          BASE_HOSTNAME: ${{ needs.create-cluster.outputs.base-domain }}
+          CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
+          CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
+
+      # sensitive values are passed to cf deploy via __MTA___ env vars and never written to the descriptor
       - name: deploy ${{inputs.connector_version}} to BTP
-        # download-artifact puts the file w/o subdir here
+        env:
+          CF_API: ${{ inputs.cf_api_endpoint }}
+          CF_ORG: ${{ inputs.cf_org }}
+          CF_SPACE: ${{ inputs.cf_space }}
+          CF_USER: ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_EMAIL }}
+          CF_PASSWORD: ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_PASSWORD }}
+          APP_VERSION: ${{ inputs.connector_version }}
+          # resolved by `cf deploy` into the ${...} parameters of mtad.yaml.example
+          __MTA___region-id: ${{ needs.create-cluster.outputs.region-id }}
+          __MTA___cluster-id: ${{ needs.create-cluster.outputs.cluster-uuid }}
+          __MTA___base-domain: ${{ needs.create-cluster.outputs.base-domain }}
+          __MTA___client-id: ${{ steps.create_client.outputs.client-id }}
+          __MTA___client-secret: ${{ steps.create_client.outputs.client-secret }}
+          DEPLOYMENT_NAME: ${{ needs.create-cluster.outputs.deployment-name }}
         run: |
+          set -euo pipefail
           cd rfc-connector
-          ls -al .
-          ls -al target
-          cf login -a ${{ inputs.cf_api_endpoint }} -u ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_EMAIL }} \
-          -p ${{ steps.vault-secrets.outputs.SAP_CLOUDFOUNDRY_PASSWORD }} -o ${{ inputs.cf_org }} -s ${{ inputs.cf_space }}
-          cf deploy ./ -f
+          # remove the filled-in descriptor, whatever the deploy outcome
+          trap 'rm -f mtad.yaml' EXIT
+          cp mtad.yaml.example mtad.yaml
+          # only the structural placeholders (MTA ID, names, war path) are filled in here
+          ../scripts/replace_mtad_placeholders.js mtad.yaml "$APP_VERSION" "$DEPLOYMENT_NAME"
+          ls -al . target
+          cf login -a "$CF_API" -u "$CF_USER" -p "$CF_PASSWORD" -o "$CF_ORG" -s "$CF_SPACE"
+          cf deploy ./ -f --require-secure-parameters --disposable-user-provided-service
 
       - name: dump app + MTA logs on failure
         if: failure()

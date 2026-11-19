@@ -52,6 +52,8 @@ jobs:
     needs: [extract-version,determine-connector-version]
     outputs:
         cluster-uuid: ${{ steps.create_cluster.outputs.cluster-id }}
+        region-id: ${{ steps.create_cluster.outputs.region-id }}
+        base-domain: ${{ steps.create_cluster.outputs.base-domain }}
         deployment-name: ${{ steps.set_deployment_name.outputs.deployment-name }}
     steps:
       - name: Set deployment name
@@ -88,53 +90,12 @@ jobs:
           CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
       - name: Create cluster
         id: create_cluster
-        run: node scripts/manage_cluster.js values.json
+        run: node scripts/manage_cluster.js
         env:
           CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
           CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
           CAMUNDA_DESIRED_GENERATION: ${{ needs.extract-version.outputs.camunda_release }}
           CLUSTER_NAME: ${{ steps.set_deployment_name.outputs.deployment-name }}
-      - name: Upload client config for e2e test
-        uses: actions/upload-artifact@v7
-        with:
-          name: client-config
-          path: values.json
-          retention-days: 1
-
-      # Static 8.10.3 used until alternative container image storage configured for development "$VERSION" testing
-      - name: fill in ODATA target cluster credentials
-        env:
-          VERSION: ${{ needs.determine-connector-version.outputs.VERSION }}
-          REGION_ID: ${{ steps.create_cluster.outputs.region-id }}
-          CLUSTER_ID: ${{ steps.create_cluster.outputs.cluster-id }}
-          CLIENT_ID: ${{ steps.create_cluster.outputs.client-id }}
-          CLIENT_SECRET: ${{ steps.create_cluster.outputs.client-secret }}
-          DEPLOYMENT_NAME: ${{ steps.set_deployment_name.outputs.deployment-name }}
-          IMAGE_TAG: "SNAPSHOT"
-        run: |
-          scripts/replace_mtad_placeholders.js \
-          odata-connector/mtad.yaml.dev \
-          "8.10.3" \
-          "$REGION_ID" \
-          "$CLUSTER_ID" \
-          "ultrawombat.com" \
-          "$CLIENT_ID" \
-          "$CLIENT_SECRET" \
-          "$DEPLOYMENT_NAME" \
-          "$IMAGE_TAG"
-          mv odata-connector/mtad.yaml.dev mtad.yaml
-
-      # no worries: gh marks secrets with *** also when cat'ing files
-      - name: check ODATA substitution result
-        run: |
-          cat mtad.yaml
-
-      - name: Upload ODATA mtad.yaml
-        uses: actions/upload-artifact@v7
-        with:
-          name: odata-mtad
-          path: mtad.yaml
-          retention-days: 1
 
 #  rfc-e2e:
 #    needs: determine-connector-version
@@ -155,6 +116,9 @@ jobs:
     with:
       connector_version: ${{ needs.determine-connector-version.outputs.VERSION }}
       deployment_name: ${{ needs.create-cluster.outputs.deployment-name }}
+      cluster_id: ${{ needs.create-cluster.outputs.cluster-uuid }}
+      region_id: ${{ needs.create-cluster.outputs.region-id }}
+      base_domain: ${{ needs.create-cluster.outputs.base-domain }}
       cf_api_endpoint: 'https://api.cf.eu10-004.hana.ondemand.com'
       cf_org: camunda-dev
       cf_space: sap-integration

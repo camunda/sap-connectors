@@ -12,10 +12,22 @@ on:
       maven-options:
         required: true
         type: string
+      cluster_id:
+        required: true
+        type: string
+      region_id:
+        required: true
+        type: string
+      base_domain:
+        required: true
+        type: string
 
 jobs:
   e2e:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - uses: actions/checkout@v7
@@ -27,12 +39,28 @@ jobs:
           distribution: ${{ inputs.distribution }}
           cache: maven
 
-      # second, prep deployment descriptor
-      - name: download mtad.yaml
-        uses: actions/download-artifact@v8
+      - name: Import Secrets
+        id: vault-secrets
+        uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4.0.0
         with:
-          name: client-config
-          path: .
+          url: ${{ secrets.VAULT_ADDR }}
+          method: jwt
+          path: ${{ secrets.VAULT_JWT_PATH }}
+          role: ${{ secrets.VAULT_JWT_ROLE }}
+          jwtGithubAudience: ${{ secrets.VAULT_JWT_AUDIENCE }}
+          exportEnv: false
+          secrets: |
+            secret/data/products/connectors/ci/sap CONSOLE_CLIENT_ID;
+            secret/data/products/connectors/ci/sap CONSOLE_CLIENT_SECRET;
+
+      # the client secret must not travel via job outputs (GitHub drops masked values), so create a client here
+      - name: Create client for e2e test
+        id: create_client
+        run: node scripts/manage_cluster.js -c "$CLUSTER_ID" "${{ github.job }}"
+        env:
+          CLUSTER_ID: ${{ inputs.cluster_id }}
+          CONSOLE_CLIENT_ID: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_ID }}
+          CONSOLE_CLIENT_SECRET: ${{ steps.vault-secrets.outputs.CONSOLE_CLIENT_SECRET }}
 
       # this runs w/ the deployed (!) connector
       # against c8 saas
@@ -40,11 +68,11 @@ jobs:
       - name: e2e tests (deployed connector, against c8 + ecc)
         env:
           e2e: true
+          CLIENT_ID: ${{ steps.create_client.outputs.client-id }}
+          CLIENT_SECRET: ${{ steps.create_client.outputs.client-secret }}
+          CLUSTER_ID: ${{ inputs.cluster_id }}
+          REGION_ID: ${{ inputs.region_id }}
+          BASE_DOMAIN: ${{ inputs.base_domain }}
         run: |
           # by env var e2e, only the respective tests are run
-          export CLIENT_ID=$(jq -r .clientId values.json)
-          export CLIENT_SECRET=$(jq -r .clientSecret values.json)
-          export CLUSTER_ID=$(jq -r .clusterId values.json)
-          export REGION_ID=$(jq -r .regionId values.json)
-          export BASE_DOMAIN=$(jq -r .baseDomain values.json)
           mvn -pl rfc-connector ${{ inputs.maven-options }} test

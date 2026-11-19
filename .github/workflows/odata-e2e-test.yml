@@ -9,6 +9,15 @@ on:
       deployment_name:
         required: true
         type: string
+      cluster_id:
+        required: true
+        type: string
+      region_id:
+        required: true
+        type: string
+      base_domain:
+        required: true
+        type: string
       cf_api_endpoint:
         required: true
         type: string
@@ -126,6 +135,9 @@ jobs:
     with:
       connector_version: ${{ inputs.connector_version }}
       deployment_name: ${{ inputs.deployment_name }}
+      cluster_id: ${{ inputs.cluster_id }}
+      region_id: ${{ inputs.region_id }}
+      base_domain: ${{ inputs.base_domain }}
       cf_api_endpoint: ${{ inputs.cf_api_endpoint }}
       cf_org: ${{ inputs.cf_org }}
       cf_space: ${{ inputs.cf_space }}
@@ -133,11 +145,18 @@ jobs:
 
   e2e:
     needs: deploy-to-btp
+    permissions:
+      contents: read
+      id-token: write
     uses: ./.github/workflows/odata-reusable-e2e-test.yml
     with:
       java-version: '25'
       distribution: 'temurin'
       maven-options: ''
+      cluster_id: ${{ inputs.cluster_id }}
+      region_id: ${{ inputs.region_id }}
+      base_domain: ${{ inputs.base_domain }}
+    secrets: inherit
 
   undeploy:
     needs: [ e2e, deploy-to-btp ]
