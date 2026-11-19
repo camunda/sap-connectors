@@ -164,7 +164,7 @@ jobs:
           ../scripts/replace_mtad_placeholders.js mtad.yaml "$APP_VERSION" "$DEPLOYMENT_NAME"
           ls -al . target
           cf login -a "$CF_API" -u "$CF_USER" -p "$CF_PASSWORD" -o "$CF_ORG" -s "$CF_SPACE"
-          cf deploy ./ -f
+          cf deploy ./ -f --require-secure-parameters --disposable-user-provided-service
 
       - name: dump app + MTA logs on failure
         if: failure()
