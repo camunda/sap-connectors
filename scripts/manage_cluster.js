@@ -433,7 +433,7 @@ async function main() {
         ok('Cluster deletion completed');
         return;
     } else if (args[0] === '-c') {
-        if (!args[1] && !args[2]) {
+        if (!args[1] || !args[2]) {
             fail('Cluster ID and Client Name Prefix required when using -c flag. Usage: node manage_cluster.js -c <cluster_id> <client_name_prefix>');
         }
         const clientInfo = await createClient(accessToken, args[1], args[2]);
