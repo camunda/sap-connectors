@@ -103,6 +103,10 @@ jobs:
             echo "Failed to resolve version.camunda" >&2
             exit 1
           fi
+          # snapshot images of camunda/connectors are tagged <major>.<minor>-SNAPSHOT (e.g. 8.11-SNAPSHOT)
+          if [[ "$VERSION" =~ ^([0-9]+\.[0-9]+)\.[0-9]+-SNAPSHOT$ ]]; then
+            VERSION="${BASH_REMATCH[1]}-SNAPSHOT"
+          fi
           echo "Resolved version.camunda=$VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
